@@ -1,0 +1,78 @@
+---
+title: "Steps to convert moored CTD and RCM ODF files to NetCDF files"
+author: "Jaimie Harbin"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# Introduction
+
+This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) ODF file to a NetCDF file. To convert a list of CTD ODF files run the CTD.R code and to convert a list of RCM files, run the RCM.R code. In all cases, make sure to change line 23 to direct the code to your own ODF files. The data used in this study is from the Davis Strait.
+
+# 1: Check odf metadata
+
+To check the odf metadata, use the **odf_check.R** function that was provided by Emily Chisholm. This function checks that the ODF file has all of the required metadata needed to build a NetCDF file. This metadata includes: `longitude`, `latitude`, `type`, `model`, `samplingInterval`, `countryInstituteCode`, `cruiseNumber`, `station`, `serialNumber`, `cruise`, `sounding`, `scientist`, `waterDepth`, `depthMin`, `depthMax`, `institute`, and it ensures the names of the parameters conform to General Formatting (GF3) standards.
+
+# 2: Fix any changes needed
+
+To fix any changes that is suggested from `odf_check.R`, use the **name_replacement.R** and **standard_name.R** functions. The `standard_name()` function looks at the GF3 code given in the ODF file, and determines the standard name and units based on Climate Forecast (CF) standards. This information is then used in the `name_replacement()` function which changes the `dataNamesOriginal`,  the names of the data, and the names of the units to be the CF standard_names instead of the GF3 codes instead of the codes. This function also changes the institute to be "UW/BIO".
+
+At this point, it is suggested to use `odf_check()` again to make sure all of the required changes are completed.
+
+# 3. Remove computed data
+
+To remove computed data, use the **ctdRemoveDerivedData.R** function. When dealing with a CTD file type, this function removes any `dataNamesOriginal` or `data` that is not `time`, `sea_water_electrical_conductivity`, `sea_water_practical_salinity`, `sea_water_temperature`, or `sea_water_pressure`.
+
+When dealing with an RCM file type, this function removes any `dataNamesOriginal` or `data` that is not `horizontal_current_direction`, `barotropic_sea_water_x_velocity`,`sea_water_pressure`, `sea_water_practical_salinity`, `time`, or `sea_water_temperature`.
+
+# 4. Remove computed metadata
+
+To removed computed metadata use the **ctdRemoveDerivedMetadata.R** function. This function removes any metadata that is not `time`, `sea_water_electrical_conductivity`, `sea_water_practical_salinity`, `sea_water_temperature`, or `sea_water_pressure` for a moored CTD instrument.
+
+When dealing with an RCM instrument, this function removes any metadata that is not `horizontal_current_direction`, `barotropic_sea_water_x_velocity`,`sea_water_pressure`, `sea_water_practical_salinity`, `time`, or `sea_water_temperature`.
+
+# 5. Check the actual data for CTD data
+
+**Note: Steps 5A-5B are only done for CTD data**
+
+## 5A: Convert conductivity ratio to conductivity
+
+To convert conductivity ratio to conductivity, use the **crat_units.R** function, which was provided by Clark Richards. This function converts conductivity ratio to conductivity with the specified unit.
+
+## 5B: Check range conductivity
+
+To check range conductivity, and ensure the conductivity ratio was in fact conductivity ratio and not conductivity, use the **check_crat.R** function, which was provided by Clark Richards. This function flags an ODF file if the range of conductivity is not what is expected.
+
+# 6: Fix metadata
+
+To fix the metadata, use the function **fix_metadata.R**. This function, applies the correct units according to CF standards, and creates space for flags with standard_names when they do not exist.
+
+# 7. Convert ODF file to NetCDF
+
+To Convert ODF file to NetCDF, use the **divideDataFrame.R** and **convertNetCDF.R** function. The `divideDataFrame()` function determines the units and standard_name in CF standards of the GF3 code. This function is then used in the `convertNetCDF()` function. The `convertNetCDF()` function does the following:
+
+Step 1: Remove the time
+Step 2: Determine units and standard_name for each code (using divideDataFrame.R)
+Step 3: Populate the variable, var, units, max,min, standard_name, and flags
+Step 4: About to check number of variables
+Step 5: Check dimensions of time, station, lon, lat, and dimnchar
+Step 6: Define netCDF variables using ncvar_def.
+Step 7: Create  new netCDF file on disk using nc_create.
+Step 8: Insert data to an existing netCDF using ncvar_put
+Step 9: Insert attributes (metadata) into a netCDF file
+
+
+# Summary
+1. Check odf metadata using odf_check.R
+2. Fix any changes needed using name_replacement.R and standard_name.R
+3. Remove computed data using ctdRemoveDerivedData.R
+4. Remove computed metadata using ctdRemoveDerivedMetadata.R
+5. Check actual data (**Only for CTD**)\newline
+5A: Convert conductivity ratio to conductivity crat_units.R\newline
+5B: Check range conductivity using check_crat.R
+
+6: Fix metadata
+
+7: Convert ODF file to NetCDF with divideDataFrame.R and convertNetCDF.R
+
+

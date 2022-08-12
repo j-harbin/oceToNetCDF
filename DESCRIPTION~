@@ -1,20 +1,5 @@
 Package: odfToNetcdf
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Jaimie Harbin
-Maintainer: Jaimie Harbin <jaimie.harbin@dfo-mpo.gc.ca>
-Description: This package converts ODF files from moored
-    conductivity-temperature-depth (CTD), acoustic doppler
-    current profiler (ADCP), and current meters to NetCDF files.
-License: What license is it under?
-Encoding: UTF-8
-LazyData: true
-
-
-
-Package: odfToNetcdf
-Type: Package
 Title: Convert CTD, ADCP, and CM ODF Files to NetCDF
 Version: 1.0.5
 Authors@R:

@@ -47,7 +47,7 @@ grViz("digraph flowchart {
       [6]: 'Check range of conductivity'
       [7]: 'Fix metadata'
       [8]: 'Convert to NetCDF'
-      [9]: 'odf_check()'
+      [9]: 'odfMetadataCheck()'
       [10]: 'name_replacement()'
       [11]: 'ctdRemoveDerivedData()'
       [12]: 'ctdRemoveDerivedMetadata()'

@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-odfCheck <- function(odf, print = TRUE, debug=0) {
+odfMetadataCheck <- function(odf, print = TRUE, debug=0) {
     if (print == FALSE) {
         name <- gsub(odf[['filename']], pattern = ".ODF", replacement = "")
     }

@@ -3,15 +3,25 @@
 #' Check that an ODF object has all the metadata required to build a complete netCDF file
 #'
 #' @param odf an odf object obtained from (oce::read.odf())
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #' @param print TRUE or FALSE, TRUE will cause errors to be displayed at command
 #'   line, FALSE will sink errors into text document
+#' @param debug integer value indicating level of debugging.
+#' If this is less than 1, no debugging is done. Otherwise,
+#' some functions will print debugging information
 #'
 #' @return a print statement of any issues with metadata to command line, if nothing
 #'   prints then all metadata is intact
 #' @export
 #'
 #' @examples
-odfMetadataCheck <- function(odf, print = TRUE, debug=0) {
+odfMetadataCheck <- function(odf, data=NULL, print = TRUE, debug=0) {
+  if (is.null(data)) {
+    stop("must provide a data frame for data")
+  }
+  if (!(class(data) == "data.frame")) {
+    stop("data must be a data.frame class, not ", class(data))
+  }
     if (print == FALSE) {
         name <- gsub(odf[['filename']], pattern = ".ODF", replacement = "")
     }
@@ -92,7 +102,7 @@ odfMetadataCheck <- function(odf, print = TRUE, debug=0) {
 
     l <- list()
     for (i in 1:length(names)) {
-        l[[i]] <- grep(DF$standard_name, pattern = names[[i]]) # only works if df exists
+        l[[i]] <- grep(data$standard_name, pattern = names[[i]])
     }
     for (i in seq_along(l)) {
         if (length(l[[i]]) == 0) {

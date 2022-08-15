@@ -7,13 +7,17 @@
 #' The options are ctd, rcm, or adcp
 #'
 #' @return a data frame containing the necessary standard names, units, codes, and names
+#'
+#' @example
+#' data <- getdata(type="core")
+#' names(data)
 
-getData <- function(data="ctd") {
-  if (!(data %in% c("ctd", "rcm", "adcp"))) {
+getData <- function(type="ctd") {
+  if (!(type %in% c("ctd", "rcm", "adcp"))) {
     stop("getData can only work for data type ctd, rcm, or adcp")
   }
 
-  if (data == "ctd") {
+  if (type == "ctd") {
     DF <- data.frame("code"= c("CNDC", "POTM", "PRES", "PSAL", "SIGP", "SYTM", "TEMP"),
                      "name"= c("Electrical Conductivity","Potential Temperature","Sea Pressure (sea surface - 0)",
                                "Practical Salinity","Sigma-Theta", "PIPE Time Format DD-MMM-YYYY HH:MM:SS.ss",
@@ -22,7 +26,7 @@ getData <- function(data="ctd") {
                      "standard_name"= c("sea_water_electrical_conductivity","sea_water_potential_temperature",
                                         "sea_water_pressure", "sea_water_practical_salinity","sea_water_sigma_theta",
                                         "time", "sea_water_temperature"))
-  } else if (data == "rcm") {
+  } else if (type == "rcm") {
     DF <- data.frame("code"= c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP"),
                      "name"= c("Horizontal Current Direction (true)","Horizontal Current Speed",
                                "Sea Pressure (sea surface - 0)","Practical Salinity",
@@ -33,6 +37,6 @@ getData <- function(data="ctd") {
   }
 
 
-
+DF
 
 }

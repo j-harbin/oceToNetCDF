@@ -19,8 +19,8 @@
 #'
 
 convertNetCDF <- function(odf, metadata, filename = NULL, debug=0){
-  require(oce)
-  require(ncdf4)
+  load(oce)
+  load(ncdf4)
   MCTD <- grepl("MCTD", odf[['filename']])
   RCM <- grepl("RCM", odf[['filename']])
   ADCP <- grepl("ADCP", odf[['filename']])

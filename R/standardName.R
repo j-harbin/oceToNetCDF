@@ -5,18 +5,26 @@
 #'code parameter.
 #'
 #' @param gf3 a character indicating a GF3 (General Formatting) standard code parameter
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #'
 #' @return A list containing the standard name and unit of the GF3 code in CF standard
 #' @export
 #'
 #' @examples
-standardName <- function(gf3) {
-  line <- grep(DF$code, pattern = gf3, ignore.case = TRUE)
+standardName <- function(gf3, data=NULL) {
+
+  if (is.null(data)) {
+    stop("In standardName, must provide a data frame for data")
+  }
+  if (!(class(data) == "data.frame")) {
+    stop("In standardName, data must be a data.frame class, not ", class(data))
+  }
+  line <- grep(data$code, pattern = gf3, ignore.case = TRUE)
 
   if (length(line) == 0) {
     yn <- list()
-    for (i in 1:length(DF$code)) {
-      yn[[i]] <- grep( pattern = DF$code[[i]], x = gf3, value = TRUE)
+    for (i in 1:length(data$code)) {
+      yn[[i]] <- grep( pattern = data$code[[i]], x = gf3, value = TRUE)
       if(length(yn[[i]] != 0)) {
         line <- i
       }
@@ -28,8 +36,8 @@ standardName <- function(gf3) {
   }
 
   gf3 <- list(gf3 = gf3)
-  gf3$standard_name <- as.character(DF$standard_name[[line]])
-  gf3$units <- as.character(DF$units[[line]])
+  gf3$standard_name <- as.character(data$standard_name[[line]])
+  gf3$units <- as.character(data$units[[line]])
 
 
   return(gf3)

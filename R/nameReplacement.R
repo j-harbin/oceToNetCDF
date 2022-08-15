@@ -1,6 +1,7 @@
 #' Replace DFO Codes with CF standard names
 #'
 #' @param odf an odf object (oce::read.odf())
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
@@ -8,7 +9,14 @@
 #' @return an odf file with the dataOringinalNames as standard CF
 #' names and the institute as UW/DFO
 
-nameReplacement <- function(odf, debug=0) {
+nameReplacement <- function(odf, data=NULL, debug=0) {
+
+  if (is.null(data)) {
+    stop("In nameReplacement, must provide a data frame for data")
+  }
+  if (!(class(data) == "data.frame")) {
+    stop("In nameReplacement, data must be a data.frame class, not ", class(data))
+  }
 
   header <- odf[['metadata']]$header
   k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
@@ -30,7 +38,7 @@ nameReplacement <- function(odf, debug=0) {
   }
 
   # Getting standard names of the GF3 CODE
-  t <- unlist(lapply(parameters, function(x) standardName(x)$standard_name))
+  t <- unlist(lapply(parameters, function(x) standardName(x, data=data)$standard_name))
   end <- list()
   for (i in seq_along(raw)) {
     if (grepl("01", paste0("_",gsub(".*_","",raw[i])))) {

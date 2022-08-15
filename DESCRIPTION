@@ -2,9 +2,9 @@ Package: odfToNetcdf
 Type: Package
 Title: Convert CTD, ADCP, and CM ODF Files to NetCDF
 Version: 1.0.5
-Authors: Jaimie Harbin
+Author: Jaimie Harbin
 Maintainer: Jaimie Harbin <jaimie.harbin@dfo-mpo.gc.ca>
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.5.0), knitr, ncdf4, oce
 Imports: oce (>= 1.3.0), methods
 BugReports: https://github.com/j-harbin/odfToNetCDF/issues
 Description:This package converts ODF files from moored

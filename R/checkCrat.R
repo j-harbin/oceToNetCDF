@@ -15,7 +15,7 @@ SS <- seq(20, 40, length.out = N)
 T <- expand.grid(TT, SS)[,1]
 S <- expand.grid(TT, SS)[,2]
 p <- rep(0, length(T))
-CSpm <- range(array(crat_to_units(swCSTp(S, T, p)), dim=c(N, N)))
+CSpm <- range(array(convertConductivityRatio(swCSTp(S, T, p)), dim=c(N, N)))
 
 names <- names(odf[['data']])
 keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)

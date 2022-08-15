@@ -48,12 +48,12 @@ grViz("digraph flowchart {
       [7]: 'Fix metadata'
       [8]: 'Convert to NetCDF'
       [9]: 'odfMetadataCheck()'
-      [10]: 'name_replacement()'
+      [10]: 'nameReplacement()'
       [11]: 'ctdRemoveDerivedData()'
       [12]: 'ctdRemoveDerivedMetadata()'
-      [13]: 'crat_units()'
-      [14]: 'check_crat()'
-      [15]: 'fix_metadata()'
+      [13]: 'convertConductivityRatio()'
+      [14]: 'checkCrat()'
+      [15]: 'fixMetadata()'
       [16]: 'convertNetCDF()'
       ")
 

@@ -7,7 +7,7 @@
 #' barotropic_sea_water_x_velocity, sea_water_pressure, sea_water_practical_salinity", "time",
 #' and sea_water_temperature
 
-ctdRemoveDerivedMetadata <- function(odf) { # oce object
+removeDerivedMetadata <- function(odf) { # oce object
   MCTD <- grepl("MCTD", odf[['filename']])
   RCM <- grepl("RCM", odf[['filename']])
   ADCP <- grepl("ADCP", odf[['filename']])

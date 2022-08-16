@@ -1,7 +1,9 @@
-#' Clean metadata for a CTD and RCM object
+#' Clean data and metadata for a CTD and RCM object
 #'
 #' This function ensures the proper units are associated with each variable
 #' and adds place holders for flags if they do not already exist.
+#' For a CTD type, this function also converts conductivity ratio to
+#' conducitivity if the proper unit is provided to abide by CF standards.
 #'
 #' @param odf an odf object (oce::read.odf())
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
@@ -10,7 +12,7 @@
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
 #'
-#' @return an odf object with proper units and flags
+#' @return an odf object
 
 fixMetadata <- function(odf, debug=0, data=NULL, unit=NULL) {
 

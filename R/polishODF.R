@@ -13,6 +13,16 @@
 #'  some functions will print debugging information.
 #'
 #' @return an odf object
+#' @example
+#' \dontrun{
+#' library(odfToNetcdf)
+#' data <- getData(type="ctd")
+#' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+#' odf2 <- nameReplacement(odf1, data=data)
+#' odf3 <- removeDerived(odf2)
+#' odf4 <- polishODF(odf3, data=data, unit='S/m')
+#' }
+#' @export
 
 polishODF <- function(odf, debug=0, data=NULL, unit=NULL) {
 

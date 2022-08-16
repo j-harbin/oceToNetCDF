@@ -12,6 +12,13 @@
 #'
 #' @return a print statement of any issues with metadata to command line, if nothing
 #'   prints then all metadata is intact
+#' @example
+#' \dontrun{
+#' library(odfToNetcdf)
+#' data <- getData(type="ctd")
+#' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+#' odfMetadataCheck(odf1, data=data)
+#' }
 #' @export
 #'
 #' @examples

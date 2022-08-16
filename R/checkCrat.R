@@ -7,6 +7,17 @@
 #'
 #' @return a print statement indicating if the conductivity
 #' is in the expected range
+#' @example
+#' \donrun{
+#' library(odfToNetcdf)
+#' data <- getData(type="ctd")
+#' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+#' odf2 <- nameReplacement(odf1, data=data)
+#' odf3 <- removeDerived(odf2)
+#' odf4 <- polishODF(odf3, data=data, unit='S/m')
+#' odf5 <- checkCrat(odf3)
+#' }
+#' @export
 
 checkCrat <- function(odf, unit="S/m") {
 N <- 100
@@ -29,7 +40,7 @@ if (number) {
 }
 
 if (range[1] < CSpm[1] | range[2] > CSpm[2]) {
-message("WARNING: The expected range of sea_water_electrical_conductivity in S/m is ", paste0(CSpm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "))
+message("WARNING: The expected range of sea_water_electrical_conductivity in S/m is ", paste0(CSpm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use polishODF() to convert crat to conductivity")
 } else {
   message("sea_water_electrical_conductivity range is good for file ", gsub(".*M","",odf[['filename']]))
 }

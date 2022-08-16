@@ -8,6 +8,14 @@
 #'
 #' @return an odf file with the dataOringinalNames as standard CF
 #' names and the institute as UW/DFO
+#' @example
+#'\dontrun{
+#' library(odfToNetcdf)
+#' data <- getData(type="ctd")
+#' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+#' odf2 <- nameReplacement(odf1, data=data)
+#' }
+#' @export
 
 nameReplacement <- function(odf, data=NULL, debug=0) {
 

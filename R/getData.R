@@ -11,6 +11,7 @@
 #' @example
 #' data <- getdata(type="core")
 #' names(data)
+#' @export
 
 getData <- function(type="ctd") {
   if (!(type %in% c("ctd", "rcm", "adcp"))) {

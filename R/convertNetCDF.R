@@ -10,14 +10,15 @@
 #' @param filename the desired name for the netCDF file produced, if left NULL
 #'   the default will conform to BIO naming conventions
 #' @return netCDF file with a maximum of 12 variables
-#' @export
-#'
 #' @examples
-#' file <- list.files('.', pattern = "MCTD*...*.ODF")
-#' odf <- read.odf(file)
-#' metadata <- 'MCTD_SAMPLE_METADATA.csv'
-#' mctd_nc(odf, metadata)
-#'
+#' \dontrun{
+#' library(odfToNetcdf)
+#' data <- getData(type="ctd")
+#' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+#' odf2 <- nameReplacement(odf1, data=data)
+#' odf3 <- removeDerived(odf2)
+#' odf4 <- polishODF(odf3, data=data, unit='S/m')}
+#' @export
 
 convertNetCDF <- function(odf, metadata, filename = NULL, debug=0, data=NULL){
   if (is.null(data)) {

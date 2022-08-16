@@ -14,7 +14,7 @@
 #'
 #' @return an odf object
 
-fixMetadata <- function(odf, debug=0, data=NULL, unit=NULL) {
+polishODF <- function(odf, debug=0, data=NULL, unit=NULL) {
 
   if (is.null(data)) {
     stop("must provide a dataframe data, likely from getData()")
@@ -30,8 +30,6 @@ fixMetadata <- function(odf, debug=0, data=NULL, unit=NULL) {
     if (!(unit %in% c("S/m", "mS/cm"))) {
       message("unit must be 'S/m' or'mS/cm', not ", unit)
     } else {
-      message('all is correct')
-
       names <- names(odf[['data']])
       keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)
       number <- grepl("\\_[0-9]$", names[keep])

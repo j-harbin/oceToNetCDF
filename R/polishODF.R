@@ -39,7 +39,7 @@ polishODF <- function(odf, debug=0, data=NULL, unit=NULL) {
   } else {
     if (!(unit %in% c("S/m", "mS/cm"))) {
       message("unit must be 'S/m' or'mS/cm', not ", unit)
-    } else {
+    } else if (unique(data$type) == "ctd") {
       names <- names(odf[['data']])
       keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)
       number <- grepl("\\_[0-9]$", names[keep])

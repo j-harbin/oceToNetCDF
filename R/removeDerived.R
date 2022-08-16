@@ -53,17 +53,19 @@ removeDerived <- function(odf, debug=0) {
                       "indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water",
                       "signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water")
 
-  }
+      }
   # Removing data
   throwAway <- list()
+
   for (n in names(odf[["data"]])) {
     if (!(n %in% ctdDataNames)) {
-      throwAway[i] <- n
+      for (i in seq_along(ctdDataNames)) {
+      throwAway[[i]] <- n
+      }
       odf <- oceDeleteData(odf, name=n)
       message(gsub(".*M","",odf[['filename']]), ": removed data and dataNamesOriginal ", n)
     }
   }
-
   if (length(throwAway) == 0) {
     message("Nothing to remove for this file.")
 

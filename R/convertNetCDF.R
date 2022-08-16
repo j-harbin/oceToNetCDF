@@ -4,6 +4,7 @@
 #' and RCM types.
 #'
 #' @param odf an odf object from oce which contains mctd data
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #' @param metadata a csv file following the standard template which includes all
 #'   necessary metadata
 #' @param filename the desired name for the netCDF file produced, if left NULL
@@ -18,27 +19,33 @@
 #' mctd_nc(odf, metadata)
 #'
 
-convertNetCDF <- function(odf, metadata, filename = NULL, debug=0){
-  load(oce)
-  load(ncdf4)
+convertNetCDF <- function(odf, metadata, filename = NULL, debug=0, data=NULL){
+  if (is.null(data)) {
+    stop("In convertNetCDF(), must provide a data frame for data")
+  }
+  if (!(class(data) == "data.frame")) {
+    stop("In convertNetCDF(), data must be a data.frame class, not ", class(data))
+  }
+  library(oce)
+  library(ncdf4)
   MCTD <- grepl("MCTD", odf[['filename']])
   RCM <- grepl("RCM", odf[['filename']])
   ADCP <- grepl("ADCP", odf[['filename']])
   v <- names(odf@data)
 
   if (MCTD) {
-      DF <- DF[which(DF$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES")),]
+      DF <- data[which(data$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES")),]
   } else if (RCM) {
-      DF <- DF[which(DF$code %in% c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP")),]
+      DF <- data[which(data$code %in% c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP")),]
   } else if (ADCP) {
-      DF <- DF[which(DF$code %in% c("SYTM", "UNKN", "BEAM", "ERRV", "VCSP", "NSCT","EWCT")),]
+      DF <- data[which(data$code %in% c("SYTM", "UNKN", "BEAM", "ERRV", "VCSP", "NSCT","EWCT")),]
   } else {
       message("Unrecognizable file type.")
   }
 
   var <- list()
   for (i in v) {
-    code <- DF$code[which(DF$standard_name %in% gsub("_[0-9]$.*","",i))]
+    code <- data$code[which(data$standard_name %in% gsub("_[0-9]$.*","",i))]
     var[i] <- code
   }
 
@@ -57,13 +64,12 @@ convertNetCDF <- function(odf, metadata, filename = NULL, debug=0){
   #POPULATE VARIABLES WITH APPROPRIATE CODES
   #browser()
   VAR <- list()
-
   if (debug > 0) {
     message("Step 2: About to determine units and standard_name for each code.")
   }
 
   for (i in seq_along(var)) {
-    VAR[[i]] <- dataFrameDivide(var[[i]])
+    VAR[[i]] <- standardName(var[[i]], data=data)
   }
   i <- 1
 

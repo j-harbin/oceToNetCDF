@@ -1,7 +1,7 @@
 #' Turn conductivity ratio to sea_water_electrical_conductivity
 #'
 #' @param odf a odf object (oce::read.odf())
-#' @param units standardized unit S/m by default
+#' @param unit standardized unit S/m by default
 #'
 #' @return an odf object with conductivity ratio converted to sea_water_electrical_conductivity in specified unit
 #' @export

@@ -14,6 +14,10 @@ singleAdpNetCDF(adp, name, metadata, debug = 0, data = NULL)
 \item{metadata}{csv file listing metadata names and values to be inserted into
 global attributes of net CDF}
 
+\item{debug}{integer value indicating level of debugging.
+If this is less than 1, no debugging is done. Otherwise,
+some functions will print debugging information.}
+
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
 }
 \description{

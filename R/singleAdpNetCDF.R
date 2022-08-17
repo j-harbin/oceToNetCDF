@@ -7,7 +7,11 @@
 #'@param name name of the NetCDF file to be produced
 #'@param metadata csv file listing metadata names and values to be inserted into
 #'  global attributes of net CDF
-#' @importFrom ncdf4, utils
+#' @param debug integer value indicating level of debugging.
+#'  If this is less than 1, no debugging is done. Otherwise,
+#'  some functions will print debugging information.
+#' @importFrom ncdf4
+#' @importFrom utils
 #'@example
 #' \donrun{
 #' library(odfToNetcdf)

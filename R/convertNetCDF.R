@@ -9,8 +9,12 @@
 #'   necessary metadata
 #' @param filename the desired name for the netCDF file produced, if left NULL
 #'   the default will conform to BIO naming conventions
+#' @param debug integer value indicating level of debugging.
+#'  If this is less than 1, no debugging is done. Otherwise,
+#'  some functions will print debugging information.
 #' @return netCDF file with a maximum of 12 variables
-#' @importFrom ncdf4, utils
+#' @importFrom ncdf4
+#' @importFrom utils
 #' @examples
 #' \dontrun{
 #' library(odfToNetcdf)

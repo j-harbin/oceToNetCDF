@@ -1,16 +1,32 @@
-#'ADCP Processing step 4.1
-#'@description Exports an adp object to a net cdf using variables and metadata
-#'  within adp combined with optional additional metadata see details in
-#'  \code{\link[ncdf4:ncdf4]{ncdf4}} package
+#' Convert adp object to NetCDF
+#'@description Exports an adp object to a netCDF using variables and metadata
+#'  within adp combined with optional additional metadata
 #'
 #'@param adp an adp adpect from the oce class
+#'@param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #'@param name name of the NetCDF file to be produced
 #'@param metadata csv file listing metadata names and values to be inserted into
 #'  global attributes of net CDF
+#'@example
+#' \donrun{
+#' library(odfToNetcdf)
+#' data <- getData(type="adcp")
+#' files <- list.files(pattern="ODF")
+#' adp <- compileOdfToAdp(files)
+#' singleAdpNetCDF(adp, name="test", debug=1, data=data)
+#' }
 #'
 #'@export
 
-singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
+singleAdpNetCDF <- function(adp, name,  metadata, debug=0, data=NULL){
+  if (is.null(data)) {
+    stop("must provide a data frame data, likely from getData()")
+  }
+
+  if (!(class(data) =="data.frame")) {
+    stop("data provided must be of class data.frame, not ", class(data))
+  }
+
   if (!inherits(adp, "adp")){
     stop("method is only for adpects of class '", "adp", "'")
   }
@@ -62,31 +78,28 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     lat_def <- ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
 
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def(standard_name("EWCT")$standard_name, standard_name("EWCT")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def(standardName("EWCT", data=data)$standard_name, standardName("EWCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def(standard_name("NSCT")$standard_name, standard_name("NSCT")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def(standardName("NSCT",data=data)$standard_name, standardName("NSCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def(standard_name("VCSP")$standard_name, standard_name("VCSP")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
-    #dlname <- "time_02"
-    #t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = 'double')
+    w_def <- ncvar_def(standardName("VCSP",data=data)$standard_name, standardName("VCSP",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def(standard_name("ERRV")$standard_name, standard_name("ERRV")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def(standardName("ERRV",data=data)$standard_name, standardName("ERRV",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
-    b1_def <- ncvar_def(paste0(standard_name("BEAM")$standard_name, "_1"), standard_name("BEAM")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_2"
-    b2_def <- ncvar_def(paste0(standard_name("BEAM")$standard_name, "_2"), standard_name("BEAM")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    b2_def <- ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_2"), standardName("BEAM",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_3"
-    b3_def <- ncvar_def(paste0(standard_name("BEAM")$standard_name, "_3"), standard_name("BEAM")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    b3_def <- ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_3"), standardName("BEAM",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_4"
-    b4_def <- ncvar_def(paste0(standard_name("BEAM")$standard_name, "_4"), standard_name("BEAM")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    b4_def <- ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_4"), standardName("BEAM",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_correlation_magnitude_beam_1"
     cm1_def <- ncvar_def("CMAG_01", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
@@ -101,40 +114,40 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     cm4_def <- ncvar_def("CMAG_04", "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def(paste0(standard_name("PGDP")$standard_name, "_1"), standard_name("PGDP")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), standardName("PGDP",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_2"
-    pg2_def <- ncvar_def(paste0(standard_name("PGDP")$standard_name, "_2"), standard_name("PGDP")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg2_def <- ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_2"), standardName("PGDP",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_3"
-    pg3_def <- ncvar_def(paste0(standard_name("PGDP")$standard_name, "_3"), standard_name("PGDP")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg3_def <- ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_3"), standardName("PGDP",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "percent_good_beam_4"
-    pg4_def <- ncvar_def(paste0(standard_name("PGDP")$standard_name, "_4"), standard_name("PGDP")$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg4_def <- ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_4"), standardName("PGDP",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "pitch"
-    p_def <- ncvar_def(standard_name("PTCH")$standard_name, standard_name("PTCH")$units, list( timedim,  stationdim), FillValue, dlname, prec = "float")
+    p_def <- ncvar_def(standardName("PTCH",data=data)$standard_name, standardName("PTCH",data=data)$units, list( timedim,  stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "roll"
-    r_def <- ncvar_def(standard_name("ROLL")$standard_name, standard_name("ROLL")$units, list(  timedim, stationdim ), FillValue, dlname, prec = "float")
+    r_def <- ncvar_def(standardName("ROLL",data=data)$standard_name, standardName("ROLL",data=data)$units, list(  timedim, stationdim ), FillValue, dlname, prec = "float")
 
     dlname <- "height of sea surface"
-    hght_def <- ncvar_def(standard_name("HGHT")$standard_name, standard_name("HGHT")$units, list(  distdim, stationdim ), FillValue, dlname, prec = "float")
+    hght_def <- ncvar_def(standardName("HGHT",data=data)$standard_name, standardName("HGHT",data=data)$units, list(  distdim, stationdim ), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP Transducer Temp."
-    te90_def <- ncvar_def(standard_name("TE90")$standard_name, standard_name("TE90")$units, list( timedim, stationdim), FillValue, dlname, prec = "float")
+    te90_def <- ncvar_def(standardName("TE90",data=data)$standard_name, standardName("TE90",data=data)$units, list( timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "instrument depth"
-    D_def <- ncvar_def(standard_name("DEPH")$standard_name, standard_name("DEPTH")$units, list(timedim, stationdim), FillValue, dlname, prec = "float")
+    D_def <- ncvar_def(standardName("DEPH",data=data)$standard_name, standardName("DEPH",data=data)$units, list(timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "heading"
     head_def <- ncvar_def("HEAD", "degrees", list(timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "pressure"
-    pres_def <- ncvar_def(standard_name("PRES")$standard_name, standard_name("PRES")$units, list(timedim, stationdim), FillValue, dlname, prec = "float")
+    pres_def <- ncvar_def(standardName("PRES",data=data)$standard_name, standardName("PRES",data=data)$units, list(timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "speed of sound"
-    svel_def <- ncvar_def(standard_name("SVEL")$standard_name, standard_name("DVEL")$units, list(timedim, stationdim), FillValue, dlname, prec = "float")
+    svel_def <- ncvar_def(standardName("SVEL",data=data)$standard_name, standardName("DVEL",data=data)$units, list(timedim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_string"
     ts_def <- ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
@@ -173,27 +186,24 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     lat_def <- ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
 
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncvar_def(standard_name("EWCT")$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    u_def <- ncvar_def(standardName("EWCT",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncvar_def(standard_name("NSCT")$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    v_def <- ncvar_def(standardName("NSCT",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncvar_def(standard_name("VCSP")$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
-    #dlname <- "time_02"
-    #t_def <- ncvar_def("ELTMEP01", "seconds since 1970-01-01T00:00:00Z", list( stationdim, timedim), FillValue, dlname, prec = "double")
+    w_def <- ncvar_def(standardName("VCSP",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncvar_def(standard_name("ERRV")$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    e_def <- ncvar_def(standardName("ERRV",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
 
-    b1_def <- ncvar_def(paste0(standard_name("BEAM")$standard_name, "_1"), "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    b1_def <- ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncvar_def(paste0(standard_name("PGDP")$standard_name, "_1"), "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg1_def <- ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_string"
     ts_def <- ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
@@ -295,7 +305,7 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     }
 
     ##QC VARIABLE
-    ncatt_put(ncout, 'standard_name("EWCT")$standard_name', 'ancillary_variables', 'eastward_sea_water_velocity_QC')
+    ncatt_put(ncout, 'standardName("EWCT",data=data)$standard_name', 'ancillary_variables', 'eastward_sea_water_velocity_QC')
     ncatt_put(ncout, 'NSCT', 'ancillary_variables', 'northward_sea_water_velocity_QC')
     ncatt_put(ncout, 'VCSP', 'ancillary_variables', 'upward_sea_water_velocity_QC')
 
@@ -340,30 +350,30 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     ncatt_put(ncout, "station", 'latitude', adp[['latitude']])
     ncatt_put(ncout, "DEPH", "xducer_offset_from_bottom", as.numeric(adp[['sounding']]) - adp[['sensor_depth']])
     ncatt_put(ncout, "DEPH", "bin_size", adp[['cellSize']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_2"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_2"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_2"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_3"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_3"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_3"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_4"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_4"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_4"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "CMAG_01", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "CMAG_01", "sensor_depth", adp[['sensor_depth']])
     ncatt_put(ncout, "CMAG_01", "serial_number", adp[['serialNumber']])
@@ -376,18 +386,18 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     ncatt_put(ncout, "CMAG_04", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "CMAG_04", "sensor_depth", adp[['sensor_depth']])
     ncatt_put(ncout, "CMAG_04", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_2"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_2"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_2"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_3"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_3"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_3"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_4"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_4"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_4"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "serial_number", adp[['serialNumber']])
     ncatt_put(ncout, "HEAD", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "HEAD", "sensor_depth", adp[['sensor_depth']])
     ncatt_put(ncout, "HEAD", "serial_number", adp[['serialNumber']])
@@ -397,22 +407,22 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     ncatt_put(ncout, "SVEL", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "SVEL", "sensor_depth", adp[['sensor_depth']])
     ncatt_put(ncout, "SVEL", "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "generic_name", "u")
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "generic_name", "v")
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "generic_name", "w")
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "generic_name", "w")       #issue in current NC protocol
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "generic_name", "AGC")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_2"), "generic_name", "AGC")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_3"), "generic_name", "AGC")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_4"), "generic_name", "AGC")
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "generic_name", "u")
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "generic_name", "v")
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "generic_name", "w")
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "generic_name", "w")       #issue in current NC protocol
+    ncatt_put(ncout, paste0(standardName("BEAM")$standard_name, "_1"), "generic_name", "AGC")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "generic_name", "AGC")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "generic_name", "AGC")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "generic_name", "AGC")
     ncatt_put(ncout, "CMAG_01", "generic_name", "CM")
     ncatt_put(ncout, "CMAG_02", "generic_name", "CM")
     ncatt_put(ncout, "CMAG_03", "generic_name", "CM")
     ncatt_put(ncout, "CMAG_04", "generic_name", "CM")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "generic_name", "PGd")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_2"), "generic_name", "PGd")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_3"), "generic_name", "PGd")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_4"), "generic_name", "PGd")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "generic_name", "PGd")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "generic_name", "PGd")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "generic_name", "PGd")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "generic_name", "PGd")
     ncatt_put(ncout, "hght", "generic_name", "height")
     ncatt_put(ncout, "hght", "sensor_type", adp[['instrumentType']])
     ncatt_put(ncout, "hght", "sensor_depth", adp[['sensor_depth']])
@@ -475,18 +485,18 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     ncatt_put
 
 
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "sdn_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "sdn_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "sdn_parameter_name", "Current velocity error in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 1")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_2"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 2")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_3"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 3")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_4"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 4")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_2"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 2")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_3"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 3")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_4"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 4")
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sdn_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sdn_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sdn_parameter_name", "Current velocity error in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 1")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 2")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 3")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 4")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 2")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 3")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 4")
     ncatt_put(ncout, "DEPH", "sdn_parameter_name", "Depth below surface of the water body")
     ncatt_put(ncout, "te90", "sdn_parameter_name", "Temperature of the water body")
     ncatt_put(ncout, "PTCH", "sdn_parameter_name", "Orientation (pitch) of measurement platform by inclinometer")
@@ -567,30 +577,30 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     ncatt_put(ncout, "distance", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
 
     ncatt_put(ncout, "distance", "bin_size", adp[['cellSize']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "serial_number", adp[['serialNumber']])
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "generic_name", "u")
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "generic_name", "v")
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "generic_name", "w")
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "generic_name", "w")       #issue in current NC protocol
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "generic_name", "AGC")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "generic_name", "PGd")
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "generic_name", "u")
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "generic_name", "v")
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "generic_name", "w")
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "generic_name", "w")       #issue in current NC protocol
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "generic_name", "AGC")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "generic_name", "PGd")
     #CF
 
     ncatt_put(ncout, 0, 'Conventions', 'CF-1.6')
@@ -628,12 +638,12 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     ncatt_put(ncout,0, "_FillValue", "1e35")
     ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce adpect? ..... if adp == timeSeriesProfile
 
-    ncatt_put(ncout, standard_name("EWCT")$standard_name, "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, standard_name("NSCT")$standard_name, "sdn_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, standard_name("VCSP")$standard_name, "sdn_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, standard_name("ERRV")$standard_name, "sdn_parameter_name", "Current velocity error in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 1")
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
+    ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sdn_parameter_name", "Eastward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sdn_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sdn_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sdn_parameter_name", "Current velocity error in the water body by moored acoustic doppler current profiler (ADCP)")
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sdn_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 1")
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sdn_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
     ncatt_put(ncout, "longitude", "sdn_parameter_name", "Longitude east")
     ncatt_put(ncout, "latitude", "sdn_parameter_name", "Latitude north")
 
@@ -651,35 +661,35 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
   }
 
   ####
-  ncatt_put(ncout, standard_name("EWCT")$standard_name, "data_max", max(adp[['v']][,,1], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("EWCT")$standard_name, "data_min", min(adp[['v']][,,1], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("EWCT")$standard_name, "valid_max", 1000)
-  ncatt_put(ncout, standard_name("EWCT")$standard_name, "valid_min", -1000)
+  ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "data_max", max(adp[['v']][,,1], na.rm = TRUE))
+  ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "data_min", min(adp[['v']][,,1], na.rm = TRUE))
+  ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "valid_max", 1000)
+  ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "valid_min", -1000)
 
-  ncatt_put(ncout, standard_name("NSCT")$standard_name, "data_max", max(adp[['v']][,,2], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("NSCT")$standard_name, "data_min", min(adp[['v']][,,2], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("NSCT")$standard_name, "valid_max", 1000)
-  ncatt_put(ncout, standard_name("NSCT")$standard_name, "valid_min", -1000)
+  ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "data_max", max(adp[['v']][,,2], na.rm = TRUE))
+  ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "data_min", min(adp[['v']][,,2], na.rm = TRUE))
+  ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "valid_max", 1000)
+  ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "valid_min", -1000)
 
-  ncatt_put(ncout, standard_name("VCSP")$standard_name, "data_max", max(adp[['v']][,,3], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("VCSP")$standard_name, "data_min", min(adp[['v']][,,3], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("VCSP")$standard_name, "valid_max", 1000)
-  ncatt_put(ncout, standard_name("VCSP")$standard_name, "valid_min", -1000)
+  ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "data_max", max(adp[['v']][,,3], na.rm = TRUE))
+  ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "data_min", min(adp[['v']][,,3], na.rm = TRUE))
+  ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "valid_max", 1000)
+  ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "valid_min", -1000)
 
-  ncatt_put(ncout, standard_name("ERRV")$standard_name, "data_max", max(adp[['v']][,,4], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("ERRV")$standard_name, "data_min", min(adp[['v']][,,4], na.rm = TRUE))
-  ncatt_put(ncout, standard_name("ERRV")$standard_name, "valid_max", 2000)
-  ncatt_put(ncout, standard_name("ERRV")$standard_name, "valid_min", -2000)
+  ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "data_max", max(adp[['v']][,,4], na.rm = TRUE))
+  ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "data_min", min(adp[['v']][,,4], na.rm = TRUE))
+  ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_max", 2000)
+  ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_min", -2000)
 
   if(adp@metadata$source == 'raw'){
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']][,,1], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']][,,1], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_2"), "data_min", min(adp[['a' ,'numeric']][,,2], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_2"), "data_max", max(adp[['a', 'numeric']][,,2], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_3"), "data_min", min(adp[['a', 'numeric']][,,3], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_3"), "data_max", max(adp[['a', 'numeric']][,,3], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_4"), "data_min", min(adp[['a', 'numeric']][,,4], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_4"), "data_max", max(adp[['a', 'numeric']][,,4], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']][,,1], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']][,,1], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "data_min", min(adp[['a' ,'numeric']][,,2], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "data_max", max(adp[['a', 'numeric']][,,2], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "data_min", min(adp[['a', 'numeric']][,,3], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "data_max", max(adp[['a', 'numeric']][,,3], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "data_min", min(adp[['a', 'numeric']][,,4], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "data_max", max(adp[['a', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_01", "data_min", min(adp[['q', 'numeric']][,,1], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_01", "data_max", max(adp[['q', 'numeric']][,,1], na.rm= TRUE))
 
@@ -692,14 +702,14 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
     ncatt_put(ncout, "CMAG_04", "data_min", min(adp[['q', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "CMAG_04", "data_max", max(adp[['q', 'numeric']][,,4], na.rm= TRUE))
 
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "data_min", min(adp[['g', 'numeric']][,,1], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "data_max", max(adp[['g', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_2"), "data_min", min(adp[['g', 'numeric']][,,2], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_2"), "data_max", max(adp[['g' ,'numeric']][,,2], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_3"), "data_min", min(adp[['g' ,'numeric']][,,3], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_3"), "data_max", max(adp[['g', 'numeric']][,,3], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_4"), "data_min", min(adp[['g', 'numeric']][,,4], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_4"), "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_min", min(adp[['g', 'numeric']][,,1], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_max", max(adp[['g', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "data_min", min(adp[['g', 'numeric']][,,2], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "data_max", max(adp[['g' ,'numeric']][,,2], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "data_min", min(adp[['g' ,'numeric']][,,3], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "data_max", max(adp[['g', 'numeric']][,,3], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "data_min", min(adp[['g', 'numeric']][,,4], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
     ncatt_put(ncout, "hght", "data_min", min(adp[['depth', 'data']]))
     ncatt_put(ncout, "hght", "data_max", max(adp[['depth', 'data']]))
     ncatt_put(ncout, "DEPH", "data_min", min(adp[['depth']]))
@@ -719,10 +729,10 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0){
 
   }
   if( adp@metadata$source == 'odf'){
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("BEAM")$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "data_min", min(adp[['q', 'numeric']], na.rm= TRUE))
-    ncatt_put(ncout, paste0(standard_name("PGDP")$standard_name, "_1"), "data_max", max(adp[['q', 'numeric']], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_min", min(adp[['q', 'numeric']], na.rm= TRUE))
+    ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_max", max(adp[['q', 'numeric']], na.rm= TRUE))
 
   }
 

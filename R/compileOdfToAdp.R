@@ -1,16 +1,21 @@
-#' ADCP Processing ODF to NetCDF
+#' Compile multiple adp ODF files to a single adp object
 #'
-#' Reads in a set of odf files and compiles into adp object, is capable of
-#' recognizing missing bins or missing odf files and inserting NA's in
-#' appropriate slot of data varibales
+#' This function reads in a set of odf files and compiles into adp object.
+#' It is capable of recognizing missing bins or missing odf files and
+#' inserting NA values in appropriate slot of data variables
 #'
 #'@family odf
 #' @description Converting individual odf bins to Net cdf standard format
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
+#' @example
+#' \dontrun{
+#' library(odfToNetcdf)
+#' files <- list.files(pattern="ODF")
+#' adp <- compileOdfToAdp(files)
+#' }
+#'
 #' @export
-#'
-#'
 
 compileOdfToAdp <- function(files, metadata) {
   require(oce)

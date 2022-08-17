@@ -37,7 +37,7 @@ getData <- function(type="ctd") {
             "standard_name"=c("horizontal_current_direction","barotropic_sea_water_x_velocity",
                 "sea_water_pressure","sea_water_practical_salinity","time","sea_water_temperature"),
             "type"=rep("rcm", 6))
-    } else if (type="adcp") {
+    } else if (type == "adcp") {
 
         DF <- data.frame("code"= c("DEPH", "EWCT", "HGHT", "NSCT", "PRES", "PTCH",
                 "ROLL", "SVEL", "SYTM", "VCSP", "UNKN", "ERRV", "BEAM", "TE90", "PGDP"),

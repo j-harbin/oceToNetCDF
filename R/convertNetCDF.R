@@ -27,8 +27,11 @@ convertNetCDF <- function(odf, metadata, filename = NULL, debug=0, data=NULL){
   if (!(class(data) == "data.frame")) {
     stop("In convertNetCDF(), data must be a data.frame class, not ", class(data))
   }
-  library(oce)
-  library(ncdf4)
+
+  if (!requireNamespace("oce", quietly=TRUE))
+    stop("must install.packages(\"oce\") for convertNetCDF() to work")
+  if (!requireNamespace("ncdf4", quietly=TRUE))
+    stop("must install.packages(\"ncdf4\") for convertNetCDF() to work")
   MCTD <- grepl("MCTD", odf[['filename']])
   RCM <- grepl("RCM", odf[['filename']])
   ADCP <- grepl("ADCP", odf[['filename']])

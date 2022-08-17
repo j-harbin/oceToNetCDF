@@ -18,8 +18,11 @@
 #' @export
 
 compileOdfToAdp <- function(files, metadata) {
-  require(oce)
-  require(abind)
+  if (!requireNamespace("oce", quietly=TRUE))
+    stop("must install.packages(\"oce\") for compileOdfToAdp() to work")
+
+  if (!requireNamespace("abind", quietly=TRUE))
+    stop("must install.packages(\"abind\") for plot() to work")
 
   files <- if (is.list(files)) unlist(files) else files
 

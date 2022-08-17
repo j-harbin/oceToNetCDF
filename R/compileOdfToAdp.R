@@ -1,0 +1,69 @@
+#' ADCP Processing ODF to NetCDF
+#'
+#' Reads in a set of odf files and compiles into adp object, is capable of
+#' recognizing missing bins or missing odf files and inserting NA's in
+#' appropriate slot of data varibales
+#'
+#'@family odf
+#' @description Converting individual odf bins to Net cdf standard format
+#' @param files list of odf files
+#' @param metadata any extra metadata to be added to net cdf as list form
+#' @export
+#'
+#'
+
+compileOdfToAdp <- function(files, metadata) {
+  require(oce)
+  require(abind)
+
+  files <- if (is.list(files)) unlist(files) else files
+
+  nd <- length(files)
+  ## read the first one to get length of time:
+  d <- read.oce(files[1])
+  nt <- length(d[['time']])
+  vars <- names(d@data)
+  vars <- vars[-which(vars == 'time')]
+  for (vr in vars) {
+    assign(vr, array(NA, dim=c(nt, nd)))
+  }
+  depth <- NULL
+  for (f in 1:length(files)) {
+    d <- read.odf(files[f])
+    t <- d[['time']]
+    depth[f] <- d[['depthMin']]
+    for (vr in vars) {
+      eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
+    }
+  }
+
+  ## need to sort the depths because of file sorting ...
+  o <- order(depth, decreasing = TRUE)
+  depth <- depth[o]
+  for (vr in vars) {
+    eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
+  }
+  distance <- max(depth) - depth
+  adp <- as.adp(t, distance, v=abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
+  for (m in names(d@metadata)) {
+    if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
+      adp <- oceSetMetadata(adp, m, d[[m]], note = NULL)
+    }
+  }
+
+  ## depthMinMax
+  adp <- oceSetMetadata(adp, 'depthMin', min(depth))
+  adp <- oceSetMetadata(adp, 'depthMax', max(depth))
+
+  ## add in any extra supplied metadata items
+  if (!missing(metadata)) {
+    for (m in seq_along(metadata)) {
+      adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]], note = NULL)
+    }
+  }
+  adp@metadata$source <- 'odf'
+  adp@processingLog <- processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
+
+  return(adp)
+}
+

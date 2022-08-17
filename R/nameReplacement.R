@@ -8,6 +8,7 @@
 #'
 #' @return an odf file with the dataOringinalNames as standard CF
 #' names and the institute as UW/DFO
+#' @importFrom oce
 #' @example
 #'\dontrun{
 #' library(odfToNetcdf)
@@ -87,8 +88,8 @@ nameReplacement <- function(odf, data=NULL, debug=0) {
     }
   }
 
-  odf <- oceSetMetadata(odf, name="dataNamesOriginal", value=dataNamesOriginal)
-  odf <- oceSetMetadata(odf, name="institute", value="UW/BIO")
+  odf <- oce::oceSetMetadata(odf, name="dataNamesOriginal", value=dataNamesOriginal)
+  odf <- oce::oceSetMetadata(odf, name="institute", value="UW/BIO")
   names(odf@data) <- odf@metadata$dataNamesOriginal
   names(odf@metadata$units) <- odf@metadata$dataNamesOriginal
   odf

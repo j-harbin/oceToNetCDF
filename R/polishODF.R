@@ -11,6 +11,7 @@
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
+#' @importFrom oce
 #'
 #' @return an odf object
 #' @example
@@ -52,18 +53,18 @@ polishODF <- function(odf, debug=0, data=NULL, unit=NULL) {
       if (unit == 'S/m') {
         if (!(number)) {
           odf@metadata$units$sea_water_electrical_conductivity$unit <- "S/m"
-          odf <- oceSetData(odf, name="sea_water_electrical_conductivity", value=(4.2914*crat))
+          odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(4.2914*crat))
         } else {
           eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'S/m'")))
-          odf <- oceSetData(odf, name=names[keep], value=(4.2914*crat))
+          odf <- oce::oceSetData(odf, name=names[keep], value=(4.2914*crat))
         }
       } else if (unit == 'mS/cm') {
         if (!(number)) {
           odf@metadata$units$sea_water_electrical_conductivity$unit <- "mS/cm"
-          odf <- oceSetData(odf, name="sea_water_electrical_conductivity", value=(crat*42.914))
+          odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(crat*42.914))
         } else  {
           eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'mS/cm'")))
-          odf <- oceSetData(odf, name=names[keep], value=(crat*42.914))
+          odf <- oce::oceSetData(odf, name=names[keep], value=(crat*42.914))
         }
       }
     }

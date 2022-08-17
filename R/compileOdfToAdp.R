@@ -28,7 +28,7 @@ compileOdfToAdp <- function(files, metadata) {
 
   nd <- length(files)
   ## read the first one to get length of time:
-  d <- read.oce(files[1])
+  d <- oce::read.oce(files[1])
   nt <- length(d[['time']])
   vars <- names(d@data)
   vars <- vars[-which(vars == 'time')]
@@ -37,7 +37,7 @@ compileOdfToAdp <- function(files, metadata) {
   }
   depth <- NULL
   for (f in 1:length(files)) {
-    d <- read.odf(files[f])
+    d <- oce::read.odf(files[f])
     t <- d[['time']]
     depth[f] <- d[['depthMin']]
     for (vr in vars) {
@@ -52,16 +52,16 @@ compileOdfToAdp <- function(files, metadata) {
     eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
   }
   distance <- max(depth) - depth
-  adp <- as.adp(t, distance, v=abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
+  adp <- oce::as.adp(t, distance, v=abind::abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
   for (m in names(d@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
-      adp <- oceSetMetadata(adp, m, d[[m]], note = NULL)
+      adp <- oce::oceSetMetadata(adp, m, d[[m]], note = NULL)
     }
   }
 
   ## depthMinMax
-  adp <- oceSetMetadata(adp, 'depthMin', min(depth))
-  adp <- oceSetMetadata(adp, 'depthMax', max(depth))
+  adp <- oce::oceSetMetadata(adp, 'depthMin', min(depth))
+  adp <- oce::oceSetMetadata(adp, 'depthMax', max(depth))
 
   ## add in any extra supplied metadata items
   if (!missing(metadata)) {

@@ -17,6 +17,7 @@
 #' temperature, and pressure. RCM object: an odf object with only data for horizontal_current_direction,
 #' barotropic_sea_water_x_velocity, sea_water_pressure, sea_water_practical_salinity", "time",
 #' and sea_water_temperature
+#' @importFrom oce
 #' @example
 #' \dontrun{
 #' library(odfToNetcdf)
@@ -71,7 +72,7 @@ removeDerived <- function(odf, debug=0) {
       for (i in seq_along(ctdDataNames)) {
       throwAway[[i]] <- n
       }
-      odf <- oceDeleteData(odf, name=n)
+      odf <- oce::oceDeleteData(odf, name=n)
       message(gsub(".*M","",odf[['filename']]), ": removed data and dataNamesOriginal ", n)
     }
   }

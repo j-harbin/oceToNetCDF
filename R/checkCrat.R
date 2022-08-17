@@ -4,7 +4,7 @@
 #'
 #' @param unit the specified unit of conductivity to convert to
 #' (Either 'S/m' or 'mS/cm')
-#'
+#' @importFrom oce
 #' @return a print statement indicating if the conductivity
 #' is in the expected range
 #' @example
@@ -20,13 +20,15 @@
 #' @export
 
 checkCrat <- function(odf, unit="S/m") {
+  if (!requireNamespace("oce", quietly=TRUE))
+    stop("must install.packages(\"oce\") for checkCrat() to work")
 N <- 100
 TT <- seq(-2, 30, length.out = N)
 SS <- seq(20, 40, length.out = N)
 T <- expand.grid(TT, SS)[,1]
 S <- expand.grid(TT, SS)[,2]
 p <- rep(0, length(T))
-CSpm <- range(array(convertConductivityRatio(swCSTp(S, T, p)), dim=c(N, N)))
+CSpm <- range(array(convertConductivityRatio(oce::swCSTp(S, T, p)), dim=c(N, N)))
 
 names <- names(odf[['data']])
 keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)

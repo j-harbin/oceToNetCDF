@@ -3,7 +3,7 @@
 #' This function gets the available standard names, units, codes,names, and
 #' type of data for the required information for the specified instrument type
 #'
-#' @param type the type of data that will eventually be converted into a NetCDF.
+#' @param type the type of data that will eventually be converted into a netCDF.
 #' The options are ctd, rcm, or adcp
 #'
 #' @return a data frame containing the necessary standard names, units, codes, names, and type of data

@@ -1,10 +1,10 @@
-#' Convert adp object to NetCDF
+#' Convert adp object to netCDF
 #'@description Exports an adp object to a netCDF using variables and metadata
 #'  within adp combined
 #'
 #'@param adp an adp adpect from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getData
-#'@param name name of the NetCDF file to be produced
+#'@param name name of the netCDF file to be produced
 
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
@@ -39,7 +39,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   ncfname <- paste(ncpath, ncname, ".nc", sep = "")
 
   # Added 10-SEP-2018 R.Pettipas
-  # If the function exits due to an error, close the open NetCDF file.
+  # If the function exits due to an error, close the open netCDF file.
   # Otherwise, the file can't be deleted until the R session is exited.
   on.exit(expr=ncdf4::nc_close(ncout))
 

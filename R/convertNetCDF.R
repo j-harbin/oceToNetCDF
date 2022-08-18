@@ -1,6 +1,6 @@
-#' Template to convert odf object to NetCDF
+#' Template to convert odf object to netCDF
 #'
-#' This function converts and odf object to a NetCDF files for CTD
+#' This function converts and odf object to a netCDF files for CTD
 #' and RCM types.
 #'
 #' @param odf an odf object from oce which contains mctd data

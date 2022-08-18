@@ -1,10 +1,10 @@
 # vim:textwidth=128:expandtab:shiftwidth=4:softtabstop=4
 
-#' A Package for converting ODF files to NetCDF files
+#' A Package for converting ODF files to netCDF files
 #'
 #' The `odfToNetCDF` package provides tools for converting moored conductivity-temperature-
 #' depth ("CTD"), acoustic-doppler-current-profiler (ADCP), and current meter (RCM) ODF
-#' files into NetCDF files.
+#' files into netCDF files.
 #'
 #' The sketches below illustrates the typical workflow for A) CTD
 #' and RCM data and B) ADCP data. The descriptions of the steps

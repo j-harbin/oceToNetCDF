@@ -32,8 +32,6 @@ removeDerived <- function(odf, debug=0) {
   # Removing Derived Data
   MCTD <- grepl("MCTD", odf[['filename']])
   RCM <- grepl("RCM", odf[['filename']])
-  ADCP <- grepl("ADCP", odf[['filename']])
-
   if (RCM) {
   if (debug > 0) {
     message("This is an RCM type")
@@ -49,20 +47,6 @@ removeDerived <- function(odf, debug=0) {
     }
     ctdDataNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4))
     ctdOriginalNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4))
-      } else if (ADCP) {
-    if (debug > 0) {
-      message("This is an ADCP type")
-    }
-    ctdDataNames <- c("eastward_sea_water_velocity", "northward_sea_water_velocity",
-      "time","upward_sea_water_velocity",
-      "indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water",
-      "signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water")
-
-    ctdOriginalNames <- c("eastward_sea_water_velocity", "northward_sea_water_velocity",
-                      "time","upward_sea_water_velocity",
-                      "indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water",
-                      "signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water")
-
       }
   # Removing data
   throwAway <- list()
@@ -95,8 +79,6 @@ removeDerived <- function(odf, debug=0) {
     ctdCodeNames <- c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP")
   } else if (MCTD) {
     ctdCodeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES")
-  } else if (ADCP) {
-    ctdCodeNames <- c("EWCT", "NSCT", "SYTM", "VCSP", "ERRV","BEAM")
   }
   header <- odf[['metadata']]$header
   k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
@@ -115,9 +97,6 @@ removeDerived <- function(odf, debug=0) {
       message("RCM TYPE: ", gsub(".*R","",odf[['filename']]), ": removed metadata for ", paste0(parameters[bad], sep=","))
     } else if (MCTD) {
       message("MCTD TYPE: ", gsub(".*M","",odf[['filename']]), ": removed metadata for ", paste0(parameters[bad], sep=","))
-    } else if (ADCP) {
-      message("ADCP TYPE: ", gsub(".*A","",odf[['filename']]), ": removed metadata for ", paste0(parameters[bad], sep=","))
-
     }
   } else {
     message("No metadata was removed because parameters =", paste(parameters, collapse=","))

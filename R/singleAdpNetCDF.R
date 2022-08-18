@@ -12,7 +12,7 @@
 #' @importFrom ncdf4
 #'@example
 #' \donrun{
-#' library(odfToNetcdf)
+#' library(odfToNetCDF)
 #' data <- getData(type="adcp")
 #' files <- list.files(pattern="ODF")
 #' adp <- compileOdfToAdp(files)

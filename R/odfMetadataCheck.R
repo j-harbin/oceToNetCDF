@@ -14,7 +14,7 @@
 #'   prints then all metadata is intact
 #' @example
 #' \dontrun{
-#' library(odfToNetcdf)
+#' library(odfToNetCDF)
 #' data <- getData(type="ctd")
 #' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
 #' odfMetadataCheck(odf1, data=data)

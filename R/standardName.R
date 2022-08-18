@@ -5,7 +5,6 @@
 #'code parameter.
 #'
 #' @param gf3 a character indicating a GF3 (General Formatting) standard code parameter
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #'
 #' @return A list containing the standard name and unit of the GF3 code in CF standard
 #' @export

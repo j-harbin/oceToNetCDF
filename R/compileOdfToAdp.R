@@ -10,7 +10,7 @@
 #' @param metadata any extra metadata to be added to net cdf as list form
 #' @example
 #' \dontrun{
-#' library(odfToNetcdf)
+#' library(odfToNetCDF)
 #' files <- list.files(pattern="ODF")
 #' adp <- compileOdfToAdp(files)
 #' }

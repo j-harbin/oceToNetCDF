@@ -9,7 +9,7 @@
 #' is in the expected range
 #' @example
 #' \donrun{
-#' library(odfToNetcdf)
+#' library(odfToNetCDF)
 #' data <- getData(type="ctd")
 #' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
 #' odf2 <- nameReplacement(odf1, data=data)

@@ -1,4 +1,4 @@
-Package: odfToNetcdf
+Package: odfToNetCDF
 Type: Package
 Title: Convert CTD, ADCP, and CM ODF Files to NetCDF
 Version: 1.0.5

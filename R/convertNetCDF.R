@@ -5,8 +5,6 @@
 #'
 #' @param odf an odf object from oce which contains mctd data
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
-#' @param metadata a csv file following the standard template which includes all
-#'   necessary metadata
 #' @param filename the desired name for the netCDF file produced, if left NULL
 #'   the default will conform to BIO naming conventions
 #' @param debug integer value indicating level of debugging.
@@ -14,7 +12,6 @@
 #'  some functions will print debugging information.
 #' @return netCDF file with a maximum of 12 variables
 #' @importFrom ncdf4
-#' @importFrom utils
 #' @examples
 #' \dontrun{
 #' library(odfToNetcdf)
@@ -25,7 +22,7 @@
 #' odf4 <- polishODF(odf3, data=data, unit='S/m')}
 #' @export
 
-convertNetCDF <- function(odf, metadata, filename = NULL, debug=0, data=NULL){
+convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
   if (is.null(data)) {
     stop("In convertNetCDF(), must provide a data frame for data")
   }
@@ -589,23 +586,6 @@ convertNetCDF <- function(odf, metadata, filename = NULL, debug=0, data=NULL){
   #ncdf4::ncatt_put(ncout, "longitude", "standard_name", "longitude")
 
   ####data max and min####
-
-  #metadata from spreadsheet
-
-  if (!missing(metadata)) {
-    metad <- utils::read.csv(metadata, header = TRUE)
-
-    mn <- as.character(metad[,1])
-    mv <- as.character(metad[,2])
-
-
-    md <- as.list(mv)
-    names(md) <- mn
-
-    for (m in seq_along(md)) {
-      ncdf4::ncatt_put(ncout, 0, names(md)[m], md[[m]])
-    }
-  }
 
   ####preserve ODF history header####
   if (!is.null(odf@metadata$header)){

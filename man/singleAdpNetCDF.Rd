@@ -4,15 +4,12 @@
 \alias{singleAdpNetCDF}
 \title{Convert adp object to NetCDF}
 \usage{
-singleAdpNetCDF(adp, name, metadata, debug = 0, data = NULL)
+singleAdpNetCDF(adp, name, debug = 0, data = NULL)
 }
 \arguments{
 \item{adp}{an adp adpect from the oce class}
 
 \item{name}{name of the NetCDF file to be produced}
-
-\item{metadata}{csv file listing metadata names and values to be inserted into
-global attributes of net CDF}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
@@ -22,5 +19,5 @@ some functions will print debugging information.}
 }
 \description{
 Exports an adp object to a netCDF using variables and metadata
-within adp combined with optional additional metadata
+within adp combined
 }

@@ -1,17 +1,15 @@
 #' Convert adp object to NetCDF
 #'@description Exports an adp object to a netCDF using variables and metadata
-#'  within adp combined with optional additional metadata
+#'  within adp combined
 #'
 #'@param adp an adp adpect from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #'@param name name of the NetCDF file to be produced
-#'@param metadata csv file listing metadata names and values to be inserted into
-#'  global attributes of net CDF
+
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
 #' @importFrom ncdf4
-#' @importFrom utils
 #'@example
 #' \donrun{
 #' library(odfToNetcdf)
@@ -23,7 +21,7 @@
 #'
 #'@export
 
-singleAdpNetCDF <- function(adp, name,  metadata, debug=0, data=NULL){
+singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   if (is.null(data)) {
     stop("must provide a data frame data, likely from getData()")
   }
@@ -34,9 +32,6 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0, data=NULL){
 
   if (!inherits(adp, "adp")){
     stop("method is only for adpects of class '", "adp", "'")
-  }
-  if (missing(metadata)){
-    warning('no metadata supplied')
   }
   #file name and path
   ncpath <- "./"
@@ -741,22 +736,4 @@ singleAdpNetCDF <- function(adp, name,  metadata, debug=0, data=NULL){
 
   }
 
-
-  if (!missing(metadata)) {
-    metad <- utils::read.csv(metadata, header = TRUE)
-
-    mn <- as.character(metad[,1])
-    mv <- as.character(metad[,2])
-
-
-    md <- as.list(mv)
-    names(md) <- mn
-
-    for (m in seq_along(md)) {
-      ncdf4::ncatt_put(ncout, 0, names(md)[m], md[[m]])
-    }
-    ncdf4::nc_close(ncout)
-
-
-  }
 }

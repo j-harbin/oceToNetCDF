@@ -4,13 +4,10 @@
 \alias{convertNetCDF}
 \title{Template to convert odf object to NetCDF}
 \usage{
-convertNetCDF(odf, metadata, filename = NULL, debug = 0, data = NULL)
+convertNetCDF(odf, filename = NULL, debug = 0, data = NULL)
 }
 \arguments{
 \item{odf}{an odf object from oce which contains mctd data}
-
-\item{metadata}{a csv file following the standard template which includes all
-necessary metadata}
 
 \item{filename}{the desired name for the netCDF file produced, if left NULL
 the default will conform to BIO naming conventions}

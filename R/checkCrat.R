@@ -20,30 +20,34 @@
 #' @export
 
 checkCrat <- function(odf, unit="S/m") {
-  if (!requireNamespace("oce", quietly=TRUE))
-    stop("must install.packages(\"oce\") for checkCrat() to work")
-N <- 100
-TT <- seq(-2, 30, length.out = N)
-SS <- seq(20, 40, length.out = N)
-T <- expand.grid(TT, SS)[,1]
-S <- expand.grid(TT, SS)[,2]
-p <- rep(0, length(T))
-CSpm <- range(array(convertConductivityRatio(oce::swCSTp(S, T, p)), dim=c(N, N)))
+    if (!requireNamespace("oce", quietly=TRUE))
+        stop("must install.packages(\"oce\") for checkCrat() to work")
+    N <- 100
+    TT <- seq(-2, 30, length.out = N)
+    SS <- seq(20, 40, length.out = N)
+    T <- expand.grid(TT, SS)[,1]
+    S <- expand.grid(TT, SS)[,2]
+    p <- rep(0, length(T))
+    CSpm <- range(array(4.2914*(oce::swCSTp(S, T, p)), dim=c(N, N)))
+    CmSpcm <- range(array(42.914*(oce::swCSTp(S, T, p)), dim=c(N, N)))
 
-names <- names(odf[['data']])
-keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)
-number <- grepl("\\_[0-9]$", names[keep])
+    names <- names(odf[['data']])
+    keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)
+    number <- grepl("\\_[0-9]$", names[keep])
 
-if (number) {
-  range <- range(unlist(unname(odf@data[names[keep]])))
-} else {
-  range <- range(odf@data$sea_water_electrical_conductivity)
+    if (number) {
+        range <- range(unlist(unname(odf@data[names[keep]])))
+    } else {
+        range <- range(odf@data$sea_water_electrical_conductivity)
 
-}
+    }
 
-if (range[1] < CSpm[1] | range[2] > CSpm[2]) {
-message("WARNING: The expected range of sea_water_electrical_conductivity in S/m is ", paste0(CSpm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use polishODF() to convert crat to conductivity")
-} else {
-  message("sea_water_electrical_conductivity range is good for file ", gsub(".*M","",odf[['filename']]))
-}
+    if ((range[1] < CSpm[1] | range[2] > CSpm[2]) && unit == "S/m") {
+        message("WARNING: The expected range of sea_water_electrical_conductivity in S/m is ", paste0(CSpm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use polishODF() to convert crat to conductivity")
+    } else if ((range[1] < CmSpcm[1] | range[2] > CmSpcm[2]) && unit =="mS/cm") {
+        message("WARNING: The expected range of sea_water_electrical_conductivity in mS/cm is ", paste0(CmSpcm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use polishODF() to convert crat to conductivity")
+
+    } else {
+        message("sea_water_electrical_conductivity range is good for file ", gsub(".*M","",odf[['filename']]))
+    }
 }

@@ -2,14 +2,14 @@
 % Please edit documentation in R/singleAdpNetCDF.R
 \name{singleAdpNetCDF}
 \alias{singleAdpNetCDF}
-\title{Convert adp object to NetCDF}
+\title{Convert adp object to netCDF}
 \usage{
 singleAdpNetCDF(adp, name, debug = 0, data = NULL)
 }
 \arguments{
 \item{adp}{an adp adpect from the oce class}
 
-\item{name}{name of the NetCDF file to be produced}
+\item{name}{name of the netCDF file to be produced}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,

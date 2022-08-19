@@ -7,7 +7,7 @@
 getData(type = "ctd")
 }
 \arguments{
-\item{type}{the type of data that will eventually be converted into a NetCDF.
+\item{type}{the type of data that will eventually be converted into a netCDF.
 The options are ctd, rcm, or adcp}
 }
 \value{

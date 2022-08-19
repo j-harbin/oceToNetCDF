@@ -31,7 +31,7 @@ standardName <- function(gf3, data=NULL) {
 
   }
   if (length(line) == 0) {
-    stop(gf3, " is not recognized in the codes.")
+    stop(gf3, " is not recognized in the codes for data type =", unique(data$type), ". Make sure you used the proper 'type' argument in getData()")
   }
 
   gf3 <- list(gf3 = gf3)

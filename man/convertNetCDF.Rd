@@ -2,7 +2,7 @@
 % Please edit documentation in R/convertNetCDF.R
 \name{convertNetCDF}
 \alias{convertNetCDF}
-\title{Template to convert odf object to NetCDF}
+\title{Template to convert odf object to netCDF}
 \usage{
 convertNetCDF(odf, filename = NULL, debug = 0, data = NULL)
 }
@@ -22,7 +22,7 @@ some functions will print debugging information.}
 netCDF file with a maximum of 12 variables
 }
 \description{
-This function converts and odf object to a NetCDF files for CTD
+This function converts and odf object to a netCDF files for CTD
 and RCM types.
 }
 \examples{

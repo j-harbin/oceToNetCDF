@@ -3,11 +3,11 @@
 \docType{package}
 \name{odfToNetCDF-package}
 \alias{odfToNetCDF-package}
-\title{A Package for converting ODF files to NetCDF files}
+\title{A Package for converting ODF files to netCDF files}
 \description{
 The \code{odfToNetCDF} package provides tools for converting moored conductivity-temperature-
 depth ("CTD"), acoustic-doppler-current-profiler (ADCP), and current meter (RCM) ODF
-files into NetCDF files.
+files into netCDF files.
 }
 \details{
 The sketches below illustrates the typical workflow for A) CTD

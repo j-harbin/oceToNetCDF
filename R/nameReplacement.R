@@ -10,12 +10,12 @@
 #' names and the institute as UW/DFO
 #' @importFrom oce oceSetMetadata
 #' @examples
-#'\dontrun{
 #' library(odfToNetCDF)
+#' library(oce)
 #' data <- getData(type="ctd")
-#' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+#' f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+#' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data)
-#' }
 #' @export
 
 nameReplacement <- function(odf, data=NULL, debug=0) {

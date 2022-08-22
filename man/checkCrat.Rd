@@ -20,13 +20,13 @@ is in the expected range
 Check range of conductivity
 }
 \examples{
-\dontrun{
 library(odfToNetCDF)
+library(oce)
 data <- getData(type="ctd")
-odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data)
 odf3 <- removeDerived(odf2)
 odf4 <- polishODF(odf3, data=data, unit='S/m')
 odf5 <- checkCrat(odf3)
-}
 }

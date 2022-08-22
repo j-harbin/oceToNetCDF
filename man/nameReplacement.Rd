@@ -23,10 +23,10 @@ names and the institute as UW/DFO
 Replace DFO Codes with CF standard names
 }
 \examples{
-\dontrun{
 library(odfToNetCDF)
+library(oce)
 data <- getData(type="ctd")
-odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data)
-}
 }

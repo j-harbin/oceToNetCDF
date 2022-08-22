@@ -13,6 +13,7 @@
 #'@examples
 #' \dontrun{
 #' library(odfToNetCDF)
+#' library(oce)
 #' data <- getData(type="adcp")
 #' files <- list.files(pattern="ODF")
 #' adp <- compileOdfToAdp(files)

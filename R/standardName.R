@@ -10,10 +10,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' library(odfToNetCDF)
 #' data <- getData(type="ctd")
 #' standardName("TEMP", data=data)
-#' }
 standardName <- function(gf3, data=NULL) {
 
   if (is.null(data)) {

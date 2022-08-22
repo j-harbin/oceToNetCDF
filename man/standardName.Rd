@@ -20,8 +20,7 @@ forecast (CF) standards from a General Formatting (GF3) standard
 code parameter.
 }
 \examples{
-\dontrun{
+library(odfToNetCDF)
 data <- getData(type="ctd")
 standardName("TEMP", data=data)
-}
 }

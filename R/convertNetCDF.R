@@ -14,13 +14,14 @@
 #' @importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
 #' @importFrom utils tail
 #' @examples
-#' \dontrun{
 #' library(odfToNetCDF)
+#' library(oce)
 #' data <- getData(type="ctd")
-#' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+#' f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+#' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data)
 #' odf3 <- removeDerived(odf2)
-#' odf4 <- polishODF(odf3, data=data, unit='S/m')}
+#' odf4 <- polishODF(odf3, data=data, unit='S/m')
 #' @export
 
 convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
@@ -36,16 +37,15 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
   if (!requireNamespace("ncdf4", quietly=TRUE))
     stop("must install.packages(\"ncdf4\") for convertNetCDF() to work")
   MCTD <- grepl("MCTD", odf[['filename']])
+  mctd <- grepl("mctd", odf[['filename']])
   RCM <- grepl("RCM", odf[['filename']])
-  ADCP <- grepl("ADCP", odf[['filename']])
+  rcm <- grepl("rcm", odf[['filename']])
   v <- names(odf@data)
 
-  if (MCTD) {
+  if (MCTD | mctd) {
       DF <- data[which(data$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES")),]
-  } else if (RCM) {
+  } else if (RCM | rcm) {
       DF <- data[which(data$code %in% c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP")),]
-  } else if (ADCP) {
-      DF <- data[which(data$code %in% c("SYTM", "UNKN", "BEAM", "ERRV", "VCSP", "NSCT","EWCT")),]
   } else {
       message("Unrecognizable file type.")
   }
@@ -125,19 +125,14 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
   #FILENAME
   if(missing(filename)){
     #filename <- paste("MCTD", odf[['cruiseNumber']], odf[['eventNumber']], odf[['eventQualifier']], odf[['samplingInterval']], sep = '_')
-    if (MCTD) {
+    if (MCTD | mctd) {
     f <- gsub(".*M","",odf[['filename']])
     ff <-  gsub("\\..*","",f)
     filename <- paste0("M", ff, sep="")
-    } else if (RCM) {
+    } else if (RCM | rcm) {
       f <- gsub(".*M","",odf[['filename']])
       ff <-  gsub("\\..*","",f)
       filename <- paste0("MCM", ff, sep="")
-    } else if (ADCP) {
-      f <- gsub(".*M","",odf[['filename']])
-      ff <-  gsub("\\..*","",f)
-      filename <- paste0("M", ff, sep="")
-
     }
   }
   ncpath <- "./"

@@ -31,8 +31,10 @@
 removeDerived <- function(odf, debug=0) {
   # Removing Derived Data
   MCTD <- grepl("MCTD", odf[['filename']])
+  mctd <- grepl("mctd", odf[['filename']])
   RCM <- grepl("RCM", odf[['filename']])
-  if (RCM) {
+  rcm <- grepl("rcm", odf[['filename']])
+  if (RCM | rcm) {
   if (debug > 0) {
     message("This is an RCM type")
   }
@@ -41,7 +43,7 @@ removeDerived <- function(odf, debug=0) {
   ctdOriginalNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"barotropic_sea_water_x_velocity", paste0("barotropic_sea_water_x_velocity_",1:4),
                         "sea_water_pressure", paste0("sea_water_pressure_", 1:4),"sea_water_practical_salinity",paste0("sea_water_practical_salinity_",1:4),"time",paste0("time_", 1:4),"sea_water_temperature",paste0("sea_water_temperature_",1:4))
 
-  } else if (MCTD) {
+  } else if (MCTD | mctd) {
     if (debug > 0) {
       message("This is an MCTD type")
     }
@@ -75,9 +77,9 @@ removeDerived <- function(odf, debug=0) {
 
   # Removing metadata
   # Naming bad metadata
-  if (RCM) {
+  if (RCM | rcm) {
     ctdCodeNames <- c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP")
-  } else if (MCTD) {
+  } else if (MCTD | mctd) {
     ctdCodeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES")
   }
   header <- odf[['metadata']]$header
@@ -93,9 +95,9 @@ removeDerived <- function(odf, debug=0) {
   bad <- which(!(parameters %in% ctdCodeNames))
 
   if (length(bad) > 0) {
-    if (RCM) {
+    if (RCM | rcm) {
       message("RCM TYPE: ", gsub(".*R","",odf[['filename']]), ": removed metadata for ", paste0(parameters[bad], sep=","))
-    } else if (MCTD) {
+    } else if (MCTD | mctd) {
       message("MCTD TYPE: ", gsub(".*M","",odf[['filename']]), ": removed metadata for ", paste0(parameters[bad], sep=","))
     }
   } else {

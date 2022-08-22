@@ -20,7 +20,7 @@ is in the expected range
 Check range of conductivity
 }
 \examples{
-\donrun{
+\dontrun{
 library(odfToNetCDF)
 data <- getData(type="ctd")
 odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")

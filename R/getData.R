@@ -8,7 +8,7 @@
 #'
 #' @return a data frame containing the necessary standard names, units, codes, names, and type of data
 #'
-#' @example
+#' @examples
 #' data <- getdata(type="core")
 #' names(data)
 #' @export

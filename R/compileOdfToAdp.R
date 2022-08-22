@@ -8,6 +8,7 @@
 #' @description Converting individual odf bins to Net cdf standard format
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
+#' @importFrom oce read.oce read.odf as.adp oceSetMetadata
 #' @examples
 #' \dontrun{
 #' library(odfToNetCDF)

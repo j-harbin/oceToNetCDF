@@ -25,3 +25,11 @@ prints then all metadata is intact
 \description{
 Check that an ODF object has all the metadata required to build a complete netCDF file
 }
+\examples{
+\dontrun{
+library(odfToNetCDF)
+data <- getData(type="ctd")
+odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+odfMetadataCheck(odf1, data=data)
+}
+}

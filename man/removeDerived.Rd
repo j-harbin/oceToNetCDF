@@ -27,3 +27,12 @@ metadata kept is horizontal_current_direction,
 barotropic_sea_water_x_velocity, sea_water_pressure, sea_water_practical_salinity",
 time, and sea_water_temperature
 }
+\examples{
+\dontrun{
+library(odfToNetCDF)
+data <- getData(type="ctd")
+odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+odf2 <- nameReplacement(odf1, data=data)
+odf3 <- removeDerived(odf2)
+}
+}

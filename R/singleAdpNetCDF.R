@@ -9,9 +9,9 @@
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
-#' @importFrom ncdf4
-#'@example
-#' \donrun{
+#' @importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
+#'@examples
+#' \dontrun{
 #' library(odfToNetCDF)
 #' data <- getData(type="adcp")
 #' files <- list.files(pattern="ODF")

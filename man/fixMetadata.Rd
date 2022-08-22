@@ -12,7 +12,7 @@ fixMetadata(odf, debug = 0, data = NULL, unit = NULL)
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.
-@importFrom oce}
+@importFrom oce oceSetData}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
 

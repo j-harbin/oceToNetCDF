@@ -9,7 +9,7 @@
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
-#'  @importFrom oce
+#'  @importFrom oce oceSetData
 #'
 #' @return an odf object with proper units and flags
 

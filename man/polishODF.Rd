@@ -26,3 +26,13 @@ and adds place holders for flags if they do not already exist.
 For a CTD type, this function also converts conductivity ratio to
 conducitivity if the proper unit is provided to abide by CF standards.
 }
+\examples{
+\dontrun{
+library(odfToNetCDF)
+data <- getData(type="ctd")
+odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+odf2 <- nameReplacement(odf1, data=data)
+odf3 <- removeDerived(odf2)
+odf4 <- polishODF(odf3, data=data, unit='S/m')
+}
+}

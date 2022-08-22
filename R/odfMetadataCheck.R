@@ -12,7 +12,7 @@
 #'
 #' @return a print statement of any issues with metadata to command line, if nothing
 #'   prints then all metadata is intact
-#' @example
+#' @examples
 #' \dontrun{
 #' library(odfToNetCDF)
 #' data <- getData(type="ctd")
@@ -20,8 +20,6 @@
 #' odfMetadataCheck(odf1, data=data)
 #' }
 #' @export
-#'
-#' @examples
 odfMetadataCheck <- function(odf, data=NULL, print = TRUE, debug=0) {
   if (is.null(data)) {
     stop("must provide a data frame for data")

@@ -8,6 +8,8 @@ standardName(gf3, data = NULL)
 }
 \arguments{
 \item{gf3}{a character indicating a GF3 (General Formatting) standard code parameter}
+
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
 }
 \value{
 A list containing the standard name and unit of the GF3 code in CF standard
@@ -16,4 +18,10 @@ A list containing the standard name and unit of the GF3 code in CF standard
 This function reveals the standard name and units in climate and
 forecast (CF) standards from a General Formatting (GF3) standard
 code parameter.
+}
+\examples{
+\dontrun{
+data <- getData(type="ctd")
+standardName("TEMP", data=data)
+}
 }

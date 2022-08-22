@@ -8,8 +8,8 @@
 #'
 #' @return an odf file with the dataOringinalNames as standard CF
 #' names and the institute as UW/DFO
-#' @importFrom oce
-#' @example
+#' @importFrom oce oceSetMetadata
+#' @examples
 #'\dontrun{
 #' library(odfToNetCDF)
 #' data <- getData(type="ctd")

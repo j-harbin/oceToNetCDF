@@ -21,3 +21,13 @@ some functions will print debugging information.}
 Exports an adp object to a netCDF using variables and metadata
 within adp combined
 }
+\examples{
+\dontrun{
+library(odfToNetCDF)
+data <- getData(type="adcp")
+files <- list.files(pattern="ODF")
+adp <- compileOdfToAdp(files)
+singleAdpNetCDF(adp, name="test", debug=1, data=data)
+}
+
+}

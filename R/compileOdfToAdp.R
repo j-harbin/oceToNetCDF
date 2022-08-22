@@ -8,7 +8,7 @@
 #' @description Converting individual odf bins to Net cdf standard format
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
-#' @importFrom oce read.oce read.odf as.adp oceSetMetadata
+#' @importFrom oce read.oce read.odf as.adp oceSetMetadata processingLogAppend
 #' @examples
 #' \dontrun{
 #' library(odfToNetCDF)
@@ -48,7 +48,7 @@ compileOdfToAdp <- function(files, metadata) {
 
   ## need to sort the depths because of file sorting ...
   # prevent compiler warning
-  u <- v <- w <- errorVelocity <- a <- unknown <- NULL
+  #u <- v <- w <- errorVelocity <- a <- unknown <- NULL
   o <- order(depth, decreasing = TRUE)
   depth <- depth[o]
   for (vr in vars) {
@@ -73,7 +73,7 @@ compileOdfToAdp <- function(files, metadata) {
     }
   }
   adp@metadata$source <- 'odf'
-  adp@processingLog <- processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
+  adp@processingLog <- oce::processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
 
   return(adp)
 }

@@ -18,6 +18,6 @@ This function gets the available standard names, units, codes,names, and
 type of data for the required information for the specified instrument type
 }
 \examples{
-data <- getdata(type="core")
+data <- getData(type="ctd")
 names(data)
 }

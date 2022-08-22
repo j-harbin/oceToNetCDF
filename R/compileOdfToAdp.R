@@ -8,7 +8,7 @@
 #' @description Converting individual odf bins to Net cdf standard format
 #' @param files list of odf files
 #' @param metadata any extra metadata to be added to net cdf as list form
-#' @example
+#' @examples
 #' \dontrun{
 #' library(odfToNetCDF)
 #' files <- list.files(pattern="ODF")
@@ -46,6 +46,8 @@ compileOdfToAdp <- function(files, metadata) {
   }
 
   ## need to sort the depths because of file sorting ...
+  # prevent compiler warning
+  u <- v <- w <- errorVelocity <- a <- unknown <- NULL
   o <- order(depth, decreasing = TRUE)
   depth <- depth[o]
   for (vr in vars) {

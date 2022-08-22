@@ -19,4 +19,12 @@ This function reads in a set of odf files and compiles into adp object.
 It is capable of recognizing missing bins or missing odf files and
 inserting NA values in appropriate slot of data variables
 }
+\examples{
+\dontrun{
+library(odfToNetCDF)
+files <- list.files(pattern="ODF")
+adp <- compileOdfToAdp(files)
+}
+
+}
 \concept{odf}

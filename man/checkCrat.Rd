@@ -19,3 +19,14 @@ is in the expected range
 \description{
 Check range of conductivity
 }
+\examples{
+\donrun{
+library(odfToNetCDF)
+data <- getData(type="ctd")
+odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")
+odf2 <- nameReplacement(odf1, data=data)
+odf3 <- removeDerived(odf2)
+odf4 <- polishODF(odf3, data=data, unit='S/m')
+odf5 <- checkCrat(odf3)
+}
+}

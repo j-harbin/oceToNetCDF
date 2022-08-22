@@ -4,11 +4,11 @@
 #'
 #' @param unit the specified unit of conductivity to convert to
 #' (Either 'S/m' or 'mS/cm')
-#' @importFrom oce
+#' @importFrom oce swCSTp
 #' @return a print statement indicating if the conductivity
 #' is in the expected range
-#' @example
-#' \donrun{
+#' @examples
+#' \dontrun{
 #' library(odfToNetCDF)
 #' data <- getData(type="ctd")
 #' odf1 <- read.odf("MCTD_KN179-05_1533_3309_1800.ODF")

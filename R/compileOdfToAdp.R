@@ -33,6 +33,7 @@ compileOdfToAdp <- function(files, metadata) {
   nt <- length(d[['time']])
   vars <- names(d@data)
   vars <- vars[-which(vars == 'time')]
+  u <- v <- w <- errorVelocity <- a <- unknown <- NULL
   for (vr in vars) {
     assign(vr, array(NA, dim=c(nt, nd)))
   }
@@ -48,7 +49,6 @@ compileOdfToAdp <- function(files, metadata) {
 
   ## need to sort the depths because of file sorting ...
   # prevent compiler warning
-  #u <- v <- w <- errorVelocity <- a <- unknown <- NULL
   o <- order(depth, decreasing = TRUE)
   depth <- depth[o]
   for (vr in vars) {

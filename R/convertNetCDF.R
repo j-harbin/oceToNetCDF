@@ -88,13 +88,13 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
     message("Step 3: About to populate the variable, var, units, max,min, standard_name, and flags.")
   }
 
- # variable_1 <- var1 <- units1 <- variable_2 <- var2 <- units2 <-
-#    variable_3 <- var3 <- units3 <- variable_4 <- var4 <- units4 <-
-#    variable_5 <- var5 <- units5 <- variable_6 <- var6 <- units6 <-
-#    variable_7 <- var7 <- units7 <- variable_8 <- var8 <- units8 <-
-#    variable_9 <- var9 <- units9 <- variable_10 <- var10 <- units10 <-
-#    variable_11 <- var11 <- units11 <- variable_12 <- var12 <- units12 <-
-#    NULL
+ variable_1 <- var1 <- units1 <- variable_2 <- var2 <- units2 <-
+    variable_3 <- var3 <- units3 <- variable_4 <- var4 <- units4 <-
+    variable_5 <- var5 <- units5 <- variable_6 <- var6 <- units6 <-
+    variable_7 <- var7 <- units7 <- variable_8 <- var8 <- units8 <-
+    variable_9 <- var9 <- units9 <- variable_10 <- var10 <- units10 <-
+    variable_11 <- var11 <- units11 <- variable_12 <- var12 <- units12 <-
+    NULL
   for ( vv in VAR ){
 
     eval(parse(text = paste0("variable_", i, "<- '" , v[[i]], "'")))
@@ -332,11 +332,11 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
   ncdf4::ncatt_put(ncout, var1, 'reference_scale', 'IPTS-68')
 
 
-#var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
-#  var4max <- var4min <- var5max <- var5min <- var6max <- var6min <-
-#  var7max <- var7min <- var8max <- var8min <- var9max <- var9min <-
-#  var10max <- var10min <- var11max <- var11min <- var12max <- var12min <-
-#  NULL
+var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
+  var4max <- var4min <- var5max <- var5min <- var6max <- var6min <-
+  var7max <- var7min <- var8max <- var8min <- var9max <- var9min <-
+  var10max <- var10min <- var11max <- var11min <- var12max <- var12min <-
+  NULL
   ####variables####
   #sensor type, sensor depth and serial number for each variable
   #generic nameS

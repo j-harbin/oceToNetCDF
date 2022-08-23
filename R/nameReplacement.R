@@ -5,7 +5,7 @@
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
-#'
+#' @param institute an optional name to add as the institute name
 #' @return an odf file with the dataOringinalNames as standard CF
 #' names and the institute as UW/DFO
 #' @importFrom oce oceSetMetadata
@@ -18,7 +18,7 @@
 #' odf2 <- nameReplacement(odf1, data=data)
 #' @export
 
-nameReplacement <- function(odf, data=NULL, debug=0) {
+nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL) {
 
   if (is.null(data)) {
     stop("In nameReplacement, must provide a data frame for data")
@@ -89,7 +89,9 @@ nameReplacement <- function(odf, data=NULL, debug=0) {
   }
 
   odf <- oce::oceSetMetadata(odf, name="dataNamesOriginal", value=dataNamesOriginal)
-  odf <- oce::oceSetMetadata(odf, name="institute", value="UW/BIO")
+  if (!(is.null(institute))) {
+  odf <- oce::oceSetMetadata(odf, name="institute", value=institute)
+  }
   names(odf@data) <- odf@metadata$dataNamesOriginal
   names(odf@metadata$units) <- odf@metadata$dataNamesOriginal
   odf

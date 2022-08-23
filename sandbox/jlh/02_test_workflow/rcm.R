@@ -8,7 +8,7 @@ odfs <- lapply(files, read.odf)
 #}
 
 # Step 3
-odfs <- lapply(odfs, function(x) nameReplacement(x, data=data))
+odfs <- lapply(odfs, function(x) nameReplacement(x, data=data, institute = "UW/BIO"))
 
 # Step 4
 odfs <- lapply(odfs, removeDerived)

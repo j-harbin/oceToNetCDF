@@ -4,7 +4,7 @@
 \alias{nameReplacement}
 \title{Replace DFO Codes with CF standard names}
 \usage{
-nameReplacement(odf, data = NULL, debug = 0)
+nameReplacement(odf, data = NULL, debug = 0, institute = NULL)
 }
 \arguments{
 \item{odf}{an odf object (oce::read.odf())}
@@ -14,6 +14,8 @@ nameReplacement(odf, data = NULL, debug = 0)
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
+
+\item{institute}{an optional name to add as the institute name}
 }
 \value{
 an odf file with the dataOringinalNames as standard CF

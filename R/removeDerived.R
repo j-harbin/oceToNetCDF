@@ -4,7 +4,7 @@
 #' For a CTD type, the only data and metadata kept is time, conductivity, salinity,
 #' temperature, and pressure. For an RCM type, the only data and
 #' metadata kept is horizontal_current_direction,
-#' barotropic_sea_water_x_velocity, sea_water_pressure, sea_water_practical_salinity",
+#' barotropic_sea_water_x_velocity, sea_water_pressure, sea_water_practical_salinity,
 #' time, and sea_water_temperature
 #'
 #' @param odf an odf object (oce::read.odf())

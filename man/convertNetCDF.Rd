@@ -26,6 +26,7 @@ This function converts and odf object to a netCDF files for CTD
 and RCM types.
 }
 \examples{
+\dontrun{
 library(odfToNetCDF)
 library(oce)
 data <- getData(type="ctd")
@@ -33,5 +34,7 @@ f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 odf3 <- removeDerived(odf2)
-odf4 <- polishODF(odf3, data=data)
+odf4 <- fixMetadata(odf3, data=data)
+convertNetCDF(odf4, data=data)
+}
 }

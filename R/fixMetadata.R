@@ -1,4 +1,4 @@
-#' Clean data and metadata for a CTD and RCM object
+#' Clean  metadata for a CTD and RCM object
 #'
 #' This function ensures the proper units are associated with each variable
 #' and adds place holders for flags if they do not already exist.
@@ -19,10 +19,10 @@
 #' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 #' odf3 <- removeDerived(odf2)
-#' odf4 <- polishODF(odf3, data=data)
+#' odf4 <- fixMetadata(odf3, data=data)
 #' @export
 
-polishODF <- function(odf, debug=0, data=NULL) {
+fixMetadata <- function(odf, debug=0, data=NULL) {
 
   if (is.null(data)) {
     stop("must provide a dataframe data, likely from getData()")
@@ -32,7 +32,7 @@ polishODF <- function(odf, debug=0, data=NULL) {
     stop("the data must be of class data.frame, not ", class(data))
   }
 
-  # Polishing metadata
+  # Fixing metadata
   units <- odf@metadata$units
   DATA <- names(odf@data)
   l <- vector(mode="list", length=length(DATA))

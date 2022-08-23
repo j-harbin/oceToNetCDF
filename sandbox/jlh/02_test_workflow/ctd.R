@@ -15,7 +15,7 @@ odfs <- lapply(odfs, removeDerived)
 
 # Step 5
 
-odfs <- lapply(odfs, function(x) polishODF(x, data=data))
+odfs <- lapply(odfs, function(x) fixMetadata(x, data=data))
 
 # Step 6
 

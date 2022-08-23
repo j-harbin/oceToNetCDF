@@ -15,7 +15,7 @@
 #' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 #' odf3 <- removeDerived(odf2)
-#' odf4 <- polishODF(odf3, data=data)
+#' odf4 <- fixMetadata(odf3, data=data)
 #' odf5 <- checkCrat(odf3)
 #' @export
 
@@ -43,9 +43,9 @@ checkCrat <- function(odf, unit="S/m") {
     }
 
     if ((range[1] < CSpm[1] | range[2] > CSpm[2]) && unit == "S/m") {
-        message("WARNING: The expected range of sea_water_electrical_conductivity in S/m is ", paste0(CSpm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use polishODF() to convert crat to conductivity")
+        message("WARNING: The expected range of sea_water_electrical_conductivity in S/m is ", paste0(CSpm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use fixMetadata() to convert crat to conductivity")
     } else if ((range[1] < CmSpcm[1] | range[2] > CmSpcm[2]) && unit =="mS/cm") {
-        message("WARNING: The expected range of sea_water_electrical_conductivity in mS/cm is ", paste0(CmSpcm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use polishODF() to convert crat to conductivity")
+        message("WARNING: The expected range of sea_water_electrical_conductivity in mS/cm is ", paste0(CmSpcm, sep=", "), ". File ",gsub(".*M","",odf[['filename']]), " has a range of ", paste0(range, sep=", "),". Perhaps use fixMetadata() to convert crat to conductivity")
 
     } else {
         message("sea_water_electrical_conductivity range is good for file ", gsub(".*M","",odf[['filename']]))

@@ -33,15 +33,15 @@ grViz("digraph flowchart {
 
       [1]: 'Get necessary data'
       [2]: 'Read ODF data'
-      [3]: 'Fix necessary changes'
+      [3]: 'Rename variables'
       [4]: 'Remove derived data/metadata'
-      [5]: 'Polish ODF'
+      [5]: 'Fix metadata'
       [6]: 'Convert to NetCDF'
       [7]: 'getData()'
       [8]: 'read.oce()'
       [9]: 'nameReplacement()'
       [10]: 'removeDerived()'
-      [11]: 'polishODF()'
+      [11]: 'fixMetadata()'
       [12]: 'convertNetCDF()'
       ")
 

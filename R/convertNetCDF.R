@@ -14,6 +14,7 @@
 #' @importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
 #' @importFrom utils tail
 #' @examples
+#' \dontrun{
 #' library(odfToNetCDF)
 #' library(oce)
 #' data <- getData(type="ctd")
@@ -21,7 +22,9 @@
 #' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 #' odf3 <- removeDerived(odf2)
-#' odf4 <- polishODF(odf3, data=data)
+#' odf4 <- fixMetadata(odf3, data=data)
+#' convertNetCDF(odf4, data=data)
+#' }
 #' @export
 
 convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){

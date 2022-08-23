@@ -79,10 +79,6 @@ odfMetadataCheck <- function(odf, data=NULL, print = TRUE, debug=0) {
     }
     if (is.null(odf[['institute']])) {
         print('Missing institute value')
-    } else {
-        if (length(grep(odf[['institute']], pattern = 'UW/BIO')) == 0) {
-            print(paste("institute value is '", odf[['institute']], "' should be 'UW/BIO'"))
-        }
     }
     #load('gf3-p01.RData')
     Names <- odf[['dataNamesOriginal']]

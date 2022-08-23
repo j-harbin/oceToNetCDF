@@ -1,0 +1,48 @@
+---
+title: "Steps to convert moored ADCP ODF files to a single NetCDF file"
+author: "Jaimie Harbin"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+# Introduction
+
+This vignette discusses the steps to convert a moored acoustic doppler current profiler (ADCP) ODF file to a NetCDF file. To convert a list of ADCP ODF files, use the suggested work flow provided below. The data used in this study is from the Davis Strait.
+
+![Figure 2: Work flow of the odfToNetCDF package for ADCP data types with descriptions on the left and relevant functions on the right](adcp_diagram.png)
+
+# Get necessary data
+
+To get the necessary data, use the `getData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
+
+
+
+# Compile one adp object from multiple ODF files
+
+To compile one adp object from multiple ODF files, use the `compileOdfToAdcp()` function. This function reads in a set of odf files and compiles into adp object. It is capable of recognizing missing bins or missing odf files and inserting NA values in appropriate slot of data variables
+
+# Create a single NetCDF
+
+To create a single NetCDF, use the `singleAdpNetCDF()` function. This function exports an adp object to a NetCDF using variables and metadata
+within adp combined.There are a number of steps that go into this including:
+
+1. Setting dimensions
+2. Defining variables
+3. Writting definitions to the NetCDF file using nc_create()
+4. Insert variables into the NetCDF file using ncvar_put()
+5. Writing data into existing NetCDF using ncatt_put()
+
+# Work flow
+
+A typical work flow is as follows:
+
+```{r, eval=FALSE}
+library(odfToNetCDF)
+library(oce)
+data <- getData(type="adcp")
+files <- list.files(pattern="ODF")
+adp <- compileOdfToAdp(files)
+singleAdpNetCDF(adp, name="test", debug=1, data=data)
+```
+
+

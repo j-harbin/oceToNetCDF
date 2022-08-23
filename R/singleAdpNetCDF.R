@@ -1,5 +1,5 @@
 #' Convert adp object to netCDF
-#'@description Exports an adp object to a netCDF using variables and metadata
+#'@description Exports an adp object to a NetCDF using variables and metadata
 #'  within adp combined
 #'
 #'@param adp an adp adpect from the oce class

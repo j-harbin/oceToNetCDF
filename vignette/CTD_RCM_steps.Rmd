@@ -56,17 +56,25 @@ Step 9: Insert attributes (metadata) into a netCDF file
 A typical workflow is as follows:
 
 ```{r, eval=FALSE}
+library(odfToNetCDF)
+library(oce)
+data <- getData(type="ctd")
+f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+odf1 <- read.odf(f)
+odf2 <- nameReplacement(odf1, data=data, unit="S/m")
+odf3 <- removeDerived(odf2)
+odf4 <- fixMetadata(odf3, data=data)
+convertNetCDF(odf4, data=data)
+```      
 
-      
+
+# Check odf metadata
+
+In addition to the suggested work flow, the user also has the ability to use the `odfMetadataCheck()` function, which was 
+provided by Emily O'Grady. This function checks that the ODF file has all of the required metadata needed to build a NetCDF file. This metadata includes: `longitude`, `latitude`, `type`, `model`, `samplingInterval`, `countryInstituteCode`, `cruiseNumber`, `station`, `serialNumber`, `cruise`, `sounding`, `scientist`, `waterDepth`, `depthMin`, `depthMax`, `institute`, and it ensures the names of the parameters conform to General Formatting (GF3) standards.
 
 # References
 
 Kelley, D., and Richards, C. (2020). oce: Analysis of Oceanographic Data. Available online at: https://CRAN.R-project.org/package=oce (accessed August 23, 2022).
-
-
-
-# 1: Check odf metadata
-
-To check the odf metadata, use the **odf_check.R** function that was provided by Emily Chisholm. This function checks that the ODF file has all of the required metadata needed to build a NetCDF file. This metadata includes: `longitude`, `latitude`, `type`, `model`, `samplingInterval`, `countryInstituteCode`, `cruiseNumber`, `station`, `serialNumber`, `cruise`, `sounding`, `scientist`, `waterDepth`, `depthMin`, `depthMax`, `institute`, and it ensures the names of the parameters conform to General Formatting (GF3) standards.
 
 

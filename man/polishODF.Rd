@@ -4,7 +4,7 @@
 \alias{polishODF}
 \title{Clean data and metadata for a CTD and RCM object}
 \usage{
-polishODF(odf, debug = 0, data = NULL, unit = NULL)
+polishODF(odf, debug = 0, data = NULL)
 }
 \arguments{
 \item{odf}{an odf object (oce::read.odf())}
@@ -14,8 +14,6 @@ If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
-
-\item{unit}{standardized unit S/m by default}
 }
 \value{
 an odf object
@@ -32,7 +30,7 @@ library(oce)
 data <- getData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
-odf2 <- nameReplacement(odf1, data=data)
+odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 odf3 <- removeDerived(odf2)
-odf4 <- polishODF(odf3, data=data, unit='S/m')
+odf4 <- polishODF(odf3, data=data)
 }

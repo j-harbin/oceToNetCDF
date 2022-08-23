@@ -4,7 +4,7 @@
 \alias{nameReplacement}
 \title{Replace DFO Codes with CF standard names}
 \usage{
-nameReplacement(odf, data = NULL, debug = 0, institute = NULL)
+nameReplacement(odf, data = NULL, debug = 0, institute = NULL, unit = NULL)
 }
 \arguments{
 \item{odf}{an odf object (oce::read.odf())}
@@ -16,13 +16,21 @@ If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
 \item{institute}{an optional name to add as the institute name}
+
+\item{unit}{specified unit of 'S/m' or 'mS/cm' to convert CRAT to
+sea_water_electrical_conductivty for CF standard. This is only
+used for ctd type}
 }
 \value{
 an odf file with the dataOringinalNames as standard CF
 names and the institute as UW/DFO
 }
 \description{
-Replace DFO Codes with CF standard names
+This function replaces DFO codes with CF standards. For
+ctd types, if conductivity ratio (CRAT) exists, the values
+are converted to sea_water_electrical_conductivity values
+to abide by CF standards, and the unit is changed to the
+specified unit.
 }
 \examples{
 library(odfToNetCDF)
@@ -30,5 +38,5 @@ library(oce)
 data <- getData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
-odf2 <- nameReplacement(odf1, data=data)
+odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 }

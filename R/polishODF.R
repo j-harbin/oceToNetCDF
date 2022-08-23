@@ -2,12 +2,9 @@
 #'
 #' This function ensures the proper units are associated with each variable
 #' and adds place holders for flags if they do not already exist.
-#' For a CTD type, this function also converts conductivity ratio to
-#' conducitivity if the proper unit is provided to abide by CF standards.
 #'
 #' @param odf an odf object (oce::read.odf())
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
-#' @param unit standardized unit S/m by default
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
@@ -20,12 +17,12 @@
 #' data <- getData(type="ctd")
 #' f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 #' odf1 <- read.odf(f)
-#' odf2 <- nameReplacement(odf1, data=data)
+#' odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 #' odf3 <- removeDerived(odf2)
-#' odf4 <- polishODF(odf3, data=data, unit='S/m')
+#' odf4 <- polishODF(odf3, data=data)
 #' @export
 
-polishODF <- function(odf, debug=0, data=NULL, unit=NULL) {
+polishODF <- function(odf, debug=0, data=NULL) {
 
   if (is.null(data)) {
     stop("must provide a dataframe data, likely from getData()")
@@ -35,40 +32,6 @@ polishODF <- function(odf, debug=0, data=NULL, unit=NULL) {
     stop("the data must be of class data.frame, not ", class(data))
   }
 
-  if (is.null(unit)) {
-    message("conductivity ratio is not being converted to conductivity because no unit was provided")
-  } else {
-    if (!(unit %in% c("S/m", "mS/cm"))) {
-      message("unit must be 'S/m' or'mS/cm', not ", unit)
-    } else if (unique(data$type) == "ctd") {
-      names <- names(odf[['data']])
-      keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)
-      number <- grepl("\\_[0-9]$", names[keep])
-
-      if (number) {
-        crat <- unlist(unname(odf@data[names[keep]]))
-      } else {
-        crat <- odf@data$sea_water_electrical_conductivity
-      }
-      if (unit == 'S/m') {
-        if (!(number)) {
-          odf@metadata$units$sea_water_electrical_conductivity$unit <- "S/m"
-          odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(4.2914*crat))
-        } else {
-          eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'S/m'")))
-          odf <- oce::oceSetData(odf, name=names[keep], value=(4.2914*crat))
-        }
-      } else if (unit == 'mS/cm') {
-        if (!(number)) {
-          odf@metadata$units$sea_water_electrical_conductivity$unit <- "mS/cm"
-          odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(crat*42.914))
-        } else  {
-          eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'mS/cm'")))
-          odf <- oce::oceSetData(odf, name=names[keep], value=(crat*42.914))
-        }
-      }
-    }
-  }
   # Polishing metadata
   units <- odf@metadata$units
   DATA <- names(odf@data)

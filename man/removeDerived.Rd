@@ -33,6 +33,6 @@ library(oce)
 data <- getData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
-odf2 <- nameReplacement(odf1, data=data)
+odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 odf3 <- removeDerived(odf2)
 }

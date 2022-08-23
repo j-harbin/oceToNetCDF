@@ -8,14 +8,14 @@ odfs <- lapply(files, read.odf)
 #}
 
 # Step 3
-odfs <- lapply(odfs, function(x) nameReplacement(x, data=data, institute = "UW/BIO"))
+odfs <- lapply(odfs, function(x) nameReplacement(x, data=data, institute = "UW/BIO", unit="S/m"))
 
 # Step 4
 odfs <- lapply(odfs, removeDerived)
 
 # Step 5
 
-odfs <- lapply(odfs, function(x) polishODF(x, unit="S/m", data=data))
+odfs <- lapply(odfs, function(x) polishODF(x, data=data))
 
 # Step 6
 

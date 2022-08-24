@@ -2,7 +2,7 @@
 % Please edit documentation in R/getData.R
 \name{getData}
 \alias{getData}
-\title{Get data for specified instrument type}
+\title{Get required data for specified instrument type}
 \usage{
 getData(type = "ctd")
 }
@@ -16,6 +16,7 @@ a data frame containing the necessary standard names, units, codes, names, and t
 \description{
 This function gets the available standard names, units, codes,names, and
 type of data for the required information for the specified instrument type
+of either ctd, rcm, or adcp.
 }
 \examples{
 data <- getData(type="ctd")

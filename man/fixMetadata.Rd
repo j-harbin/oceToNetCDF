@@ -2,18 +2,18 @@
 % Please edit documentation in R/fixMetadata.R
 \name{fixMetadata}
 \alias{fixMetadata}
-\title{Clean  metadata for a CTD and RCM object}
+\title{Clean metadata for a ctd and rcm objects}
 \usage{
 fixMetadata(odf, debug = 0, data = NULL)
 }
 \arguments{
-\item{odf}{an odf object (oce::read.odf())}
+\item{odf}{an odf object \code{\link[oce:read.odf]{oce::read.odf()}}}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getData]{getData()}}}
 }
 \value{
 an odf object

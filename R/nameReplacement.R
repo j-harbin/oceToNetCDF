@@ -1,13 +1,13 @@
-#' Replace DFO Codes with CF standard names
+#' Replace DFO codes with CF standard names
 #'
-#' This function replaces DFO codes with CF standards. For
-#' ctd types, if conductivity ratio (CRAT) exists, the values
-#' are converted to sea_water_electrical_conductivity values
-#' to abide by CF standards, and the unit is changed to the
+#' This function replaces DFO codes for dataNamesOriginal and data
+#' with CF standards. For ctd types, if conductivity ratio (CRAT)
+#' exists, the values are converted to sea_water_electrical_conductivity
+#' values to abide by CF standards, and the unit is changed to the
 #' specified unit.
 #'
-#' @param odf an odf object (oce::read.odf())
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
+#' @param odf an odf object [oce::read.odf()]
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getData()]
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
@@ -15,8 +15,7 @@
 #' @param unit specified unit of 'S/m' or 'mS/cm' to convert CRAT to
 #' sea_water_electrical_conductivty for CF standard. This is only
 #' used for ctd type
-#' @return an odf file with the dataOringinalNames as standard CF
-#' names and the institute as UW/DFO
+#' @return an odf file
 #' @importFrom oce oceSetMetadata
 #' @examples
 #' library(odfToNetCDF)

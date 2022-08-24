@@ -2,14 +2,14 @@
 % Please edit documentation in R/nameReplacement.R
 \name{nameReplacement}
 \alias{nameReplacement}
-\title{Replace DFO Codes with CF standard names}
+\title{Replace DFO codes with CF standard names}
 \usage{
 nameReplacement(odf, data = NULL, debug = 0, institute = NULL, unit = NULL)
 }
 \arguments{
-\item{odf}{an odf object (oce::read.odf())}
+\item{odf}{an odf object \code{\link[oce:read.odf]{oce::read.odf()}}}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getData]{getData()}}}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
@@ -22,14 +22,13 @@ sea_water_electrical_conductivty for CF standard. This is only
 used for ctd type}
 }
 \value{
-an odf file with the dataOringinalNames as standard CF
-names and the institute as UW/DFO
+an odf file
 }
 \description{
-This function replaces DFO codes with CF standards. For
-ctd types, if conductivity ratio (CRAT) exists, the values
-are converted to sea_water_electrical_conductivity values
-to abide by CF standards, and the unit is changed to the
+This function replaces DFO codes for dataNamesOriginal and data
+with CF standards. For ctd types, if conductivity ratio (CRAT)
+exists, the values are converted to sea_water_electrical_conductivity
+values to abide by CF standards, and the unit is changed to the
 specified unit.
 }
 \examples{

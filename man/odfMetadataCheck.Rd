@@ -2,12 +2,12 @@
 % Please edit documentation in R/odfMetadataCheck.R
 \name{odfMetadataCheck}
 \alias{odfMetadataCheck}
-\title{Check ODF metadata}
+\title{Check if required metadata exists}
 \usage{
 odfMetadataCheck(odf, data = NULL, print = TRUE, debug = 0)
 }
 \arguments{
-\item{odf}{an odf object obtained from (oce::read.odf())}
+\item{odf}{an odf object obtained from \code{\link[oce:read.odf]{oce::read.odf()}}}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
 
@@ -23,7 +23,8 @@ a print statement of any issues with metadata to command line, if nothing
 prints then all metadata is intact
 }
 \description{
-Check that an ODF object has all the metadata required to build a complete netCDF file
+This function checks that an ODF object has all the metadata
+required to build a complete netCDF file
 }
 \examples{
 library(odfToNetCDF)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/standardName.R
 \name{standardName}
 \alias{standardName}
-\title{Obtain standard name and units from GF3 code}
+\title{Obtain standard name, name, and units from GF3 code}
 \usage{
 standardName(gf3, data = NULL)
 }
@@ -15,7 +15,7 @@ standardName(gf3, data = NULL)
 A list containing the standard name and unit of the GF3 code in CF standard
 }
 \description{
-This function reveals the standard name and units in climate and
+This function reveals the standard name, anme, and units in climate and
 forecast (CF) standards from a General Formatting (GF3) standard
 code parameter.
 }

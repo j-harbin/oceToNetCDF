@@ -18,8 +18,8 @@ some functions will print debugging information.}
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
 }
 \description{
-Exports an adp object to a NetCDF using variables and metadata
-within adp combined
+This function xxports an adp object to a netCDF using variables
+and metadata within adp combined
 }
 \examples{
 \dontrun{

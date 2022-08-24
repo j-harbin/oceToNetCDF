@@ -1,12 +1,12 @@
-#' Template to convert odf object to netCDF
+#' Converts odf object to netCDF
 #'
 #' This function converts and odf object to a netCDF files for CTD
 #' and RCM types.
 #'
-#' @param odf an odf object from oce which contains mctd data
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
+#' @param odf an odf object from oce which contains mctd or rcm data
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getData()]
 #' @param filename the desired name for the netCDF file produced, if left NULL
-#'   the default will conform to BIO naming conventions
+#'   the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.

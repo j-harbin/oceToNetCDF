@@ -2,7 +2,7 @@
 % Please edit documentation in R/removeDerived.R
 \name{removeDerived}
 \alias{removeDerived}
-\title{Remove derived ctd data and metadata}
+\title{Remove derived ctd and rcm data and metadata}
 \usage{
 removeDerived(odf, debug = 0)
 }

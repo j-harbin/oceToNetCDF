@@ -1,4 +1,4 @@
-#' Remove derived ctd data and metadata
+#' Remove derived ctd and rcm data and metadata
 #'
 #' This function removes data and metadata that is derived.
 #' For a CTD type, the only data and metadata kept is time, conductivity, salinity,

@@ -1,8 +1,9 @@
-#' Check ODF metadata
+#' Check if required metadata exists
 #'
-#' Check that an ODF object has all the metadata required to build a complete netCDF file
+#' This function checks that an ODF object has all the metadata
+#' required to build a complete netCDF file
 #'
-#' @param odf an odf object obtained from (oce::read.odf())
+#' @param odf an odf object obtained from [oce::read.odf()]
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #' @param print TRUE or FALSE, TRUE will cause errors to be displayed at command
 #'   line, FALSE will sink errors into text document

@@ -1,10 +1,10 @@
-#' Clean  metadata for a CTD and RCM object
+#' Clean metadata for a ctd and rcm objects
 #'
 #' This function ensures the proper units are associated with each variable
 #' and adds place holders for flags if they do not already exist.
 #'
-#' @param odf an odf object (oce::read.odf())
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
+#' @param odf an odf object [oce::read.odf()]
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getData()]
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.

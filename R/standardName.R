@@ -1,6 +1,6 @@
-#' Obtain standard name and units from GF3 code
+#' Obtain standard name, name, and units from GF3 code
 #'
-#' This function reveals the standard name and units in climate and
+#' This function reveals the standard name, anme, and units in climate and
 #' forecast (CF) standards from a General Formatting (GF3) standard
 #'code parameter.
 #'

@@ -1,7 +1,8 @@
-#' Get data for specified instrument type
+#' Get required data for specified instrument type
 #'
 #' This function gets the available standard names, units, codes,names, and
 #' type of data for the required information for the specified instrument type
+#' of either ctd, rcm, or adcp.
 #'
 #' @param type the type of data that will eventually be converted into a netCDF.
 #' The options are ctd, rcm, or adcp

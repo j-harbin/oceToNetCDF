@@ -2,21 +2,21 @@
 % Please edit documentation in R/convertNetCDF.R
 \name{convertNetCDF}
 \alias{convertNetCDF}
-\title{Template to convert odf object to netCDF}
+\title{Converts odf object to netCDF}
 \usage{
 convertNetCDF(odf, filename = NULL, debug = 0, data = NULL)
 }
 \arguments{
-\item{odf}{an odf object from oce which contains mctd data}
+\item{odf}{an odf object from oce which contains mctd or rcm data}
 
 \item{filename}{the desired name for the netCDF file produced, if left NULL
-the default will conform to BIO naming conventions}
+the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getData]{getData()}}}
 }
 \value{
 netCDF file with a maximum of 12 variables

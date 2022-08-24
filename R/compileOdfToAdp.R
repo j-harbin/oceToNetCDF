@@ -1,13 +1,11 @@
 #' Compile multiple adp ODF files to a single adp object
 #'
-#' This function reads in a set of odf files and compiles into adp object.
-#' It is capable of recognizing missing bins or missing odf files and
-#' inserting NA values in appropriate slot of data variables
+#' This function reads in a set of adp odf files and compiles them
+#' into a single adp object. It is capable of recognizing missing bins
+#' or missing odf files and inserts NA values in appropriate slot of
+#' data variables.
 #'
-#'@family odf
-#' @description Converting individual odf bins to Net cdf standard format
-#' @param files list of odf files
-#' @param metadata any extra metadata to be added to net cdf as list form
+#' @param files list of adp odf files
 #' @importFrom oce read.oce read.odf as.adp oceSetMetadata processingLogAppend
 #' @examples
 #' \dontrun{
@@ -18,7 +16,7 @@
 #'
 #' @export
 
-compileOdfToAdp <- function(files, metadata) {
+compileOdfToAdp <- function(files) {
   if (!requireNamespace("oce", quietly=TRUE))
     stop("must install.packages(\"oce\") for compileOdfToAdp() to work")
 
@@ -65,13 +63,6 @@ compileOdfToAdp <- function(files, metadata) {
   ## depthMinMax
   adp <- oce::oceSetMetadata(adp, 'depthMin', min(depth))
   adp <- oce::oceSetMetadata(adp, 'depthMax', max(depth))
-
-  ## add in any extra supplied metadata items
-  if (!missing(metadata)) {
-    for (m in seq_along(metadata)) {
-      adp <- oceSetMetadata(adp, names(metadata)[m], metadata[[m]], note = NULL)
-    }
-  }
   adp@metadata$source <- 'odf'
   adp@processingLog <- oce::processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
 

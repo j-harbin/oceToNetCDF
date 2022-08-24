@@ -4,20 +4,16 @@
 \alias{compileOdfToAdp}
 \title{Compile multiple adp ODF files to a single adp object}
 \usage{
-compileOdfToAdp(files, metadata)
+compileOdfToAdp(files)
 }
 \arguments{
-\item{files}{list of odf files}
-
-\item{metadata}{any extra metadata to be added to net cdf as list form}
+\item{files}{list of adp odf files}
 }
 \description{
-Converting individual odf bins to Net cdf standard format
-}
-\details{
-This function reads in a set of odf files and compiles into adp object.
-It is capable of recognizing missing bins or missing odf files and
-inserting NA values in appropriate slot of data variables
+This function reads in a set of adp odf files and compiles them
+into a single adp object. It is capable of recognizing missing bins
+or missing odf files and inserts NA values in appropriate slot of
+data variables.
 }
 \examples{
 \dontrun{
@@ -27,4 +23,3 @@ adp <- compileOdfToAdp(files)
 }
 
 }
-\concept{odf}

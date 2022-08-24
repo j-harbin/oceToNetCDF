@@ -8,11 +8,11 @@
 #' @param files list of adp odf files
 #' @importFrom oce read.oce read.odf as.adp oceSetMetadata processingLogAppend
 #' @examples
-#' \dontrun{
 #' library(odfToNetCDF)
-#' files <- list.files(pattern="ODF")
+#' f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
+#' f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
+#' files <- c(f1,f2)
 #' adp <- compileOdfToAdp(files)
-#' }
 #'
 #' @export
 

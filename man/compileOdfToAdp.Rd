@@ -16,10 +16,10 @@ or missing odf files and inserts NA values in appropriate slot of
 data variables.
 }
 \examples{
-\dontrun{
 library(odfToNetCDF)
-files <- list.files(pattern="ODF")
+f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
+f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
+files <- c(f1,f2)
 adp <- compileOdfToAdp(files)
-}
 
 }

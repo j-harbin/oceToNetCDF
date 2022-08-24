@@ -4,7 +4,7 @@
 #'
 #' The `odfToNetCDF` package provides tools for converting moored conductivity-temperature-
 #' depth ("CTD"), acoustic-doppler-current-profiler ("ADCP"), and recording current meter (RCM)
-#' ODF files into netCDF files.
+#' ocean data format ("ODF") files into netCDF files.
 #'
 #' The sketches below illustrates the typical workflow for top) CTD
 #' and RCM data and bottom) ADCP data. The descriptions of the steps

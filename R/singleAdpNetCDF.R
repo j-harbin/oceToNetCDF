@@ -1,6 +1,6 @@
 #' Convert adp object to netCDF
 #'
-#' This function xxports an adp object to a netCDF using variables
+#' This function exports an adp object to a netCDF using variables
 #' and metadata within adp combined
 #'
 #'@param adp an adp adpect from the oce class

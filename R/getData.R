@@ -41,22 +41,22 @@ getData <- function(type="ctd") {
     } else if (type == "adcp") {
 
         DF <- data.frame("code"= c("DEPH", "EWCT", "HGHT", "NSCT", "PRES", "PTCH",
-                "ROLL", "SVEL", "SYTM", "VCSP", "UNKN", "ERRV", "BEAM", "TE90", "PGDP"),
+                "ROLL", "SVEL", "SYTM", "VCSP", "UNKN", "ERRV", "BEAM", "TE90", "PGDP", "CMAG", "HEAD"),
             "name"= c("Sensor Depth below Sea Surface","East (true) Component of Current",
                 "Height/Altitude above Sea Surface","North (true) Component of Current",
                 "Sea Pressure (sea surface - 0)","Pitch Angle","Roll Angle","Sound Velocity",
                 "PIPE Time Format DD-MMM-YYYY HH:MM:SS.ss", "Vertical Current Speed",
                 "Unknown WMO Code","Error Velocity","ADCP Echo Intensity","Temperature (1990 scale)",
-                "Percent Good Pings"),
+                "Percent Good Pings", "Current Magnitude", "Heading"),
             units=c("metres","m/s","metres","m/s","decibars", "degrees","degrees","m/s",
-                    "s","m/s","1","m/s","1","degrees C", "%"),
+                    "s","m/s","1","m/s","1","degrees C", "%", "1", "degree"),
             "standard_name"= c("sensor_depth_below_sea_surface ","eastward_sea_water_velocity","height_above_mean_sea_level",
                 "northward_sea_water_velocity","sea_water_pressure","platform_pitch_angle","platform_roll_angle",
                 "speed_of_sound_in_sea_water","time","upward_sea_water_velocity","unknown_WMO_code",
                 "indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water",
                 "signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water",
-                "temperature_1990_scale","percent_good_ping"),
-            "type"=rep("adcp", 15))
+                "temperature_1990_scale","percent_good_ping", "current_magnitude", "heading"),
+            "type"=rep("adcp", 17))
     }
 
 

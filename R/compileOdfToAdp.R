@@ -6,6 +6,9 @@
 #' data variables.
 #'
 #' @param files list of adp odf files
+#' @param debug integer value indicating level of debugging.
+#'  If this is less than 1, no debugging is done. Otherwise,
+#'  some functions will print debugging information
 #' @importFrom oce read.oce read.odf as.adp oceSetMetadata processingLogAppend
 #' @examples
 #' library(odfToNetCDF)
@@ -16,7 +19,7 @@
 #'
 #' @export
 
-compileOdfToAdp <- function(files) {
+compileOdfToAdp <- function(files, debug=0) {
   if (!requireNamespace("oce", quietly=TRUE))
     stop("must install.packages(\"oce\") for compileOdfToAdp() to work")
 
@@ -31,7 +34,12 @@ compileOdfToAdp <- function(files) {
   nt <- length(d[['time']])
   vars <- names(d@data)
   vars <- vars[-which(vars == 'time')]
+  if (debug > 0) {
+    message("Before renaming vars= ", paste0(vars, sep=""))
+  }
   u <- v <- w <- errorVelocity <- a <- unknown <- NULL
+
+  # Create array
   for (vr in vars) {
     assign(vr, array(NA, dim=c(nt, nd)))
   }

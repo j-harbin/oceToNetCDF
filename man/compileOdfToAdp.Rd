@@ -4,10 +4,14 @@
 \alias{compileOdfToAdp}
 \title{Compile multiple adp ODF files to a single adp object}
 \usage{
-compileOdfToAdp(files)
+compileOdfToAdp(files, debug = 0)
 }
 \arguments{
 \item{files}{list of adp odf files}
+
+\item{debug}{integer value indicating level of debugging.
+If this is less than 1, no debugging is done. Otherwise,
+some functions will print debugging information}
 }
 \description{
 This function reads in a set of adp odf files and compiles them

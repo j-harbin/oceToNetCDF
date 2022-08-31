@@ -601,7 +601,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     ncdf4::ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "generic_name", "u")
     ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "generic_name", "v")
     ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "generic_name", "w")
-    ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "generic_name", "w")       #issue in current NC protocol
+    ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "generic_name", standardName("ERRV", data=data)$name)       #issue in current NC protocol
     ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "generic_name", "AGC")
     ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "generic_name", "PGd")
     #CF

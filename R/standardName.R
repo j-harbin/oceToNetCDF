@@ -1,6 +1,6 @@
 #' Obtain standard name, name, and units from GF3 code
 #'
-#' This function reveals the standard name, anme, and units in climate and
+#' This function reveals the standard name, name, and units in climate and
 #' forecast (CF) standards from a General Formatting (GF3) standard
 #'code parameter.
 #'
@@ -40,6 +40,7 @@ standardName <- function(gf3, data=NULL) {
   gf3 <- list(gf3 = gf3)
   gf3$standard_name <- as.character(data$standard_name[[line]])
   gf3$units <- as.character(data$units[[line]])
+  gf3$name <- as.character(data$name[[line]])
 
 
   return(gf3)

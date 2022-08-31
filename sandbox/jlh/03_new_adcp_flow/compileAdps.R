@@ -30,15 +30,21 @@ compileAdps <- function(adps, debug=0) {
     stop("Must provide more than one adp to compile")
   }
 
+  # Step one: Determine length of time
   nd <- length(adps)
   d <- adps[[1]]
   #d <- nameReplacement(d, data=data)
   nt <- length(d[['time']])
+
+  if (debug > 0) {
+    message("Step 1: Determined the length of time in first adp. All of the times are the same for each file. length(t)= ", nt)
+  }
+
   vars <- names(d@data)
   vars <- vars[-which(grepl("time", vars))]
 
   if (debug > 0) {
-  message("vars= ", paste0(vars, sep=""))
+    message("Step 2: Just determined names of variables. All of these are the same for each file. vars= ", paste0(vars, sep=","))
   }
 
   u <- v <- w <- errorVelocity <- a <- unknown <- NULL
@@ -48,14 +54,25 @@ compileAdps <- function(adps, debug=0) {
     assign(vr, array(NA, dim=c(nt, nd)))
   }
 
+  if (debug > 0) {
+    message("Step 3: Just created array")
+  }
+
   depth <- NULL
-  for (i in 1:length(files)) {
-    d <- adps[[i]]
-    t <- d[['time']]
-    depth[i] <- d[['depthMin']]
+  ADCP <- list()
+  for (i in seq_along(adps)) {
+    A <- adps[[i]]
+    t <- A[['time']]
+    depth[i] <- A[['depthMin']]
     for (vr in vars) {
-      eval(parse(text=paste0(vr, "[, i] <- d[['", vr, "']]")))
+      eval(parse(text=paste0(vr, "[, i] <- A[['", vr, "']]")))
     }
+    ADCP[i] <- A
+  }
+
+  if (debug > 0) {
+    message("Step 4: Just assigned each variables from ", paste0(vars, sep=","), " in the correct location of array.")
+    message("adps are still individual object. length(ADCP)= ", length(ADCP), " and length(ADCP[[1]][['v']])= ", length(ADCP[[1]][['v']]))
   }
 
   ## need to sort the depths because of file sorting ...
@@ -65,14 +82,29 @@ compileAdps <- function(adps, debug=0) {
   for (vr in vars) {
     eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
   }
+
+  if (debug > 0) {
+    message("Step 5: Just rearranged variables to be with decreasing depth")
+    message("The length of depth is ", length(depth))
+  }
   distance <- max(depth) - depth
   names <- lapply(d[["dataNamesOriginal"]], function(x) standardName(x, data=data)$standard_name)
 message(length(names))
+
+if (debug > 0) {
+  message("Step 6: Determined the dataNamesOriginal =", paste0(d[["dataNamesOriginal"]], sep=","))
+}
+
   adp <- oce::as.adp(t, distance, v=abind::abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
+
+  if (debug > 0) {
+    message("Step 7: Created new adp object with time, distance, a, and q, with northward_sea_water_velocity (v) as an array of u (eastward_sea_water_velocity), v, and w (upward_sea_water_velocity), and errorVelocity (indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water)=", dim(adp[['v']]))
+  }
+
   #adp <- nameReplacement(adp, data=data)
-  for (m in names(d@metadata)) {
+  for (m in names(A@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
-      adp <- oce::oceSetMetadata(adp, m, d[[m]], note = NULL)
+      adp <- oce::oceSetMetadata(adp, m, A[[m]], note = NULL)
     }
   }
 

@@ -15,7 +15,7 @@ standardName(gf3, data = NULL)
 A list containing the standard name and unit of the GF3 code in CF standard
 }
 \description{
-This function reveals the standard name, anme, and units in climate and
+This function reveals the standard name, name, and units in climate and
 forecast (CF) standards from a General Formatting (GF3) standard
 code parameter.
 }

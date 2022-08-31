@@ -1,9 +1,10 @@
 #' Convert adp object to netCDF
 #'
 #' This function exports an adp object to a netCDF using variables
-#' and metadata within adp combined
+#' and metadata within adp combined. Data variables names and units
+#' are named inserted in CF standards using the [standardName()] function.
 #'
-#'@param adp an adp adpect from the oce class
+#'@param adp an adp object from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getData
 #'@param name name of the netCDF file to be produced
 
@@ -73,14 +74,14 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     }
     #define variables
 
-    dlname <- 'lon'
+    dlname <- 'longitude'
     lon_def <- ncdf4::ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
 
-    dlname <- 'lat'
+    dlname <- 'latitude'
     lat_def <- ncdf4::ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
 
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncdf4::ncvar_def(standardName("EWCT", data=data)$standard_name, standardName("EWCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    u_def <- ncdf4::ncvar_def(longname= standardName("EWCT", data=data)$standard_name, standardName("EWCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
     v_def <- ncdf4::ncvar_def(standardName("NSCT",data=data)$standard_name, standardName("NSCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
@@ -188,24 +189,24 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     lat_def <- ncdf4::ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
 
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncdf4::ncvar_def(standardName("EWCT",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    u_def <- ncdf4::ncvar_def(standardName("EWCT",data=data)$standard_name, standardName("EWCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncdf4::ncvar_def(standardName("NSCT",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    v_def <- ncdf4::ncvar_def(standardName("NSCT",data=data)$standard_name, standardName("NSCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncdf4::ncvar_def(standardName("VCSP",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    w_def <- ncdf4::ncvar_def(standardName("VCSP",data=data)$standard_name, standardName("VCSP",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "error_velocity_in_sea_water"
-    e_def <- ncdf4::ncvar_def(standardName("ERRV",data=data)$standard_name, "m/sec", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    e_def <- ncdf4::ncvar_def(standardName("ERRV",data=data)$standard_name, standardName("ERRV",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "ADCP_echo_intensity_beam_1"
 
-    b1_def <- ncdf4::ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), "counts", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    b1_def <- ncdf4::ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
 
     dlname <- "percent_good_beam_1"
-    pg1_def <- ncdf4::ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), "percent", list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    pg1_def <- ncdf4::ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), standardName("PGDP", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
     dlname <- "time_string"
     ts_def <- ncdf4::ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")

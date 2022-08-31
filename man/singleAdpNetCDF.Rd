@@ -7,7 +7,7 @@
 singleAdpNetCDF(adp, name, debug = 0, data = NULL)
 }
 \arguments{
-\item{adp}{an adp adpect from the oce class}
+\item{adp}{an adp object from the oce class}
 
 \item{name}{name of the netCDF file to be produced}
 
@@ -19,7 +19,8 @@ some functions will print debugging information.}
 }
 \description{
 This function exports an adp object to a netCDF using variables
-and metadata within adp combined
+and metadata within adp combined. Data variables names and units
+are named inserted in CF standards using the \code{\link[=standardName]{standardName()}} function.
 }
 \examples{
 \dontrun{

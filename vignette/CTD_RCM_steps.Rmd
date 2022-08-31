@@ -73,6 +73,10 @@ convertNetCDF(odf4, data=data)
 In addition to the suggested work flow, the user also has the ability to use the `odfMetadataCheck()` function, which was 
 provided by Emily O'Grady. This function checks that the ODF file has all of the required metadata needed to build a NetCDF file. This metadata includes: `longitude`, `latitude`, `type`, `model`, `samplingInterval`, `countryInstituteCode`, `cruiseNumber`, `station`, `serialNumber`, `cruise`, `sounding`, `scientist`, `waterDepth`, `depthMin`, `depthMax`, `institute`, and it ensures the names of the parameters conform to General Formatting (GF3) standards.
 
+# Caution
+
+It's important to note for RCM files, code HCDT (Horizontal current direction (true)) does not have a CF standard. The standard name has been added as horizontal_current_direction. Additionally, unlike mCTD files, no data ranges are being checked. It's recommended that the user investigates the data themselves.
+
 # References
 
 Kelley, D., and Richards, C. (2020). oce: Analysis of Oceanographic Data. Available online at: https://CRAN.R-project.org/package=oce (accessed August 23, 2022).

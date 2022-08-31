@@ -45,4 +45,15 @@ adp <- compileOdfToAdp(files)
 singleAdpNetCDF(adp, name="test", debug=1, data=data)
 ```
 
+# Caution
+
+It should be noted that for code PGDP (percent good pings), TE90 (Temperature (1990 scale)), and DEPH (Sensor Depth below Sea Surface) there were no CF standards. Their standard names have been entered as percent_good_pings, temperature_1990_scale, and sensor_depth_below_sea_surface respectively.
+
+Additionally, codes CMAG and HEAD were not identified in the list of DFO codes (Government of Canada, 2022), but were given standard names of current_magnitude and heading respectively.
+
+# References
+
+1. https://www.meds-sdmm.dfo-mpo.gc.ca/isdm-gdsi/diction/main-eng.asp
+
+
 

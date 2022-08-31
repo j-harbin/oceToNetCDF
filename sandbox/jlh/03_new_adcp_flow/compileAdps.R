@@ -99,13 +99,18 @@ if (debug > 0) {
 
   if (debug > 0) {
     message("Step 7: Created new adp object with time, distance, a, and q, with northward_sea_water_velocity (v) as an array of u (eastward_sea_water_velocity), v, and w (upward_sea_water_velocity), and errorVelocity (indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water)=", dim(adp[['v']]))
+    message("The names of data in the new adp are ", names(adp[['data']]))
   }
 
-  #adp <- nameReplacement(adp, data=data)
-  for (m in names(A@metadata)) {
+  # FIXME: Set DataNamesOriginal
+  for (m in names(d@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
-      adp <- oce::oceSetMetadata(adp, m, A[[m]], note = NULL)
+      adp <- oce::oceSetMetadata(adp, name=m, value=d[[m]], note = NULL)
     }
+  }
+
+  if (debug > 0) {
+    message("Step 8: Just set the metadata units and flags. The names of units are ", names(adp@metadata$units), " the name of flags are ", names(adp@metadata$flags))
   }
 
   ## depthMinMax

@@ -89,7 +89,6 @@ compileAdps <- function(adps, debug=0) {
   }
   distance <- max(depth) - depth
   names <- lapply(d[["dataNamesOriginal"]], function(x) standardName(x, data=data)$standard_name)
-message(length(names))
 
 if (debug > 0) {
   message("Step 6: Determined the dataNamesOriginal =", paste0(d[["dataNamesOriginal"]], sep=","))
@@ -99,8 +98,13 @@ if (debug > 0) {
 
   if (debug > 0) {
     message("Step 7: Created new adp object with time, distance, a, and q, with northward_sea_water_velocity (v) as an array of u (eastward_sea_water_velocity), v, and w (upward_sea_water_velocity), and errorVelocity (indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water)=", dim(adp[['v']]))
-    message("The names of data in the new adp are ", names(adp[['data']]))
+    message("The names of data in the new adp are ", paste0(names(adp[['data']]), sep=","))
+    message("The names of metadata in the new adp are ", paste0(names(adp[['metadata']]), sep=","))
+    message("The names of data in the OLD adp are ", paste0(names(d[['metadata']]), sep=","))
+
   }
+
+  message("HI ", paste0(names(adp@metadata), sep=" ,"))
 
   # FIXME: Set DataNamesOriginal
   for (m in names(d@metadata)) {

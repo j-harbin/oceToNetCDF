@@ -103,6 +103,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
     eval(parse(text = paste0("variable_", i, "<- '" , v[[i]], "'")))
     eval(parse(text= paste0("var",i," <-'", v[[i]],"'")))
     eval(parse(text = paste0("units", i, " <-'", vv$units, "'")))
+    #eval(parse(text = paste0("generic_parameter_name", i, " <-'", vv$name, "'")))
     eval(parse(text = paste0('var', i, 'max <-', -10000)))
     eval(parse(text = paste0('var', i, 'min <-' , 10000)))
     if(!is.null(vv$std)){
@@ -302,7 +303,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
   ncdf4::ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
   ncdf4::ncatt_put(ncout, 'station', 'cf_role', 'timeseries_id')
   ncdf4::ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
-  ncdf4::ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
+  #ncdf4::ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
   ncdf4::ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
 
   #FROM ODF
@@ -335,18 +336,13 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
   var7max <- var7min <- var8max <- var8min <- var9max <- var9min <-
   var10max <- var10min <- var11max <- var11min <- var12max <- var12min <-
   NULL
-  ####variables####
-  #sensor type, sensor depth and serial number for each variable
-  #generic nameS
-  #STANDARD NAMES
-  #data max and min
-  #VALID MIN AND MAX
-  #p01 and p06 names
 
   ncdf4::ncatt_put(ncout, var1, "sensor_type", odf[['model']])
   ncdf4::ncatt_put(ncout, var1, "sensor_depth", odf[['depthMin']])
   ncdf4::ncatt_put(ncout, var1, "serial_number", odf[['serialNumber']])
-  #ncdf4::ncatt_put(ncout, var1, "generic_name", variable_1)
+  ncdf4::ncatt_put(ncout, var1, "generic_parameter_name", data$name[which(data$code == var[1])])
+
+
   #if (!is.null(std_variable_1)){
   #  ncdf4::ncatt_put(ncout, var1, "standard_name", variable_1)
   #}
@@ -355,12 +351,12 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
   ncdf4::ncatt_put(ncout, var1, "valid_max", var1max)
   ncdf4::ncatt_put(ncout, var1, "valid_min", var1min)
 
-
   if (numvar > 1){
     ncdf4::ncatt_put(ncout, var2, "sensor_type", odf[['model']])
     ncdf4::ncatt_put(ncout, var2, "sensor_depth", odf[['depthMin']])
     ncdf4::ncatt_put(ncout, var2, "serial_number", odf[['serialNumber']])
-    #ncdf4::ncatt_put(ncout, var2, "generic_name", variable_2)
+    ncdf4::ncatt_put(ncout, var2, "generic_parameter_name", data$name[which(data$code == var[2])])
+
     #if (!is.null(std_variable_2)){
     #  ncdf4::ncatt_put(ncout, var2, "standard_name", variable_2)
     #}
@@ -369,13 +365,13 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
     ncdf4::ncatt_put(ncout, var2, "valid_max", var2max)
     ncdf4::ncatt_put(ncout, var2, "valid_min", var2min)
 
-
     if (numvar >2){
       ncdf4::ncatt_put(ncout, var3, "sensor_type", odf[['model']])
       ncdf4::ncatt_put(ncout, var3, "sensor_depth", odf[['depthMin']])
       ncdf4::ncatt_put(ncout, var3, "serial_number", odf[['serialNumber']])
-      #ncdf4::ncatt_put(ncout, var3, "generic_name", variable_3)
-      #if (!is.null(std_variable_3)){
+      ncdf4::ncatt_put(ncout, var3, "generic_parameter_name", data$name[which(data$code == var[3])])
+
+            #if (!is.null(std_variable_3)){
       #  ncdf4::ncatt_put(ncout, var3, "standard_name", variable_3)
       #}
       ncdf4::ncatt_put(ncout, var3, "data_max", max(odf[[variable_3]], na.rm = TRUE))
@@ -388,6 +384,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
         ncdf4::ncatt_put(ncout, var4, "sensor_type", odf[['model']])
         ncdf4::ncatt_put(ncout, var4, "sensor_depth", odf[['depthMin']])
         ncdf4::ncatt_put(ncout, var4, "serial_number", odf[['serialNumber']])
+        ncdf4::ncatt_put(ncout, var4, "generic_parameter_name", data$name[which(data$code == var[4])])
+
         #ncdf4::ncatt_put(ncout, var4, "generic_name", variable_4)
         #if (!is.null(std_variable_4)){
         #  ncdf4::ncatt_put(ncout, var4, "standard_name", variable_4)
@@ -402,6 +400,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
           ncdf4::ncatt_put(ncout, var5, "sensor_type", odf[['model']])
           ncdf4::ncatt_put(ncout, var5, "sensor_depth", odf[['depthMin']])
           ncdf4::ncatt_put(ncout, var5, "serial_number", odf[['serialNumber']])
+          ncdf4::ncatt_put(ncout, var5, "generic_parameter_name", data$name[which(data$code == var[5])])
+
           #ncdf4::ncatt_put(ncout, var5, "generic_name", variable_5)
           #if (!is.null(std_variable_5)){
           #  ncdf4::ncatt_put(ncout, var5, "standard_name", variable_5)
@@ -416,6 +416,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
             ncdf4::ncatt_put(ncout, var6, "sensor_type", odf[['model']])
             ncdf4::ncatt_put(ncout, var6, "sensor_depth", odf[['depthMin']])
             ncdf4::ncatt_put(ncout, var6, "serial_number", odf[['serialNumber']])
+            ncdf4::ncatt_put(ncout, var6, "generic_parameter_name", data$name[which(data$code == var[6])])
+
             #ncdf4::ncatt_put(ncout, var6, "generic_name", variable_6)
             #if (!is.null(std_variable_6)){
             #  ncdf4::ncatt_put(ncout, var6, "standard_name", variable_6)
@@ -430,6 +432,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
               ncdf4::ncatt_put(ncout, var7, "sensor_type", odf[['model']])
               ncdf4::ncatt_put(ncout, var7, "sensor_depth", odf[['depthMin']])
               ncdf4::ncatt_put(ncout, var7, "serial_number", odf[['serialNumber']])
+              ncdf4::ncatt_put(ncout, var7, "generic_parameter_name", data$name[which(data$code == var[7])])
+
               #ncdf4::ncatt_put(ncout, var7, "generic_name", variable_7)
               #if (!is.null(std_variable_7)){
               #  ncdf4::ncatt_put(ncout, var7, "standard_name", variable_7)
@@ -444,6 +448,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
                 ncdf4::ncatt_put(ncout, var8, "sensor_type", odf[['model']])
                 ncdf4::ncatt_put(ncout, var8, "sensor_depth", odf[['depthMin']])
                 ncdf4::ncatt_put(ncout, var8, "serial_number", odf[['serialNumber']])
+                ncdf4::ncatt_put(ncout, var8, "generic_parameter_name", data$name[which(data$code == var[8])])
+
                 #ncdf4::ncatt_put(ncout, var8, "generic_name", variable_8)
                 #if (!is.null(std_variable_8)){
                 #  ncdf4::ncatt_put(ncout, var8, "standard_name", variable_8)
@@ -458,6 +464,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
                   ncdf4::ncatt_put(ncout, var9, "sensor_type", odf[['model']])
                   ncdf4::ncatt_put(ncout, var9, "sensor_depth", odf[['depthMin']])
                   ncdf4::ncatt_put(ncout, var9, "serial_number", odf[['serialNumber']])
+                  ncdf4::ncatt_put(ncout, var9, "generic_parameter_name", data$name[which(data$code == var[9])])
+
                   #ncdf4::ncatt_put(ncout, var9, "generic_name", variable_9)
                   #if (!is.null(std_variable_9)){
                   #  ncdf4::ncatt_put(ncout, var9, "standard_name", variable_9)
@@ -472,6 +480,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
                     ncdf4::ncatt_put(ncout, var10, "sensor_type", odf[['model']])
                     ncdf4::ncatt_put(ncout, var10, "sensor_depth", odf[['depthMin']])
                     ncdf4::ncatt_put(ncout, var10, "serial_number", odf[['serialNumber']])
+                    ncdf4::ncatt_put(ncout, var10, "generic_parameter_name", data$name[which(data$code == var[10])])
+
                     #ncdf4::ncatt_put(ncout, var10, "generic_name", variable_10)
                     #if (!is.null(std_variable_10)){
                     #  ncdf4::ncatt_put(ncout, var10, "standard_name", variable_10)
@@ -486,6 +496,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
                       ncdf4::ncatt_put(ncout, var11, "sensor_type", odf[['model']])
                       ncdf4::ncatt_put(ncout, var11, "sensor_depth", odf[['depthMin']])
                       ncdf4::ncatt_put(ncout, var11, "serial_number", odf[['serialNumber']])
+                      ncdf4::ncatt_put(ncout, var11, "generic_parameter_name", data$name[which(data$code == var[11])])
+
                       #ncdf4::ncatt_put(ncout, var11, "generic_name", variable_11)
                       #if (!is.null(std_variable_11)){
                       #  ncdf4::ncatt_put(ncout, var11, "standard_name", variable_11)
@@ -500,6 +512,8 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
                         ncdf4::ncatt_put(ncout, var12, "sensor_type", odf[['model']])
                         ncdf4::ncatt_put(ncout, var12, "sensor_depth", odf[['depthMin']])
                         ncdf4::ncatt_put(ncout, var12 , "serial_number", odf[['serialNumber']])
+                        ncdf4::ncatt_put(ncout, var12, "generic_parameter_name", data$name[which(data$code == var[12])])
+
                         #ncdf4::ncatt_put(ncout, var12, "generic_name", variable_12)
                         #if (!is.null(std_variable_12)){
                         #  ncdf4::ncatt_put(ncout, var12, "standard_name", variable_12)
@@ -569,10 +583,9 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
 
 
 
-  ncdf4::ncatt_put(ncout, "longitude", "sdn_parameter_name", "Longitude east")
-  ncdf4::ncatt_put(ncout, "latitude", "sdn_parameter_name", "Latitude north")
-  #ncdf4::ncatt_put(ncout, 'ELTMEP01', "sdn_parameter_name", "Elapsed time (since 1970-01-01T00:00:00Z)")
-  ncdf4::ncatt_put(ncout, 'time_string', "sdn_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
+  ncdf4::ncatt_put(ncout, "longitude", "generic_parameter_name", "Longitude east")
+  ncdf4::ncatt_put(ncout, "latitude", "generic_parameter_name", "Latitude north")
+  ncdf4::ncatt_put(ncout, 'time_string', "generic_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
 
 
 

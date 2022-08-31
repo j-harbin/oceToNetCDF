@@ -1,3 +1,4 @@
+library(oce)
 # Step 1
 data <- getData(type="ctd")
 # Step 2

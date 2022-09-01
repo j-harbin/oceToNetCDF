@@ -93,20 +93,25 @@ compileAdps <- function(adps, debug=0) {
 if (debug > 0) {
   message("Step 6: Determined the dataNamesOriginal =", paste0(d[["dataNamesOriginal"]], sep=","))
 }
-
   adp <- oce::as.adp(t, distance, v=abind::abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
+
 
   if (debug > 0) {
     message("Step 7: Created new adp object with time, distance, a, and q, with northward_sea_water_velocity (v) as an array of u (eastward_sea_water_velocity), v, and w (upward_sea_water_velocity), and errorVelocity (indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water)=", dim(adp[['v']]))
-    message("The names of data in the new adp are ", paste0(names(adp[['data']]), sep=","))
-    message("The names of metadata in the new adp are ", paste0(names(adp[['metadata']]), sep=","))
-    message("The names of data in the OLD adp are ", paste0(names(d[['metadata']]), sep=","))
+    #message("The names of data in the new adp are ", paste0(names(adp[['data']]), sep=","))
+    #message("The names of metadata in the new adp are ", paste0(names(adp[['metadata']]), sep=","))
+    #message("The names of data in the OLD adp are ", paste0(names(d[['metadata']]), sep=","))
 
   }
 
-  message("HI ", paste0(names(adp@metadata), sep=" ,"))
+  # FIXME START
 
-  # FIXME: Set DataNamesOriginal
+  adp <- oceSetMetadata(adp, name="dataNamesOriginal", value=d[["dataNamesOriginal"]])
+
+  message("JAIM the new do=", adp[['dataNamesOriginal']], " and the names data are ", names(adp[['data']]))
+
+
+  # END FIXME
   for (m in names(d@metadata)) {
     if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
       adp <- oce::oceSetMetadata(adp, name=m, value=d[[m]], note = NULL)
@@ -121,7 +126,6 @@ if (debug > 0) {
   adp <- oce::oceSetMetadata(adp, 'depthMin', min(depth))
   adp <- oce::oceSetMetadata(adp, 'depthMax', max(depth))
   adp@metadata$source <- 'odf'
-  adp <- oce::oceSetMetadata(adp, "dataNamesOriginal", names)
   adp@processingLog <- oce::processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
 
   return(adp)

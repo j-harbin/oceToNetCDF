@@ -7,4 +7,3 @@ files <- list.files(path=path, pattern="*.ODF", ignore.case=TRUE, full.names = T
 adps <- lapply(files, read.oce)
 #adps2 <- lapply(adps, function(x) nameReplacement(x, data=data, debug=1))
 source("sandbox/jlh/03_new_adcp_flow/compileAdps.R"); adps3 <- compileAdps(adps, debug=1)
-singleAdpNetCDF(adps3, data=data, name="JAIM")

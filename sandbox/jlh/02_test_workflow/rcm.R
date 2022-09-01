@@ -1,5 +1,5 @@
 # Step 1
-data <- getData(type="rcm")
+data <- getCFData(type="rcm")
 # Step 2
 files <- list.files("../davisStrait/data/mooring/2004-05/RCM", full.names = TRUE)
 odfs <- lapply(files, read.odf)

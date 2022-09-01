@@ -5,13 +5,13 @@
 #'code parameter.
 #'
 #' @param gf3 a character indicating a GF3 (General Formatting) standard code parameter
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from getData
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from getCFData
 #' @return A list containing the standard name and unit of the GF3 code in CF standard
 #' @export
 #'
 #' @examples
 #' library(odfToNetCDF)
-#' data <- getData(type="ctd")
+#' data <- getCFData(type="ctd")
 #' standardName("TEMP", data=data)
 standardName <- function(gf3, data=NULL) {
 
@@ -34,7 +34,7 @@ standardName <- function(gf3, data=NULL) {
 
   }
   if (length(line) == 0) {
-    stop(gf3, " is not recognized in the codes for data type =", unique(data$type), ". Make sure you used the proper 'type' argument in getData()")
+    stop(gf3, " is not recognized in the codes for data type =", unique(data$type), ". Make sure you used the proper 'type' argument in getCFData()")
   }
 
   gf3 <- list(gf3 = gf3)

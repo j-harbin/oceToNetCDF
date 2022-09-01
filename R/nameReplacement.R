@@ -7,7 +7,7 @@
 #' specified unit.
 #'
 #' @param odf an odf object [oce::read.odf()]
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getData()]
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getCFData()]
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
@@ -20,7 +20,7 @@
 #' @examples
 #' library(odfToNetCDF)
 #' library(oce)
-#' data <- getData(type="ctd")
+#' data <- getCFData(type="ctd")
 #' f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 #' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data, unit="S/m")

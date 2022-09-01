@@ -3,7 +3,7 @@
 export(compileOdfToAdp)
 export(convertNetCDF)
 export(fixMetadata)
-export(getData)
+export(getCFData)
 export(nameReplacement)
 export(odfMetadataCheck)
 export(removeDerived)

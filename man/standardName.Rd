@@ -9,7 +9,7 @@ standardName(gf3, data = NULL)
 \arguments{
 \item{gf3}{a character indicating a GF3 (General Formatting) standard code parameter}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getCFData}
 }
 \value{
 A list containing the standard name and unit of the GF3 code in CF standard
@@ -21,6 +21,6 @@ code parameter.
 }
 \examples{
 library(odfToNetCDF)
-data <- getData(type="ctd")
+data <- getCFData(type="ctd")
 standardName("TEMP", data=data)
 }

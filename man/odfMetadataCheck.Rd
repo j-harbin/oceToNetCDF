@@ -9,7 +9,7 @@ odfMetadataCheck(odf, data = NULL, print = TRUE, debug = 0)
 \arguments{
 \item{odf}{an odf object obtained from \code{\link[oce:read.odf]{oce::read.odf()}}}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getCFData}
 
 \item{print}{TRUE or FALSE, TRUE will cause errors to be displayed at command
 line, FALSE will sink errors into text document}
@@ -29,7 +29,7 @@ required to build a complete netCDF file
 \examples{
 library(odfToNetCDF)
 library(oce)
-data <- getData(type="ctd")
+data <- getCFData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odfMetadataCheck(odf1, data=data)

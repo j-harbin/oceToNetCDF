@@ -15,7 +15,7 @@ singleAdpNetCDF(adp, name, debug = 0, data = NULL)
 If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getCFData}
 }
 \description{
 This function exports an adp object to a netCDF using variables
@@ -26,7 +26,7 @@ are named inserted in CF standards using the \code{\link[=standardName]{standard
 \dontrun{
 library(odfToNetCDF)
 library(oce)
-data <- getData(type="adcp")
+data <- getCFData(type="adcp")
 files <- list.files(pattern="ODF")
 adp <- compileOdfToAdp(files)
 singleAdpNetCDF(adp, name="test", debug=1, data=data)

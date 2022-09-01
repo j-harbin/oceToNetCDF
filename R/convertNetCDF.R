@@ -4,7 +4,7 @@
 #' and RCM types.
 #'
 #' @param odf an odf object from oce which contains mctd or rcm data
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getData()]
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getCFData()]
 #' @param filename the desired name for the netCDF file produced, if left NULL
 #'   the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions
 #' @param debug integer value indicating level of debugging.
@@ -17,7 +17,7 @@
 #' \dontrun{
 #' library(odfToNetCDF)
 #' library(oce)
-#' data <- getData(type="ctd")
+#' data <- getCFData(type="ctd")
 #' f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 #' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data, unit="S/m")

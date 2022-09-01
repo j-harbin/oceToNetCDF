@@ -6,7 +6,7 @@ context("nameReplacement()")
 
 library(odfToNetCDF)
 library(oce)
-data <- getData(type="ctd")
+data <- getCFData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 

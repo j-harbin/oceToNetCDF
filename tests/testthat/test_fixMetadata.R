@@ -6,7 +6,7 @@ context("fixMetadata")
 
 library(odfToNetCDF)
 library(oce)
-data <- getData(type="ctd")
+data <- getCFData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")
@@ -24,7 +24,7 @@ test_that("fixMetadata",
 
 test_that("errors",
           {
-            expect_error(fixMetadata(odf3), "must provide a dataframe data, likely from getData()")
+            expect_error(fixMetadata(odf3), "must provide a dataframe data, likely from getCFData()")
             expect_error(fixMetadata(odf1, data=1:10), "the data must be of class data.frame, not integer")
 
 

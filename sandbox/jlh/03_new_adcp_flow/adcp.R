@@ -1,5 +1,5 @@
 # Step one
-data <- getData(type="adcp")
+data <- getCFData(type="adcp")
 
 # Step two
 path <- "../davisStrait/data/mooring/2004-05/ADCP/BI3/"

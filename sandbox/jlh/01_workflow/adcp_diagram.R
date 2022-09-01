@@ -22,7 +22,7 @@ grViz("digraph flowchart {
       [1]: 'Get necessary data'
       [2]: 'Compile one adp object from multiple ODF'
       [3]: 'Create a single NetCDF'
-      [4]: 'getData()'
+      [4]: 'getCFData()'
       [5]: 'compileOdfToAdp()'
       [6]: 'singleAdpNetCDF()'
       ")

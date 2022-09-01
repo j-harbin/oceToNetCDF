@@ -13,7 +13,7 @@ This vignette discusses the steps to convert a moored acoustic doppler current p
 
 # Get necessary data
 
-To get the necessary data, use the `getData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
+To get the necessary data, use the `getCFData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
 
 
 
@@ -39,7 +39,7 @@ A typical work flow is as follows:
 ```{r, eval=FALSE}
 library(odfToNetCDF)
 library(oce)
-data <- getData(type="adcp")
+data <- getCFData(type="adcp")
 files <- list.files(pattern="ODF")
 adp <- compileOdfToAdp(files)
 singleAdpNetCDF(adp, name="test", debug=1, data=data)

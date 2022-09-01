@@ -15,7 +15,7 @@ This vignette discusses the steps to convert a moored conductivity-temperature-d
 
 # 1: Get necessary data
 
-To get the necessary data, use the `getData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
+To get the necessary data, use the `getCFData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
 
 
 # 2: Read an oceanographic data file
@@ -58,7 +58,7 @@ A typical workflow is as follows:
 ```{r, eval=FALSE}
 library(odfToNetCDF)
 library(oce)
-data <- getData(type="ctd")
+data <- getCFData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")

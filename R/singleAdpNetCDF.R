@@ -5,7 +5,7 @@
 #' are named inserted in CF standards using the [standardName()] function.
 #'
 #'@param adp an adp object from the oce class
-#'@param data a data frame of standard name, name, units, and GF3 codes likely from getData
+#'@param data a data frame of standard name, name, units, and GF3 codes likely from getCFData
 #'@param name name of the netCDF file to be produced
 
 #' @param debug integer value indicating level of debugging.
@@ -16,7 +16,7 @@
 #' \dontrun{
 #' library(odfToNetCDF)
 #' library(oce)
-#' data <- getData(type="adcp")
+#' data <- getCFData(type="adcp")
 #' files <- list.files(pattern="ODF")
 #' adp <- compileOdfToAdp(files)
 #' singleAdpNetCDF(adp, name="test", debug=1, data=data)
@@ -26,7 +26,7 @@
 
 singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   if (is.null(data)) {
-    stop("must provide a data frame data, likely from getData()")
+    stop("must provide a data frame data, likely from getCFData()")
   }
 
   if (!(class(data) =="data.frame")) {

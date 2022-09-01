@@ -1,6 +1,6 @@
 library(oce)
 # Step 1
-data <- getData(type="ctd")
+data <- getCFData(type="ctd")
 # Step 2
 files <- list.files("../davisStrait/data/mooring/2004-05/MCat", full.names = TRUE)
 odfs <- lapply(files, read.odf)

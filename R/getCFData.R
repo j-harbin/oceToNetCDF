@@ -10,13 +10,13 @@
 #' @return a data frame containing the necessary standard names, units, codes, names, and type of data
 #'
 #' @examples
-#' data <- getData(type="ctd")
+#' data <- getCFData(type="ctd")
 #' names(data)
 #' @export
 
-getData <- function(type="ctd") {
+getCFData <- function(type="ctd") {
     if (!(type %in% c("ctd", "rcm", "adcp"))) {
-        stop("getData can only work for data type ctd, rcm, or adcp")
+        stop("getCFData() can only work for data type ctd, rcm, or adcp")
     }
 
     if (type == "ctd") {

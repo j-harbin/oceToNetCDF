@@ -37,7 +37,7 @@ grViz("digraph flowchart {
       [4]: 'Remove derived data/metadata'
       [5]: 'Fix metadata'
       [6]: 'Convert to NetCDF'
-      [7]: 'getData()'
+      [7]: 'getCFData()'
       [8]: 'read.oce()'
       [9]: 'nameReplacement()'
       [10]: 'removeDerived()'

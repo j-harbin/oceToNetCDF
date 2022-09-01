@@ -7,4 +7,4 @@ files <- list.files(path=path, pattern="*.ODF", ignore.case=TRUE)
 adp <- compileOdfToAdp(paste0(path,files), debug=1)
 
 # Step three
-singleAdpNetCDF(adp, name="T2004-05.BI3", debug=1, data=data)
+singleAdpNetCDF(adp, name="2004-05.BI3", debug=1, data=data)

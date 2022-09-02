@@ -132,22 +132,29 @@ testADP <- function(adp, name, debug=0, data=NULL){
 
     #insert variables into nc file
     if (debug > 0) {
-        message("Step 4: About to insert variables to nc file")
+        message("Step 4: About to insert variables to nc file using ncvar_put()")
     }
 
-    # I AM HERE
-    names <-
+    names <- unlist(lapply(ncvarObjects, function(x) x$name))
+    ea <- which(grepl("eastward", names))
+    no <- which(grepl("northward", names))
+    up <- which(grepl("upward", names))
+    er <- which(grepl("error", names))
+    keep <-sort(c(ea,no,up,er))
 
-    for (i in ncvarObjects) {
-
+    for (i in seq_along(ncvarObjects[keep])) {
+      if (debug > 0) {
+      message(ncvarObjects[[i]]$name, " is going in dimension ", i)
+      }
+      ncdf4::ncvar_put(nc=ncout, varid=ncvarObjects[[i]], vals=adp[['v']][,,i])
 
     }
 
 
-    ncdf4::ncvar_put(ncout, u_def, adp[['v']][,,1])
-    ncdf4::ncvar_put(ncout, v_def, adp[['v']][,,2])
-    ncdf4::ncvar_put(ncout, w_def, adp[['v']][,,3])
-    ncdf4::ncvar_put(ncout, e_def, adp[['v']][,,4])
+    #ncdf4::ncvar_put(ncout, u_def, adp[['v']][,,1])
+    #ncdf4::ncvar_put(ncout, v_def, adp[['v']][,,2])
+    #ncdf4::ncvar_put(ncout, w_def, adp[['v']][,,3])
+    #ncdf4::ncvar_put(ncout, e_def, adp[['v']][,,4])
     ncdf4::ncvar_put(ncout, ts_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
     ncdf4::ncvar_put(ncout, longitude_def, adp[['longitude']])
     ncdf4::ncvar_put(ncout, latitude_def, adp[['latitude']])

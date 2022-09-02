@@ -106,14 +106,10 @@ if (debug > 0) {
 
   # FIXME START
 
-  adp <- oceSetMetadata(adp, name="dataNamesOriginal", value=d[["dataNamesOriginal"]])
-
-  message("JAIM the new do=", adp[['dataNamesOriginal']], " and the names data are ", names(adp[['data']]))
-
 
   # END FIXME
   for (m in names(d@metadata)) {
-    if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
+    if (m != 'units' & m != 'flags') {
       adp <- oce::oceSetMetadata(adp, name=m, value=d[[m]], note = NULL)
     }
   }
@@ -125,6 +121,9 @@ if (debug > 0) {
   ## depthMinMax
   adp <- oce::oceSetMetadata(adp, 'depthMin', min(depth))
   adp <- oce::oceSetMetadata(adp, 'depthMax', max(depth))
+  message("HI", d[['dataNamesOriginal']])
+  #adp@metadata$dataNamesOriginal <- d[["dataNamesOriginal"]]
+  adp <- oceSetMetadata(adp, name="dataNamesOriginal", value=d[["dataNamesOriginal"]])
   adp@metadata$source <- 'odf'
   adp@processingLog <- oce::processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
 

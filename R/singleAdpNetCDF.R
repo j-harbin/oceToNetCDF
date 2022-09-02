@@ -68,7 +68,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   #set fill value
   FillValue <- 1e35
 
-  if (adp@metadata$source == 'raw'){
+  if (adp@metadata$source == 'raw') {
     if (debug > 0) {
       message("The metadata source is raw")
     }

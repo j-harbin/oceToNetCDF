@@ -24,7 +24,7 @@
 #'
 #'@export
 
-singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
+testADP <- function(adp, name, debug=0, data=NULL){
     if (is.null(data)) {
         stop("must provide a data frame data, likely from getCFData()")
     }
@@ -57,7 +57,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     latitude <- adp[['latitude']]
 
     # Create dimensions
-    timedim <- ncdf4::ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
+    timedim <- ncdf4::ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))
     distdim <- ncdf4::ncdim_def("distance", "metres", as.double(dist))
     stationdim <- ncdf4::ncdim_def("station", "", as.numeric(adp[['mooring_number']]))
     longitudedim <- ncdf4::ncdim_def("longitude", "degrees_east" , as.double(longitude))
@@ -69,8 +69,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     FillValue <- 1e35
 
     #Define variables
-
-    # FIXME START
 
     if (debug > 0) {
         message("Step 2: Define a netcdf variable using ncvar_def()")
@@ -86,6 +84,9 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     time_string_def <- ncdf4::ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
     dataNames <- unlist(unname(adp[['dataNamesOriginal']]))
+    #dataNames <- dataNames[-which(grepl("SYTM", dataNames))]
+    #dataNames <- dataNames[-which(grepl("UNKN", dataNames))]
+
 
     if (debug > 0) {
         message("latitude, longitude, time_string and ", paste0(dataNames, sep=","), " are being defined")
@@ -105,7 +106,8 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     }
     dlNames <- unlist(dlNames)
 
-    ncvarObjects <- lapply(seq_along(dataNames), function(x) ncvar_def(longname= standardName(dataNames[i], data=data)$standard_name, units = standardName(dataNames[i], data=data)$units, dim = stationdim, name = dlNames[i], prec = 'double'))
+    ncvarObjects <- lapply(seq_along(dataNames), function(x) ncvar_def(longname= standardName(dataNames[x], data=data)$standard_name, units = standardName(dataNames[x], data=data)$units, dim = stationdim, name = dlNames[x], prec = 'double'))
+    names(ncvarObjects) <- defs
 
     # END FIXME
     FillValue <- 0
@@ -121,49 +123,36 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
 
     ####writing net CDF####
     #write out definitions to new nc file
-    message("PAPER", class(ncvarObjects[[1]]))
-    ncout <- ncdf4::nc_create(ncfname, list(ncvarObjects), force_v4 = TRUE)
 
-    if (adp@metadata$source == 'odf'){
-        if (debug > 0) {
-            message("The metadata source is odf")
-        }
-        #define variables
-
-        if (debug > 0) {
-            message("Step 2: About to define variables")
-        }
-
-        ####writing net CDF####
-        #write out definitions to new nc file
-
-        if (debug > 0) {
-            message("Step 3: About to write out definitions to nc file using ncdf4::nc_create")
-        }
-        ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-
-
+    if (debug > 0) {
+      message("Step 3: About to create a netcdf file using nc_create()")
     }
-
+    #message("names of ncvarObjects", unlist(lapply(ncvarObjects, function(x) x$name)))
+    ncout <- ncdf4::nc_create(filename=ncfname, vars=ncvarObjects, force_v4 = TRUE)
 
     #insert variables into nc file
     if (debug > 0) {
         message("Step 4: About to insert variables to nc file")
     }
 
+    # I AM HERE
+    names <-
+
+    for (i in ncvarObjects) {
+
+
+    }
+
+
     ncdf4::ncvar_put(ncout, u_def, adp[['v']][,,1])
     ncdf4::ncvar_put(ncout, v_def, adp[['v']][,,2])
     ncdf4::ncvar_put(ncout, w_def, adp[['v']][,,3])
     ncdf4::ncvar_put(ncout, e_def, adp[['v']][,,4])
     ncdf4::ncvar_put(ncout, ts_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
-    ncdf4::ncvar_put(ncout, lon_def, adp[['longitude']])
-    ncdf4::ncvar_put(ncout, lat_def, adp[['latitude']])
+    ncdf4::ncvar_put(ncout, longitude_def, adp[['longitude']])
+    ncdf4::ncvar_put(ncout, latitude_def, adp[['latitude']])
 
-    if (adp@metadata$source == 'raw'){
 
-        if (debug > 0) {
-            message("Metadata source is raw")
-        }
 
         ncdf4::ncvar_put(ncout, b1_def, adp[['a', 'numeric']][,,1])
         ncdf4::ncvar_put(ncout, b2_def, adp[['a', 'numeric']][,,2])
@@ -190,11 +179,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
         ncdf4::ncvar_put(ncout, pres_def, adp[['pressure']])
         ncdf4::ncvar_put(ncout, svel_def, adp[['soundSpeed']])
         ncdf4::ncvar_put(ncout, ts_def, adp[['time']])
-    }
-    if (adp@metadata$source == 'odf'){
-        if (debug > 0) {
-            message("Metadata source is odf")
-        }
 
         if (debug > 0) {
             message("Step 5: About to write data into existing Netcdf using ncdf4::ncvar_put")
@@ -203,7 +187,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
         ncdf4::ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
         ncdf4::ncvar_put(ncout, ts_def, adp[['time']])
 
-    }
 
     ####metadata####
     if (debug > 0) {

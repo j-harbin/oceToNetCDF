@@ -73,7 +73,7 @@ compile2 <- function(files, debug=0) {
         message('A new adp has been created with data names = ', paste0(names(adp@data), sep=","), " and length = ", length(names(adp@data)))
     }
 
-    neededMeta <- c("units", "flags", "dataNamesOriginal")
+    neededMeta <- c("dataNamesOriginal")
     for (i in seq_along(neededMeta)) {
         l <- length(which(grepl(neededMeta[i], names(adp@metadata))))
         if (l == 0) {

@@ -46,8 +46,7 @@ testADP <- function(adp, name, debug=0, data=NULL){
     # Otherwise, the file can't be deleted until the R session is exited.
     on.exit(expr=ncdf4::nc_close(ncout))
 
-    ####setting dimensions and definitions####
-    # Dimension variables from adp adpect
+    # Setting dimensions
     if (debug > 0) {
         message("Step 1: About to set dimension using ncdim_def()")
     }
@@ -69,7 +68,6 @@ testADP <- function(adp, name, debug=0, data=NULL){
     FillValue <- 1e35
 
     #Define variables
-
     if (debug > 0) {
         message("Step 2: Define a netcdf variable using ncvar_def()")
     }
@@ -86,7 +84,6 @@ testADP <- function(adp, name, debug=0, data=NULL){
     dataNames <- unlist(unname(adp[['dataNamesOriginal']]))
     #dataNames <- dataNames[-which(grepl("SYTM", dataNames))]
     #dataNames <- dataNames[-which(grepl("UNKN", dataNames))]
-
 
     if (debug > 0) {
         message("latitude, longitude, time_string and ", paste0(dataNames, sep=","), " are being defined")
@@ -229,216 +226,6 @@ testADP <- function(adp, name, debug=0, data=NULL){
     ncdf4::ncatt_put(ncout, 0, "vertical_separation", adp[['vertical_separation']])
     ncdf4::ncatt_put(ncout, 0, "title", adp[['title']])
 
-    if (adp@metadata$source == 'raw'){
-        if (debug > 0) {
-            message("Metadata source is raw")
-        }
-
-        ##QC VARIABLE
-        ncdf4::ncatt_put(ncout, 'standardName("EWCT",data=data)$standard_name', 'ancillary_variables', 'eastward_sea_water_velocity_QC')
-        ncdf4::ncatt_put(ncout, 'NSCT', 'ancillary_variables', 'northward_sea_water_velocity_QC')
-        ncdf4::ncatt_put(ncout, 'VCSP', 'ancillary_variables', 'upward_sea_water_velocity_QC')
-
-        ####pulled from adp adpect####
-        ncdf4::ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
-
-        #       deprecated --- Diana Cardoso 06/01/2018
-        #ncdf4::ncatt_put(ncout, 0, "deployment_date", adp[['deployment_time']])
-        #ncdf4::ncatt_put(ncout, 0, "recovery_date", adp[['recovery_time']])
-
-
-        ncdf4::ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
-        ncdf4::ncatt_put(ncout, 0, "frequency", adp[['frequency']])
-        ncdf4::ncatt_put(ncout, 0, "beam_pattern", adp[['beamPattern']])
-        ncdf4::ncatt_put(ncout, 0, "janus", adp[['numberOfBeams']])
-        ncdf4::ncatt_put(ncout, 0, "pings_per_ensemble", adp[['pingsPerEnsemble']])
-        ncdf4::ncatt_put(ncout, 0, "valid_correlation_range", adp[['lowCorrThresh']])
-        ncdf4::ncatt_put(ncout, 0, "minmax_percent_good", adp[['percentGdMinimum']])
-        ncdf4::ncatt_put(ncout, 0,"minmax_percent_good", "100")
-        ncdf4::ncatt_put(ncout, 0, "error_velocity_threshold", paste(adp[['errorVelocityMaximum']], 'm/s'))
-        ncdf4::ncatt_put(ncout, 0, "transmit_pulse_length_cm", adp[['xmitPulseLength']]*100)
-        ncdf4::ncatt_put(ncout, 0, "false_target_reject_values", adp[['falseTargetThresh']])
-        ncdf4::ncatt_put(ncout, 0, "serial_number", adp[['serialNumber']])
-
-        #     deprecated --- Diana Cardoso 06/01/2018
-        #ncdf4::ncatt_put(ncout, 0, "transform", adp[['oceCoordinate']])
-
-
-        ncdf4::ncatt_put(ncout, 0, "data_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, 0, "data_subtype", adp[['data_subtype']])
-        ncdf4::ncatt_put(ncout, 0, "coord_system", adp[['oceCoordinate']])
-        ncdf4::ncatt_put(ncout, 0, "longitude", adp[['longitude']])
-        ncdf4::ncatt_put(ncout, 0, "latitude", adp[['latitude']])
-        ncdf4::ncatt_put(ncout, 0, "magnetic_variation", adp[['magnetic_variation']])
-        ncdf4::ncatt_put(ncout, 0, "platform", adp[['platform']])
-        ncdf4::ncatt_put(ncout, 0, "sounding", adp[['sounding']])
-        ncdf4::ncatt_put(ncout, 0, "scientist", adp[['scientist']])
-        ncdf4::ncatt_put(ncout, 0, "water_depth", adp[['sounding']])
-        ncdf4::ncatt_put(ncout, 0, "delta_t_sec",as.double(adp[['sampling_interval']]))
-        ncdf4::ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']]*1000)
-        ncdf4::ncatt_put(ncout, "station", 'longitude', adp[['longitude']])
-        ncdf4::ncatt_put(ncout, "station", 'latitude', adp[['latitude']])
-        ncdf4::ncatt_put(ncout, "DEPH", "xducer_offset_from_bottom", as.numeric(adp[['sounding']]) - adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "DEPH", "bin_size", adp[['cellSize']])
-        ncdf4::ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "CMAG_01", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "CMAG_01", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "CMAG_01", "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "CMAG_02", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "CMAG_02", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "CMAG_02", "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "CMAG_03", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "CMAG_03", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "CMAG_03", "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "CMAG_04", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "CMAG_04", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "CMAG_04", "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "HEAD", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "HEAD", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "HEAD", "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "PRES", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "PRES", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "PRES", "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "SVEL", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "SVEL", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "SVEL", "serial_number", adp[['serialNumber']])
-        #ncdf4::ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "generic_name", "u")
-        #ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "generic_name", "v")
-        #ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "generic_name", "w")
-        #ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "generic_name", "w")       #issue in current NC protocol
-        #ncdf4::ncatt_put(ncout, paste0(standardName("BEAM")$standard_name, "_1"), "generic_name", "AGC")
-        #ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "generic_name", "AGC")
-        #ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "generic_name", "AGC")
-        #ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "generic_name", "AGC")
-        #ncdf4::ncatt_put(ncout, "CMAG_01", "generic_name", "CM")
-        #ncdf4::ncatt_put(ncout, "CMAG_02", "generic_name", "CM")
-        #ncdf4::ncatt_put(ncout, "CMAG_03", "generic_name", "CM")
-        #ncdf4::ncatt_put(ncout, "CMAG_04", "generic_name", "CM")
-        #ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "generic_name", "PGd")
-        #ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "generic_name", "PGd")
-        #ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "generic_name", "PGd")
-        #ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "generic_name", "PGd")
-        #ncdf4::ncatt_put(ncout, "hght", "generic_name", "height")
-        ncdf4::ncatt_put(ncout, "hght", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "hght", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "hght", "serial_number", adp[['serialNumber']])
-        #ncdf4::ncatt_put(ncout, "DEPH", "generic_name", "depth")
-        ncdf4::ncatt_put(ncout, "DEPH", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "DEPH", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "DEPH", "serial_number", adp[['serialNumber']])
-        #ncdf4::ncatt_put(ncout, "te90", "generic_name", "temp")
-        ncdf4::ncatt_put(ncout, "te90", "sensor_type", adp[['instrumentType']])
-        ncdf4::ncatt_put(ncout, "te90", "sensor_depth", adp[['sensor_depth']])
-        ncdf4::ncatt_put(ncout, "te90", "serial_number", adp[['serialNumber']])
-        ncdf4::ncatt_put(ncout, "eastward_sea_water_velocity_QC", "comment", "Quality flag resulting from quality control")
-        ncdf4::ncatt_put(ncout, "eastward_sea_water_velocity_QC", "flag_meanings",adp[['flag_meaning']])
-        ncdf4::ncatt_put(ncout, "eastward_sea_water_velocity_QC", "flag_values",c(0:9))
-        ncdf4::ncatt_put(ncout, "eastward_sea_water_velocity_QC", "References", adp[['flag_references']])
-        ncdf4::ncatt_put(ncout, "northward_sea_water_velocity_QC", "comment", "Quality flag resulting from quality control")
-        ncdf4::ncatt_put(ncout, "northward_sea_water_velocity_QC", "flag_meanings", adp[['flag_meaning']])
-        ncdf4::ncatt_put(ncout, "northward_sea_water_velocity_QC", "flag_values",c(0:9))
-        ncdf4::ncatt_put(ncout, "northward_sea_water_velocity_QC", "References", adp[['flag_references']])
-        ncdf4::ncatt_put(ncout, "upward_sea_water_velocity_QC", "comment", "Quality flag resulting from quality control")
-        ncdf4::ncatt_put(ncout, "upward_sea_water_velocity_QC", "flag_meanings", adp[['flag_meaning']])
-        ncdf4::ncatt_put(ncout, "upward_sea_water_velocity_QC", "flag_values",c(0:9))
-        ncdf4::ncatt_put(ncout, "upward_sea_water_velocity_QC", "References", adp[['flag_references']])
-
-        #CF conventions
-
-        ncdf4::ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
-        ncdf4::ncatt_put(ncout, 0, "creator_type", "person")
-        ncdf4::ncatt_put(ncout, 0, "program", adp[['program']])
-        ncdf4::ncatt_put(ncout, 0, "sea_name", adp[['sea_name']])
-        ncdf4::ncatt_put(ncout, 0, "time_coverage_start", adp[['time_coverage_start']])
-        ncdf4::ncatt_put(ncout, 0, "time_coverage_end", adp[['time_coverage_end']])
-        ncdf4::ncatt_put(ncout, 0, "geospatial_lat_min", adp[['latitude']])
-        ncdf4::ncatt_put(ncout, 0, "geospatial_lat_max", adp[['latitude']])
-        ncdf4::ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
-        ncdf4::ncatt_put(ncout, 0, "geospatial_lon_min", adp[['longitude']])
-        ncdf4::ncatt_put(ncout, 0, "geospatial_lon_max", adp[['longitude']])
-        ncdf4::ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
-
-        if (adp[['orientation']] == 'up'){
-            ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
-            ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
-        }
-        if (adp[['orientation']] == 'down'){
-            ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_min", adp[['sensor_depth']] + min(adp[['distance']], na.rm = TRUE))
-            ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_max", adp[['sensor_depth']] + max(adp[['distance']], na.rm = TRUE))
-        }
-        ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
-        ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
-        ncdf4::ncatt_put(ncout, 0, "institution", adp[['institution']])
-        ncdf4::ncatt_put(ncout, 0, "project", adp[['project']])
-        ncdf4::ncatt_put(ncout, 0, "history", adp[['history']])
-        ncdf4::ncatt_put(ncout, 0 , "flag_meanings", adp[['flag_meaning']])
-        ncdf4::ncatt_put(ncout, 0 , "flag_values", c(0:9))
-        ncdf4::ncatt_put(ncout, 0, "source", "R code: adcpProcess, github:")
-        ncdf4::ncatt_put(ncout, 0, "date_modified", as.character(as.POSIXct(Sys.time(), format = '%Y-%m-%d %H:%M:%sZ', tz = 'UTC')))
-        ncdf4::ncatt_put(ncout,0, "_FillValue", "1e35")
-        ncdf4::ncatt_put(ncout, 0, "featureType", "timeSeriesProfile") #link to oce adpect? ..... if adp == timeSeriesProfile
-        ncdf4::ncatt_put
-
-
-        ncdf4::ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "generic_parameter_name", standardName("EWCT",data=data)$name)
-        ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "generic_parameter_name", standardName("NSCT",data=data)$name)
-        ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "generic_parameter_name", standardName("VCSP",data=data)$name)
-        ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "generic_parameter_name", standardName("ERRV",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "generic_parameter_name", standardName("BEAM",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "generic_parameter_name", standardName("BEAM",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "generic_parameter_name", standardName("BEAM",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "generic_parameter_name", standardName("PGDP",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "generic_parameter_name", standardName("PGDP",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "generic_parameter_name", standardName("PGDP",data=data)$name)
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "generic_parameter_name", standardName("PGDP",data=data)$name)
-        ncdf4::ncatt_put(ncout, "DEPH", "generic_parameter_name", standardName("DEPH",data=data)$name)
-        ncdf4::ncatt_put(ncout, "TE90", "generic_parameter_name", standardName("TE90",data=data)$name)
-        ncdf4::ncatt_put(ncout, "PTCH", "generic_parameter_name", standardName("PTCH",data=data)$name)
-        ncdf4::ncatt_put(ncout, "ROLL", "generic_parameter_name", standardName("ROLL",data=data)$name)
-        ncdf4::ncatt_put(ncout, "longitude", "generic_parameter_name", "Longitude east")
-        ncdf4::ncatt_put(ncout, "latitude", "generic_parameter_name", "Latitude north")
-        ncdf4::ncatt_put(ncout, "HEAD", "generic_parameter_name", standardName("HEAD",data=data)$name)
-        ncdf4::ncatt_put(ncout, "PRES", "generic_parameter_name", standardName("PRES",data=data)$name)
-        ncdf4::ncatt_put(ncout, "SVEL", "generic_parameter_name", standardName("SVEL",data=data)$name)
-        ncdf4::ncatt_put(ncout, 'time_string', "generic_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
-
-    }
 
     if (adp@metadata$source == 'odf'){
         ncdf4::ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
@@ -484,22 +271,6 @@ testADP <- function(adp, name, debug=0, data=NULL){
         ncdf4::ncatt_put(ncout, 0, "cruise_number", gsub(".*M","",adp[['cruiseNumber']]))
         ncdf4::ncatt_put(ncout, 0, "depth_off_bottom", gsub(".*M","",adp[['depthOffBottom']]))
         ncdf4::ncatt_put(ncout, 0, "source", gsub(".*M","",adp[['source']]))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         #FIXME: should be pulled from odf...not in adpect... issue with oce read.odf
@@ -610,53 +381,6 @@ testADP <- function(adp, name, debug=0, data=NULL){
     ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_max", 2000)
     ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_min", -2000)
 
-    if(adp@metadata$source == 'raw'){
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']][,,1], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']][,,1], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "data_min", min(adp[['a' ,'numeric']][,,2], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_2"), "data_max", max(adp[['a', 'numeric']][,,2], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "data_min", min(adp[['a', 'numeric']][,,3], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_3"), "data_max", max(adp[['a', 'numeric']][,,3], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "data_min", min(adp[['a', 'numeric']][,,4], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_4"), "data_max", max(adp[['a', 'numeric']][,,4], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, "CMAG_01", "data_min", min(adp[['q', 'numeric']][,,1], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, "CMAG_01", "data_max", max(adp[['q', 'numeric']][,,1], na.rm= TRUE))
-
-        ncdf4::ncatt_put(ncout, "CMAG_02", "data_min", min(adp[['q' ,'numeric']][,,2], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, "CMAG_02", "data_max", max(adp[['q', 'numeric']][,,2], na.rm= TRUE))
-
-        ncdf4::ncatt_put(ncout, "CMAG_03", "data_min", min(adp[['q', 'numeric']][,,3], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, "CMAG_03", "data_max", max(adp[['q', 'numeric']][,,3], na.rm= TRUE))
-
-        ncdf4::ncatt_put(ncout, "CMAG_04", "data_min", min(adp[['q', 'numeric']][,,4], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, "CMAG_04", "data_max", max(adp[['q', 'numeric']][,,4], na.rm= TRUE))
-
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_min", min(adp[['g', 'numeric']][,,1], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_max", max(adp[['g', 'numeric']][,,1], na.rm= TRUE))# eg min 25 % good
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "data_min", min(adp[['g', 'numeric']][,,2], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_2"), "data_max", max(adp[['g' ,'numeric']][,,2], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "data_min", min(adp[['g' ,'numeric']][,,3], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_3"), "data_max", max(adp[['g', 'numeric']][,,3], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "data_min", min(adp[['g', 'numeric']][,,4], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_4"), "data_max", max(adp[['g', 'numeric']][,,4], na.rm= TRUE))
-        ncdf4::ncatt_put(ncout, "hght", "data_min", min(adp[['depth', 'data']]))
-        ncdf4::ncatt_put(ncout, "hght", "data_max", max(adp[['depth', 'data']]))
-        ncdf4::ncatt_put(ncout, "DEPH", "data_min", min(adp[['depth']]))
-        ncdf4::ncatt_put(ncout, "DEPH", "data_max", max(adp[['depth']]))
-        ncdf4::ncatt_put(ncout, "te90", "data_min", min(adp[['temperature']]))
-        ncdf4::ncatt_put(ncout, "te90", "data_max", max(adp[['temperature']]))
-        ncdf4::ncatt_put(ncout, "PTCH", "data_min", min(adp[['pitch']]))
-        ncdf4::ncatt_put(ncout, "PTCH", "data_max", max(adp[['pitch']]))
-        ncdf4::ncatt_put(ncout, "ROLL", "data_min", min(adp[['roll']]))
-        ncdf4::ncatt_put(ncout, "ROLL", "data_max", max(adp[['roll']]))
-        ncdf4::ncatt_put(ncout, "HEAD", "data_min", min(adp[['heading']]))
-        ncdf4::ncatt_put(ncout, "HEAD", "data_max", max(adp[['heading']]))
-        ncdf4::ncatt_put(ncout, "PRES", "data_min", min(adp[['pressure']]))
-        ncdf4::ncatt_put(ncout, "PRES", "data_max", max(adp[['pressure']]))
-        ncdf4::ncatt_put(ncout, "SVEL", "data_min", min(adp[['soundSpeed']]))
-        ncdf4::ncatt_put(ncout, "SVEL", "data_max", max(adp[['soundSpeed']]))
-
-    }
     if( adp@metadata$source == 'odf'){
         ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
         ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']], na.rm= TRUE))

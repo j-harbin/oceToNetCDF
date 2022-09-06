@@ -149,16 +149,28 @@ testADP <- function(adp, name, debug=0, data=NULL){
       ncdf4::ncvar_put(nc=ncout, varid=ncvarObjects[[i]], vals=adp[['v']][,,i])
 
     }
+# HERE LONG WEEKEND START UP
+    #ncdf4::ncvar_put(ncout, time_string_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
+    #ncdf4::ncvar_put(ncout, longitude_def, adp[['longitude']])
+    #ncdf4::ncvar_put(ncout, latitude_def, adp[['latitude']])
 
+ # a, q, and g
 
-    #ncdf4::ncvar_put(ncout, u_def, adp[['v']][,,1])
-    #ncdf4::ncvar_put(ncout, v_def, adp[['v']][,,2])
-    #ncdf4::ncvar_put(ncout, w_def, adp[['v']][,,3])
-    #ncdf4::ncvar_put(ncout, e_def, adp[['v']][,,4])
-    ncdf4::ncvar_put(ncout, ts_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
-    ncdf4::ncvar_put(ncout, longitude_def, adp[['longitude']])
-    ncdf4::ncvar_put(ncout, latitude_def, adp[['latitude']])
+    a <- which(grepl("signal_intensity_from_multibeam", names))
+    q <- which(grepl("unknown", names))
+    g <- which(grepl("percent_good_ping", names))
+    aqg <- c(a,q,g)
 
+    for (i in seq_along(ncvarObjects[aqg])) {
+      ncdf4::ncvar_put(nc=ncout, varid=ncvarObjects[[i]], vals=adp[[names[i], "numeric"]][,,i])
+      ncdf4::ncvar_put(nc=ncout, varid=ncvarObjects[[i]], vals=adp[[names[i], "numeric"]][,,i+1])
+      ncdf4::ncvar_put(nc=ncout, varid=ncvarObjects[[i]], vals=adp[[names[i], "numeric"]][,,i+2])
+      ncdf4::ncvar_put(nc=ncout, varid=ncvarObjects[[i]], vals=adp[[names[i], "numeric"]][,,i+3])
+      #ncdf4::ncvar_put(ncout, b1_def, adp[['a', 'numeric']][,,1])
+
+    }
+
+    # LONG WEEKEND HERE
 
 
         ncdf4::ncvar_put(ncout, b1_def, adp[['a', 'numeric']][,,1])
@@ -170,10 +182,12 @@ testADP <- function(adp, name, debug=0, data=NULL){
         ncdf4::ncvar_put(ncout, cm2_def, adp[['q', 'numeric']][,,2])
         ncdf4::ncvar_put(ncout, cm3_def, adp[['q', 'numeric']][,,3])
         ncdf4::ncvar_put(ncout, cm4_def, adp[['q', 'numeric']][,,4])
+
         ncdf4::ncvar_put(ncout, pg1_def, adp[['g', 'numeric']][,,1])
         ncdf4::ncvar_put(ncout, pg2_def, adp[['g', 'numeric']][,,2])
         ncdf4::ncvar_put(ncout, pg3_def, adp[['g', 'numeric']][,,3])
         ncdf4::ncvar_put(ncout, pg4_def, adp[['g', 'numeric']][,,4])
+
         ncdf4::ncvar_put(ncout, p_def, adp[['pitch']])
         ncdf4::ncvar_put(ncout, r_def, adp[['roll']]*(180/pi))
         ncdf4::ncvar_put(ncout, hght_def, (adp[['distance']] - adp[['sensor_depth']]))

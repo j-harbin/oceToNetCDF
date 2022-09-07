@@ -68,10 +68,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   #set fill value
   FillValue <- 1e35
 
-  if (adp@metadata$source == 'odf'){
-    if (debug > 0) {
-      message("The metadata source is odf")
-    }
     #define variables
 
     if (debug > 0) {
@@ -116,13 +112,14 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
 
 
-  }
 
 
   #insert variables into nc file
   if (debug > 0) {
     message("Step 4: About to insert variables to nc file")
   }
+
+  #browser()
 
   ncdf4::ncvar_put(ncout, u_def, adp[['v']][,,1])
   ncdf4::ncvar_put(ncout, v_def, adp[['v']][,,2])
@@ -132,19 +129,12 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   ncdf4::ncvar_put(ncout, lon_def, adp[['longitude']])
   ncdf4::ncvar_put(ncout, lat_def, adp[['latitude']])
 
-  if (adp@metadata$source == 'odf'){
-    if (debug > 0) {
-    message("Metadata source is odf")
-    }
-
     if (debug > 0) {
       message("Step 5: About to write data into existing Netcdf using ncdf4::ncvar_put")
     }
     ncdf4::ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
     ncdf4::ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
     ncdf4::ncvar_put(ncout, ts_def, adp[['time']])
-
-  }
 
   ####metadata####
   if (debug > 0) {
@@ -167,7 +157,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   ncdf4::ncatt_put(ncout, 0, "title", adp[['title']])
 
 
-  if (adp@metadata$source == 'odf'){
     ncdf4::ncatt_put(ncout, 0, "mooring_number", adp[['mooring_number']])
     ncdf4::ncatt_put(ncout, 0, "firmware_version", adp[['firmwareVersion']])
     ncdf4::ncatt_put(ncout, 0, "frequency", adp[['frequency']])
@@ -211,23 +200,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     ncdf4::ncatt_put(ncout, 0, "cruise_number", gsub(".*M","",adp[['cruiseNumber']]))
     ncdf4::ncatt_put(ncout, 0, "depth_off_bottom", gsub(".*M","",adp[['depthOffBottom']]))
     ncdf4::ncatt_put(ncout, 0, "source", gsub(".*M","",adp[['source']]))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     #FIXME: should be pulled from odf...not in adpect... issue with oce read.odf
     ncdf4::ncatt_put(ncout, "distance", "xducer_offset_from_bottom", adp[['depth_off_bottom']])
@@ -305,7 +277,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
 
 
 
-  }
   if(!is.null(adp[['publisher_name']])){
     ncdf4::ncatt_put(ncout, 0, "publisher_name", adp[['publisher_name']])
   }
@@ -337,12 +308,10 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_max", 2000)
   ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_min", -2000)
 
-  if( adp@metadata$source == 'odf'){
     ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
     ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']], na.rm= TRUE))
     ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_min", min(adp[['q', 'numeric']], na.rm= TRUE))
     ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_max", max(adp[['q', 'numeric']], na.rm= TRUE))
 
-  }
 
 }

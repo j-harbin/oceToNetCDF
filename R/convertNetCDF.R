@@ -254,6 +254,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
   }
 
   ####INSERT DATA####
+  browser()
   ncdf4::ncvar_put(ncout, ts_def, odf[['time']])
   #ncdf4::ncvar_put(ncout, t_def, as.POSIXct(odf[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
   ncdf4::ncvar_put(ncout, lon_def, odf[['longitude']])

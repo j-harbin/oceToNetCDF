@@ -10,3 +10,6 @@ source("sandbox/jlh/03_new_adcp_flow/compile2.R"); adps3 <- compile2(files, debu
 source("sandbox/jlh/03_new_adcp_flow/single2.R"); single2(adps3, data=data, name="TEST", debug=1)
 
 #singleAdpNetCDF(adps3, data=data, name="j", debug=1)
+
+#http://nco.sourceforge.net
+# https://pro.arcgis.com/en/pro-app/latest/help/data/multidimensional/fundamentals-of-netcdf-data-storage.htm

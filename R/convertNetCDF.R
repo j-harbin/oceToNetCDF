@@ -7,6 +7,8 @@
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from [getCFData()]
 #' @param filename the desired name for the netCDF file produced, if left NULL
 #'   the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions
+#'@param destination the specified location to save the NetCDF. By default this is set
+#' to the local directory
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
@@ -27,7 +29,7 @@
 #' }
 #' @export
 
-convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
+convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination="."){
   if (is.null(data)) {
     stop("In convertNetCDF(), must provide a data frame for data")
   }
@@ -139,8 +141,8 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
       filename <- paste0("MCM", ff, sep="")
     }
   }
-  ncpath <- "./"
-  ncfname <- paste(ncpath, filename, ".nc", sep = "")
+  ncpath <- destination
+  ncfname <- paste(ncpath,"/", filename, ".nc", sep = "")
 
   if (debug > 0) {
     message("Step 5: Check dimensions of time, station, lon, lat, and dimnchar.")
@@ -254,7 +256,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL){
   }
 
   ####INSERT DATA####
-  browser()
   ncdf4::ncvar_put(ncout, ts_def, odf[['time']])
   #ncdf4::ncvar_put(ncout, t_def, as.POSIXct(odf[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
   ncdf4::ncvar_put(ncout, lon_def, odf[['longitude']])

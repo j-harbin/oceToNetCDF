@@ -4,7 +4,7 @@
 \alias{singleAdpNetCDF}
 \title{Convert adp object to netCDF}
 \usage{
-singleAdpNetCDF(adp, name, debug = 0, data = NULL)
+singleAdpNetCDF(adp, name, debug = 0, data = NULL, destination = ".")
 }
 \arguments{
 \item{adp}{an adp object from the oce class}
@@ -16,6 +16,9 @@ If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getCFData}
+
+\item{destination}{the specified location to save the NetCDF. By default this is set
+to the local directory}
 }
 \description{
 This function exports an adp object to a netCDF using variables

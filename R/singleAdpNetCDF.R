@@ -7,7 +7,8 @@
 #'@param adp an adp object from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getCFData
 #'@param name name of the netCDF file to be produced
-
+#'@param destination the specified location to save the NetCDF. By default this is set
+#' to the local directory
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
@@ -24,7 +25,7 @@
 #'
 #'@export
 
-singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
+singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   if (is.null(data)) {
     stop("must provide a data frame data, likely from getCFData()")
   }
@@ -37,9 +38,9 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
     stop("method is only for adpects of class '", "adp", "'")
   }
   #file name and path
-  ncpath <- "./"
+  ncpath <- destination
   ncname <- name
-  ncfname <- paste(ncpath, ncname, ".nc", sep = "")
+  ncfname <- paste(ncpath,"/", ncname, ".nc", sep = "")
 
   # Added 10-SEP-2018 R.Pettipas
   # If the function exits due to an error, close the open netCDF file.

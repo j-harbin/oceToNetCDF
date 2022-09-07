@@ -4,7 +4,7 @@
 \alias{convertNetCDF}
 \title{Converts odf object to netCDF}
 \usage{
-convertNetCDF(odf, filename = NULL, debug = 0, data = NULL)
+convertNetCDF(odf, filename = NULL, debug = 0, data = NULL, destination = ".")
 }
 \arguments{
 \item{odf}{an odf object from oce which contains mctd or rcm data}
@@ -17,6 +17,9 @@ If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getCFData]{getCFData()}}}
+
+\item{destination}{the specified location to save the NetCDF. By default this is set
+to the local directory}
 }
 \value{
 netCDF file with a maximum of 12 variables

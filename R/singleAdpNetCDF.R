@@ -57,13 +57,11 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   lat <- adp[['latitude']]
 
   #create dimensions
-  timedim <- ncdf4::ncdim_def("time", "seconds since 1970-01-01T00:00:00Z", as.double(time))    #time formatting FIX
-  distdim <- ncdf4::ncdim_def("distance", "metres", as.double(dist))
-  stationdim <- ncdf4::ncdim_def("station", "", as.numeric(adp[['mooring_number']]))
-  londim <- ncdf4::ncdim_def("lon", "degrees_east" , as.double(lon))
-  latdim <- ncdf4::ncdim_def("lat", "degrees_north", as.double(lat))
-  dimnchar <- ncdf4::ncdim_def('nchar', '', 1:23, create_dimvar = FALSE)
-
+  timedim <- ncdf4::ncdim_def(name="time", units="seconds since 1970-01-01T00:00:00Z", vals=as.double(time))
+  distdim <- ncdf4::ncdim_def(name="distance", units="metres", vals=as.double(dist))
+  #stationdim <- ncdf4::ncdim_def(name="station", units="", vals=1538)
+  stationdim <- ncdf4::ncdim_def(name="station", units="", vals=as.numeric(adp[['mooringNumber']]))
+  dimnchar <- ncdf4::ncdim_def(name='nchar', units='', vals=1:23, create_dimvar = FALSE)
 
   #set fill value
   FillValue <- 1e35

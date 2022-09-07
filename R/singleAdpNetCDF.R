@@ -60,7 +60,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL){
   timedim <- ncdf4::ncdim_def(name="time", units="seconds since 1970-01-01T00:00:00Z", vals=as.double(time))
   distdim <- ncdf4::ncdim_def(name="distance", units="metres", vals=as.double(dist))
   #stationdim <- ncdf4::ncdim_def(name="station", units="", vals=1538)
-  stationdim <- ncdf4::ncdim_def(name="station", units="", vals=as.numeric(adp[['mooringNumber']]))
+  stationdim <- ncdf4::ncdim_def(name="station", units="", vals=as.numeric(adp[['station']]))
   dimnchar <- ncdf4::ncdim_def(name='nchar', units='', vals=1:23, create_dimvar = FALSE)
 
   #set fill value

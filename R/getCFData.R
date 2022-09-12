@@ -23,7 +23,7 @@ getCFData <- function(type="ctd") {
         DF <- data.frame("code"= c("CNDC", "POTM", "PRES", "PSAL", "SIGP", "SIGT", "SYTM", "TEMP"),
             "name"= c("Electrical Conductivity","Potential Temperature","Sea Pressure (sea surface - 0)",
                 "Practical Salinity","Sigma-Theta", "Sigma-Theta", "PIPE Time Format DD-MMM-YYYY HH:MM:SS.ss",
-                " Sea Temperature"),
+                "Sea Temperature"),
             "units"=c("S/m", "degrees C", "dbar","1","kg/m**3", "kg/m**3","s","degree_C"),
             "standard_name"= c("sea_water_electrical_conductivity","sea_water_potential_temperature",
                 "sea_water_pressure", "sea_water_practical_salinity","sea_water_sigma_theta", "sea_water_sigma_theta", "time", "sea_water_temperature"),

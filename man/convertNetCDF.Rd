@@ -9,7 +9,7 @@ convertNetCDF(odf, filename = NULL, debug = 0, data = NULL, destination = ".")
 \arguments{
 \item{odf}{an odf object from oce which contains mctd or rcm data}
 
-\item{filename}{the desired name for the netCDF file produced, if left NULL
+\item{filename}{the desired name for the netCDF file produced (not including the extension), if left NULL
 the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions}
 
 \item{debug}{integer value indicating level of debugging.

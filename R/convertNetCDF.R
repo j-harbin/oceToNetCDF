@@ -5,7 +5,7 @@
 #'
 #' @param odf an odf object from oce which contains mctd or rcm data
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from [getCFData()]
-#' @param filename the desired name for the netCDF file produced, if left NULL
+#' @param filename the desired name for the netCDF file produced (not including the extension), if left NULL
 #'   the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions
 #'@param destination the specified location to save the NetCDF. By default this is set
 #' to the local directory

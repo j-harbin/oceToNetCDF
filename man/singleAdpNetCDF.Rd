@@ -9,7 +9,7 @@ singleAdpNetCDF(adp, name, debug = 0, data = NULL, destination = ".")
 \arguments{
 \item{adp}{an adp object from the oce class}
 
-\item{name}{name of the netCDF file to be produced}
+\item{name}{name of the netCDF file (not including the extension) to be produced}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,

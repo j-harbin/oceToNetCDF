@@ -6,7 +6,7 @@
 #'
 #'@param adp an adp object from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getCFData
-#'@param name name of the netCDF file to be produced
+#'@param name name of the netCDF file (not including the extension) to be produced
 #'@param destination the specified location to save the NetCDF. By default this is set
 #' to the local directory
 #' @param debug integer value indicating level of debugging.

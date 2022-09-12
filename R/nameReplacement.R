@@ -59,7 +59,8 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
   end <- list()
   for (i in seq_along(raw)) {
     if (grepl("01", paste0("_",gsub(".*_","",raw[i])))) {
-      end[i] <- paste0(t[i], "_1")
+      #end[i] <- paste0(t[i], "_1")
+      end[i] <- t[i]
     } else if (grepl("02", paste0("_",gsub(".*_","",raw[i])))) {
       end[i] <- paste0(t[i], "_2")
     } else if (grepl("03", paste0("_",gsub(".*_","",raw[i])))) {

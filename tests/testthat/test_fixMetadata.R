@@ -15,7 +15,7 @@ odf3 <- removeDerived(odf2)
 test_that("fixMetadata",
           {
             odf4 <- fixMetadata(odf3, data=data)
-            expect_equal(names(odf4[['metadata']]$flags[1]), "sea_water_temperature_1")
+            expect_equal(names(odf4[['metadata']]$flags[1]), "sea_water_temperature")
             expect_equal(odf4[['metadata']]$units[[1]]$unit, "degree_C")
 
 

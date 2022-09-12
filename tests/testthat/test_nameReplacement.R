@@ -13,7 +13,7 @@ odf1 <- read.odf(f)
 test_that("nameReplacement",
           {
             odf2 <- nameReplacement(odf1, data=data, unit="S/m")
-            expect_equal(names(odf2[['data']])[1], "sea_water_temperature_1")
+            expect_equal(names(odf2[['data']])[1], "sea_water_temperature")
 
           }
 )

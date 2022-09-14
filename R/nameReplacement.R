@@ -107,7 +107,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
   # Converting CRAT to conductivity for CF standards
   if (unique(data$type) == "ctd") {
   if (is.null(unit)) {
-    stop("must provide a unit of either 'm/S' or 'mS/cm' for CTD type to convert CRAT to sea_water_electrical_conducitivity for CF standards")
+    stop("must provide a unit of either 'S/m' or 'mS/cm' for CTD type to convert CRAT to sea_water_electrical_conducitivity for CF standards")
   } else {
     if (!(unit %in% c("S/m", "mS/cm"))) {
       message("unit must be 'S/m' or'mS/cm', not ", unit)

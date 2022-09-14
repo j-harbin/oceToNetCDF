@@ -45,13 +45,15 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     parameters[i] <- param2
     raw[i] <- param
   }
+  if (length(which(parameters == "CRAT")) != 0) {
   parameters[which(parameters == "CRAT")] <- "CNDC"
+  }
   if (!(length(parameters) == length(unique(parameters)))) {
     message("Warning: One of the parameters has a duplicate (ie. more than one sensor)")
   }
   if (debug > 0) {
-    message("parameters= ", parameters)
-    message("raw= ", raw)
+    message("parameters= ", paste0(parameters, sep=","))
+    message("raw= ", paste0(raw, sep=","))
   }
 
   # Getting standard names of the GF3 CODE
@@ -73,11 +75,11 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
   }
 
   if (debug > 0) {
-    message("end= ", end )
+    message("end= ", paste0(end, sep=","))
   }
 
   if (debug > 0) {
-    message("t= ", t)
+    message("t= ", paste0(t, sep=","))
   }
   # Replacing NAME with standard name
   tk <- which(!(t %in% ""))
@@ -89,7 +91,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
   for (i in seq_along(t)) {
     if (i %in% tk) {
       if (debug > 0) {
-      message(dataNamesOriginal[i], "what is being replaced with ", end[i])
+      message(dataNamesOriginal[i], "  is being replaced with ", end[i])
       }
       dataNamesOriginal[i] <- end[i]
     } else {
@@ -105,7 +107,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
   names(odf@metadata$units) <- odf@metadata$dataNamesOriginal
 
   # Converting CRAT to conductivity for CF standards
-  if (unique(data$type) == "ctd") {
+  if (unique(data$type) == "ctd" && length(which(parameters == "CRAT") != 0)) {
   if (is.null(unit)) {
     stop("must provide a unit of either 'S/m' or 'mS/cm' for CTD type to convert CRAT to sea_water_electrical_conducitivity for CF standards")
   } else {

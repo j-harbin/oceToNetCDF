@@ -20,8 +20,8 @@ odfs <- lapply(odfs, function(x) fixMetadata(x, data=data))
 
 # Step 6
 
-#lapply(odfs, function(x) convertNetCDF(x, data=data))
-lapply(odfs, function(x) convertNetCDF(x, data=data, destination="/Users/jaimiekeeping/Documents/GitHub/odfToNetCDF/R"))
+lapply(odfs, function(x) convertNetCDF(x, data=data))
+#lapply(odfs, function(x) convertNetCDF(x, data=data, destination="/Users/jaimiekeeping/Documents/GitHub/odfToNetCDF/R"))
 
 
 # odfMetadataCheck

@@ -45,8 +45,12 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     parameters[i] <- param2
     raw[i] <- param
   }
+  parameters <- gsub("'", "", parameters)
+  raw <- gsub("'", "", raw)
+  browser()
   if (length(which(parameters == "CRAT")) != 0) {
-  parameters[which(parameters == "CRAT")] <- "CNDC"
+    message('Warning: Found CRAT instead of CNDC')
+    ##parameters[which(parameters == "CRAT")] <- "CNDC"
   }
   if (!(length(parameters) == length(unique(parameters)))) {
     message("Warning: One of the parameters has a duplicate (ie. more than one sensor)")
@@ -87,7 +91,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     message("tk= ", tk)
   }
   dataNamesOriginal <- unname(unlist(odf[['dataNamesOriginal']]))
-  dataNamesOriginal[which(dataNamesOriginal == "CRAT_01")] <- "CNDC_01"
+  ##dataNamesOriginal[which(dataNamesOriginal == "CRAT_01")] <- "CNDC_01"
   for (i in seq_along(t)) {
     if (i %in% tk) {
       if (debug > 0) {

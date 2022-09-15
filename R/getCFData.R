@@ -20,14 +20,14 @@ getCFData <- function(type="ctd") {
     }
 
     if (type == "ctd") {
-        DF <- data.frame("code"= c("CNDC", "POTM", "PRES", "PSAL", "SIGP", "SIGT", "SYTM", "TEMP"),
-            "name"= c(paste("Electrical", "Conductivity"),paste("Potential", "Temperature"),paste("Sea", "Pressure", "(sea surface - 0)"),
+        DF <- data.frame("code"= c("CNDC", "CRAT", "POTM", "PRES", "PSAL", "SIGP", "SIGT", "SYTM", "TEMP"),
+            "name"= c(paste("Electrical", "Conductivity"), paste("Conductivity", "Ratio"), paste("Potential", "Temperature"),paste("Sea", "Pressure", "(sea surface - 0)"),
                 paste("Practical", "Salinity"),"Sigma-Theta", "Sigma-Theta", paste("PIPE", "Time", "Format", "DD-MMM-YYYY", "HH:MM:SS.ss"),
                 paste("Sea", "Temperature")),
-            "units"=c("S/m", "degrees C", "dbar","1","kg/m**3", "kg/m**3","s","degree_C"),
-            "standard_name"= c("sea_water_electrical_conductivity","sea_water_potential_temperature",
+            "units"=c("S/m", "", "degrees C", "dbar","1","kg/m**3", "kg/m**3","s","degree_C"),
+            "standard_name"= c("sea_water_electrical_conductivity","sea_water_electrical_conductivity_ratio", "sea_water_potential_temperature",
                 "sea_water_pressure", "sea_water_practical_salinity","sea_water_sigma_theta", "sea_water_sigma_theta", "time", "sea_water_temperature"),
-            "type"=rep("ctd", 8))
+            "type"=rep("ctd", 9))
     } else if (type == "rcm") {
         DF <- data.frame("code"= c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP"),
             "name"= c(paste("Horizontal", "Current", "Direction (true)"),paste("Horizontal", "Current", "Speed"),

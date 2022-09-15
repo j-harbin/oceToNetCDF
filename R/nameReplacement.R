@@ -47,7 +47,6 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
   }
   parameters <- gsub("'", "", parameters)
   raw <- gsub("'", "", raw)
-  browser()
   if (length(which(parameters == "CRAT")) != 0) {
     message('Warning: Found CRAT instead of CNDC')
     ##parameters[which(parameters == "CRAT")] <- "CNDC"

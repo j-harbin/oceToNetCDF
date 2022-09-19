@@ -42,6 +42,11 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   ncname <- name
   ncfname <- paste(ncpath,"/", ncname, ".nc", sep = "")
 
+  ## Sometimes adp objects from ODF files don't have echo amplitude (a) or percent good (q)
+  ## Has a and q?
+  has_a <- ifelse('a' %in% names(adp[['data']]), TRUE, FALSE)
+  has_q <- ifelse('q' %in% names(adp[['data']]), TRUE, FALSE)
+
   # Added 10-SEP-2018 R.Pettipas
   # If the function exits due to an error, close the open netCDF file.
   # Otherwise, the file can't be deleted until the R session is exited.
@@ -91,13 +96,14 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     dlname <- "error_velocity_in_sea_water"
     e_def <- ncdf4::ncvar_def(standardName("ERRV",data=data)$standard_name, standardName("ERRV",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
 
-    dlname <- "ADCP_echo_intensity_beam_1"
-
-    b1_def <- ncdf4::ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
-
-
-    dlname <- "percent_good_beam_1"
-    pg1_def <- ncdf4::ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), standardName("PGDP", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    if (has_a) {
+       dlname <- "ADCP_echo_intensity_beam_1"
+       b1_def <- ncdf4::ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    }
+    if (has_q) {
+      dlname <- "percent_good_beam_1"
+      pg1_def <- ncdf4::ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), standardName("PGDP", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    }
 
     dlname <- "time_string"
     ts_def <- ncdf4::ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
@@ -108,10 +114,15 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     if (debug > 0) {
       message("Step 3: About to write out definitions to nc file using ncdf4::nc_create")
     }
-    ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-
-
-
+    if (has_a & has_q) {
+      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
+    } else if (has_a) {
+      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
+    } else if (has_q) {
+      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
+    } else {
+      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
+    }
 
   #insert variables into nc file
   if (debug > 0) {
@@ -131,8 +142,8 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     if (debug > 0) {
       message("Step 5: About to write data into existing Netcdf using ncdf4::ncvar_put")
     }
-    ncdf4::ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
-    ncdf4::ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
+  if (has_a) ncdf4::ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
+  if (has_q) ncdf4::ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
     ncdf4::ncvar_put(ncout, ts_def, adp[['time']])
 
   ####metadata####
@@ -216,12 +227,16 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_type", adp[['instrumentType']])
     ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "sensor_depth", adp[['sensor_depth']])
     ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "serial_number", adp[['serialNumber']])
-    ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-    ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-    ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
-    ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
-    ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
-    ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
+    if (has_a) {
+      ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
+      ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
+      ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
+    }
+    if (has_q) {
+      ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_type", adp[['instrumentType']])
+      ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "sensor_depth", adp[['sensor_depth']])
+      ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "serial_number", adp[['serialNumber']])
+    }
     #ncdf4::ncatt_put(ncout, standardName("EWCT",data=data)$standard_name, "generic_name", "u")
     #ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "generic_name", "v")
     #ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "generic_name", "w")
@@ -269,8 +284,8 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     ncdf4::ncatt_put(ncout, standardName("NSCT",data=data)$standard_name, "generic_parameter_name", "Northward current velocity (Eulerian) in the water body by moored acoustic doppler current profiler (ADCP)")
     ncdf4::ncatt_put(ncout, standardName("VCSP",data=data)$standard_name, "generic_parameter_name", "Upward current velocity in the water body by moored acoustic doppler current profiler (ADCP)")
     ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "generic_parameter_name", "Current velocity error in the water body by moored acoustic doppler current profiler (ADCP)")
-    ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "generic_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 1")
-    ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "generic_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
+    if (has_a) ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "generic_parameter_name", "Echo intensity from the water body by moored acoustic doppler current profiler (ADCP) beam 1")
+    if (has_q) ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "generic_parameter_name", "Acceptable proportion of signal returns by moored acoustic doppler current profiler (ADCP) beam 1")
     ncdf4::ncatt_put(ncout, "longitude", "generic_parameter_name", "Longitude east")
     ncdf4::ncatt_put(ncout, "latitude", "generic_parameter_name", "Latitude north")
 
@@ -307,10 +322,13 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_max", 2000)
   ncdf4::ncatt_put(ncout, standardName("ERRV",data=data)$standard_name, "valid_min", -2000)
 
+  if (has_a) {
     ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_min", min(adp[['a', 'numeric']], na.rm= TRUE))
     ncdf4::ncatt_put(ncout, paste0(standardName("BEAM",data=data)$standard_name, "_1"), "data_max", max(adp[['a', 'numeric']], na.rm= TRUE))
+  }
+  if (has_q) {
     ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_min", min(adp[['q', 'numeric']], na.rm= TRUE))
     ncdf4::ncatt_put(ncout, paste0(standardName("PGDP",data=data)$standard_name, "_1"), "data_max", max(adp[['q', 'numeric']], na.rm= TRUE))
-
+  }
 
 }

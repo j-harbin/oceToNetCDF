@@ -30,14 +30,16 @@ getCFData <- function(type="ctd") {
                 "sea_water_temperature"),
             "type"=rep("ctd", 10))
     } else if (type == "rcm") {
-        DF <- data.frame("code"= c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP"),
+        DF <- data.frame("code"= c("HCDT", "HCSP", "PRES", "PSAL", "CRAT", "SYTM", "TEMP"),
             "name"= c(paste("Horizontal", "Current", "Direction (true)"),paste("Horizontal", "Current", "Speed"),
                 paste("Sea", "Pressure", "(sea surface - 0)"),paste("Practical", "Salinity"),
+                paste("Conductivity", "Ratio"),
                 paste("PIPE", "Time", "Format", "DD-MMM-YYYY", "HH:MM:SS.ss"), paste("Sea", "Temperature")),
-            "units"=c("degrees", "m/s","dbar","1","s","degree_C"),
+            "units"=c("degrees", "m/s","dbar","1","1", "s","degree_C"),
             "standard_name"=c("horizontal_current_direction","barotropic_sea_water_x_velocity",
-                "sea_water_pressure","sea_water_practical_salinity","time","sea_water_temperature"),
-            "type"=rep("rcm", 6))
+                "sea_water_pressure","sea_water_practical_salinity", "sea_water_conductivity_ratio",
+                "time","sea_water_temperature"),
+            "type"=rep("rcm", 7))
     } else if (type == "adcp") {
 
         DF <- data.frame("code"= c("DEPH", "EWCT", "HGHT", "NSCT", "PRES", "PTCH",

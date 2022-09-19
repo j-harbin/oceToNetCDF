@@ -43,37 +43,79 @@ compileOdfToAdp <- function(files, debug=0) {
   for (vr in vars) {
     assign(vr, array(NA, dim=c(nt, nd)))
   }
-  depth <- NULL
-  for (f in 1:length(files)) {
-    d <- oce::read.odf(files[f])
-    t <- d[['time']]
-    depth[f] <- d[['depthMin']]
+  ## Some ADCP ODF datasets actually contain a field for "depth", presumably because the ADCP had a pressure sensor.
+  ## For these cases, you can't use 'depthMin' to get the bin depth (to convert to 'distance') but
+  ## we need to determine the distance and then add the "depth" or "pressure" field back into the adp
+  ## object so that it can be preserved.
+  if ('depth' %in% vars) {
+    if (debug > 0) {
+        message("Field 'depth' found in ADP object")
+    }
+    vars <- vars[-which(vars == 'depth')]
+    depth_array <- array(NA, dim=c(nt, length(files)))
+    for (f in 1:length(files)) {
+      d <- oce::read.odf(files[f])
+      t <- d[['time']]
+      depth_array[, f] <- d[['depth']]
+      for (vr in vars) {
+        eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
+      }
+    }
+    min_depth <- apply(depth_array, 2, min)
+    o <- order(min_depth, decreasing = TRUE)
+    min_depth <- min_depth[o]
+    depth_array <- depth_array[,o]
     for (vr in vars) {
-      eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
+      eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
     }
-  }
-
-  ## need to sort the depths because of file sorting ...
-  # prevent compiler warning
-  o <- order(depth, decreasing = TRUE)
-  depth <- depth[o]
-  for (vr in vars) {
-    eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
-  }
-  distance <- max(depth) - depth
-  adp <- oce::as.adp(t, distance, v=abind::abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
-  for (m in names(d@metadata)) {
-    if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
-      adp <- oce::oceSetMetadata(adp, m, d[[m]], note = NULL)
+    distance <- max(min_depth) - min_depth
+    adp <- oce::as.adp(t, distance, v=abind::abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
+    adp <- oce::oceSetData(adp, 'depth', depth_array[,1], list(unit=expression(m), scale=''))
+    for (m in names(d@metadata)) {
+      if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
+        adp <- oce::oceSetMetadata(adp, m, d[[m]], note = NULL)
+      }
     }
+    ## depthMinMax
+    adp <- oce::oceSetMetadata(adp, 'depthMin', min(min_depth))
+    adp <- oce::oceSetMetadata(adp, 'depthMax', max(min_depth))
+    adp@metadata$source <- 'odf'
+    adp@processingLog <- oce::processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
+
+    return(adp)
+
+  } else {
+    depth <- NULL
+    for (f in 1:length(files)) {
+      d <- oce::read.odf(files[f])
+      t <- d[['time']]
+      depth[f] <- d[['depthMin']]
+      for (vr in vars) {
+        eval(parse(text=paste0(vr, "[, f] <- d[['", vr, "']]")))
+      }
+    }
+
+    ## need to sort the depths because of file sorting ...
+    # prevent compiler warning
+    o <- order(depth, decreasing = TRUE)
+    depth <- depth[o]
+    for (vr in vars) {
+      eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
+    }
+    distance <- max(depth) - depth
+    adp <- oce::as.adp(t, distance, v=abind::abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
+    for (m in names(d@metadata)) {
+      if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {
+        adp <- oce::oceSetMetadata(adp, m, d[[m]], note = NULL)
+      }
+    }
+
+    ## depthMinMax
+    adp <- oce::oceSetMetadata(adp, 'depthMin', min(depth))
+    adp <- oce::oceSetMetadata(adp, 'depthMax', max(depth))
+    adp@metadata$source <- 'odf'
+    adp@processingLog <- oce::processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
+
+    return(adp)
   }
-
-  ## depthMinMax
-  adp <- oce::oceSetMetadata(adp, 'depthMin', min(depth))
-  adp <- oce::oceSetMetadata(adp, 'depthMax', max(depth))
-  adp@metadata$source <- 'odf'
-  adp@processingLog <- oce::processingLogAppend(adp@processingLog, 'Creation : Data and metadata read into adp object from ODF file')
-
-  return(adp)
 }
-

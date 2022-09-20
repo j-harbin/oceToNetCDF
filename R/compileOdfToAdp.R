@@ -35,7 +35,7 @@ compileOdfToAdp <- function(files, debug=0) {
   vars <- names(d@data)
   vars <- vars[-which(vars == 'time')]
   if (debug > 0) {
-    message("Before renaming vars= ", paste0(vars, sep=""))
+    message("Before renaming, vars = c('", paste0(vars, collapse="', '"), "')")
   }
   u <- v <- w <- errorVelocity <- a <- unknown <- NULL
 

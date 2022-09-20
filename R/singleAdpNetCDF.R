@@ -130,6 +130,8 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     } else if (has_q) {
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
+    } else if (has_err) {
+      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     } else {
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     }

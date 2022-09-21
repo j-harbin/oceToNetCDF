@@ -1,11 +1,11 @@
 ## vim:textwidth=128:expandtab:shiftwidth=4:softtabstop=4
 
 library(odfToNetCDF)
+library(testthat)
+library(oce)
 
 context("fixMetadata")
 
-library(odfToNetCDF)
-library(oce)
 data <- getCFData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)

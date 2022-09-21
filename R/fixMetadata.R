@@ -39,21 +39,25 @@ fixMetadata <- function(odf, debug=0, data=NULL) {
   names(l) <- DATA
 
   for (i in seq_along(DATA)) {
-    keep <- data$units[which(data$standard_name == gsub("_[0-9]$.*","",DATA[i])
-)]
-    unit <- odf@metadata$units[DATA[i]][[1]][1]$unit
-    if (debug > 0) {
-    message(keep, " is the units in dataframe for ", DATA[i], " and ", unit, " is what is in the odf")
-    }
-    odf@metadata$units[DATA[i]][[1]][1]$unit <- keep
+      keep <- data$units[which(data$standard_name == gsub("_[0-9]$.*","",DATA[i])
+          )]
+      if (length(keep) > 1) {
+          keep <- keep[1]
+      }
 
-    ## Populating flags
-    if (length(odf@metadata$flags) == 0) {
-    L<- rep(NA_real_, length(unlist(odf@data[DATA[i]])))
-    l[[i]] <- L
-    } else {
-      message("Flags already exist for this profile.")
-    }
+      unit <- odf@metadata$units[DATA[i]][[1]][1]$unit
+      if (debug > 0) {
+          message(keep, " is the units in dataframe for ", DATA[i], " and ", unit, " is what is in the odf")
+      }
+      odf@metadata$units[DATA[i]][[1]][1]$unit <- keep
+
+      ## Populating flags
+      if (length(odf@metadata$flags) == 0) {
+          L<- rep(NA_real_, length(unlist(odf@data[DATA[i]])))
+          l[[i]] <- L
+      } else {
+          message("Flags already exist for this profile.")
+      }
 
   }
   odf@metadata$flags <- l

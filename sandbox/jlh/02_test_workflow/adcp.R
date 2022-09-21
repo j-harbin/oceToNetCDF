@@ -2,7 +2,9 @@
 data <- getCFData(type="adcp")
 
 # Step two
-path <- "../davisStrait/data/mooring/2004-05/ADCP/BI3/"
+path <- "../davisStrait/data/mooring/2004-05/ADCP/C1-C6/"
+
+#path <- "../davisStrait/data/mooring/2004-05/ADCP/BI3/"
 files <- list.files(path=path, pattern="*.ODF", ignore.case=TRUE)
 adp <- compileOdfToAdp(paste0(path,files), debug=1)
 

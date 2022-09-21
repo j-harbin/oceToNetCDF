@@ -17,6 +17,7 @@ test_that("data frame components, rcm",
             data <- getCFData(type="rcm")
             expect_equal(names(data), c("code", "name", "units", "standard_name", "type"))
             expect_equal(unique(data$type), "rcm")
+            expect_equal(data$standard_name[which(data$code == "HCSP")], "horizontal_current_speed")
           }
 )
 

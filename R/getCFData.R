@@ -36,7 +36,7 @@ getCFData <- function(type="ctd") {
                 paste("Conductivity", "Ratio"),
                 paste("PIPE", "Time", "Format", "DD-MMM-YYYY", "HH:MM:SS.ss"), paste("Sea", "Temperature")),
             "units"=c("degrees", "m/s","dbar","1","1", "s","degree_C"),
-            "standard_name"=c("horizontal_current_direction","barotropic_sea_water_x_velocity",
+            "standard_name"=c("horizontal_current_direction","horizontal_current_speed",
                 "sea_water_pressure","sea_water_practical_salinity", "sea_water_conductivity_ratio",
                 "time","sea_water_temperature"),
             "type"=rep("rcm", 7))

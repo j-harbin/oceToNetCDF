@@ -202,6 +202,10 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     ncdf4::ncatt_put(ncout, 0, "sounding", adp[['sounding']])
     ncdf4::ncatt_put(ncout, 0, "scientist", adp[['scientist']])
     ncdf4::ncatt_put(ncout, 0, "water_depth", adp[['water_depth']])
+    depthMin <- adp[["depthMin"]]
+    if (exists("depthMin")) {
+    ncdf4::ncatt_put(ncout, 0, "instrument_depth", adp[['depthMin']])
+    }
     ncdf4::ncatt_put(ncout, 0, "delta_t_sec", as.double(adp[['sampling_interval']]))
     ncdf4::ncatt_put(ncout, 0, "pred_accuracy", adp[['velocityResolution']])
     ncdf4::ncatt_put(ncout, 0, "cell_size", adp[['cellSize']])

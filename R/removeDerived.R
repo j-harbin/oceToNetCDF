@@ -4,7 +4,7 @@
 #' For a CTD type, the only data and metadata kept is time, conductivity, salinity,
 #' temperature, and pressure. For an RCM type, the only data and
 #' metadata kept is horizontal_current_direction,
-#' barotropic_sea_water_x_velocity, sea_water_pressure, sea_water_practical_salinity,
+#' horizontal_current_speed, sea_water_pressure, sea_water_practical_salinity,
 #' time, and sea_water_temperature
 #'
 #' @param odf an odf object (oce::read.odf())
@@ -15,7 +15,7 @@
 #'
 #' @return CTD object: an odf object with only data for time, conductivity, salinity,
 #' temperature, and pressure. RCM object: an odf object with only data for horizontal_current_direction,
-#' barotropic_sea_water_x_velocity, sea_water_pressure, sea_water_practical_salinity", "time",
+#' horizontal_current_speed, sea_water_pressure, sea_water_practical_salinity", "time",
 #' and sea_water_temperature
 #' @importFrom oce oceDeleteData
 #' @examples
@@ -38,9 +38,9 @@ removeDerived <- function(odf, debug=0) {
   if (debug > 0) {
     message("This is an RCM type")
   }
-  ctdDataNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"barotropic_sea_water_x_velocity", paste0("barotropic_sea_water_x_velocity_",1:4),
+  ctdDataNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"horizontal_current_speed", paste0("horizontal_current_speed_",1:4),
   "sea_water_pressure", paste0("sea_water_pressure_", 1:4),"sea_water_practical_salinity",paste0("sea_water_practical_salinity_",1:4),"time",paste0("time_", 1:4),"sea_water_temperature",paste0("sea_water_temperature_",1:4))
-  ctdOriginalNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"barotropic_sea_water_x_velocity", paste0("barotropic_sea_water_x_velocity_",1:4),
+  ctdOriginalNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"horizontal_current_speed", paste0("horizontal_current_speed_",1:4),
                         "sea_water_pressure", paste0("sea_water_pressure_", 1:4),"sea_water_practical_salinity",paste0("sea_water_practical_salinity_",1:4),"time",paste0("time_", 1:4),"sea_water_temperature",paste0("sea_water_temperature_",1:4))
 
   } else if (MCTD | mctd) {

@@ -1,7 +1,7 @@
 # Step 1
 data <- getCFData(type="rcm")
 # Step 2
-files <- list.files("../davisStrait/data/mooring/2004-05/RCM", full.names = TRUE)
+files <- list.files("../davisStrait/data/mooring/2005/RCM/odf/", full.names = TRUE)
 odfs <- lapply(files, read.odf)
 #for (j in seq_along(odfs)) {
 #  odfMetadataCheck(odfs[[j]], data=data)

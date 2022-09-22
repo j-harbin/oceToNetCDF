@@ -50,7 +50,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (MCTD | mctd) {
       DF <- data[which(data$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES")),]
   } else if (RCM | rcm) {
-      DF <- data[which(data$code %in% c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP")),]
+      DF <- data[which(data$code %in% c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP", "EWCT", "NSCT")),]
   } else {
       message("Unrecognizable file type.")
   }

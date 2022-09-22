@@ -38,24 +38,26 @@ removeDerived <- function(odf, debug=0) {
   if (debug > 0) {
     message("This is an RCM type")
   }
-  ctdDataNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"horizontal_current_speed", paste0("horizontal_current_speed_",1:4),
-  "sea_water_pressure", paste0("sea_water_pressure_", 1:4),"sea_water_practical_salinity",paste0("sea_water_practical_salinity_",1:4),"time",paste0("time_", 1:4),"sea_water_temperature",paste0("sea_water_temperature_",1:4))
-  ctdOriginalNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"horizontal_current_speed", paste0("horizontal_current_speed_",1:4),
-                        "sea_water_pressure", paste0("sea_water_pressure_", 1:4),"sea_water_practical_salinity",paste0("sea_water_practical_salinity_",1:4),"time",paste0("time_", 1:4),"sea_water_temperature",paste0("sea_water_temperature_",1:4))
+  dataNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"horizontal_current_speed", paste0("horizontal_current_speed_",1:4),
+    "sea_water_pressure", paste0("sea_water_pressure_", 1:4),"sea_water_practical_salinity",paste0("sea_water_practical_salinity_",1:4),"time",paste0("time_", 1:4),"sea_water_temperature",paste0("sea_water_temperature_",1:4),
+    "eastward_sea_water_velocity", "northward_sea_water_velocity")
+  originalNames <- c("horizontal_current_direction", paste0("horizontal_current_direction_", 1:4),"horizontal_current_speed", paste0("horizontal_current_speed_",1:4),
+                        "sea_water_pressure", paste0("sea_water_pressure_", 1:4),"sea_water_practical_salinity",paste0("sea_water_practical_salinity_",1:4),"time",paste0("time_", 1:4),"sea_water_temperature",paste0("sea_water_temperature_",1:4),
+                     "eastward_sea_water_velocity", "northward_sea_water_velocity")
 
   } else if (MCTD | mctd) {
     if (debug > 0) {
       message("This is an MCTD type")
     }
-    ctdDataNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4))
-    ctdOriginalNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4))
+    dataNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4))
+    originalNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4))
       }
   # Removing data
   throwAway <- list()
 
   for (n in names(odf[["data"]])) {
-    if (!(n %in% ctdDataNames)) {
-      for (i in seq_along(ctdDataNames)) {
+    if (!(n %in% dataNames)) {
+      for (i in seq_along(dataNames)) {
       throwAway[[i]] <- n
       }
       odf <- oce::oceDeleteData(odf, name=n)
@@ -68,7 +70,7 @@ removeDerived <- function(odf, debug=0) {
   }
 
   for (i in odf[["dataNamesOriginal"]]) {
-    if (!(i %in% ctdOriginalNames)) {
+    if (!(i %in% originalNames)) {
       b <- which(odf[['dataNamesOriginal']] == i)
       odf[['dataNamesOriginal']] <- odf[['dataNamesOriginal']][-b]
     }
@@ -78,9 +80,9 @@ removeDerived <- function(odf, debug=0) {
   # Removing metadata
   # Naming bad metadata
   if (RCM | rcm) {
-    ctdCodeNames <- c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP")
+    codeNames <- c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP", "EWCT", "NSCT")
   } else if (MCTD | mctd) {
-    ctdCodeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES")
+    codeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES")
   }
   header <- odf[['metadata']]$header
   k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
@@ -92,7 +94,7 @@ removeDerived <- function(odf, debug=0) {
   }
 
 
-  bad <- which(!(parameters %in% ctdCodeNames))
+  bad <- which(!(parameters %in% codeNames))
 
   if (length(bad) > 0) {
     if (RCM | rcm) {

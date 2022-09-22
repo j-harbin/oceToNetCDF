@@ -30,16 +30,17 @@ getCFData <- function(type="ctd") {
                 "sea_water_temperature"),
             "type"=rep("ctd", 10))
     } else if (type == "rcm") {
-        DF <- data.frame("code"= c("HCDT", "HCSP", "PRES", "PSAL", "CRAT", "SYTM", "TEMP"),
+        DF <- data.frame("code"= c("HCDT", "HCSP", "PRES", "PSAL", "CRAT", "SYTM", "TEMP", "EWCT", "NSCT"),
             "name"= c(paste("Horizontal", "Current", "Direction (true)"),paste("Horizontal", "Current", "Speed"),
                 paste("Sea", "Pressure", "(sea surface - 0)"),paste("Practical", "Salinity"),
                 paste("Conductivity", "Ratio"),
-                paste("PIPE", "Time", "Format", "DD-MMM-YYYY", "HH:MM:SS.ss"), paste("Sea", "Temperature")),
-            "units"=c("degrees", "m/s","dbar","1","1", "s","degree_C"),
+                paste("PIPE", "Time", "Format", "DD-MMM-YYYY", "HH:MM:SS.ss"), paste("Sea", "Temperature"),
+                paste("East", "(true)", "Component", "of", "Current"), paste("North", "(true)", "Component", "of", "Current")),
+            "units"=c("degrees", "m/s","dbar","1","1", "s","degree_C", "m/s", "m/s"),
             "standard_name"=c("horizontal_current_direction","horizontal_current_speed",
                 "sea_water_pressure","sea_water_practical_salinity", "sea_water_conductivity_ratio",
-                "time","sea_water_temperature"),
-            "type"=rep("rcm", 7))
+                "time","sea_water_temperature", "eastward_sea_water_velocity", "northward_sea_water_velocity"),
+            "type"=rep("rcm", 9))
     } else if (type == "adcp") {
 
         DF <- data.frame("code"= c("DEPH", "EWCT", "HGHT", "NSCT", "PRES", "PTCH",

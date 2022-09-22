@@ -69,7 +69,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   timedim <- ncdf4::ncdim_def(name="time", units="seconds since 1970-01-01T00:00:00Z", vals=as.double(time))
   distdim <- ncdf4::ncdim_def(name="distance", units="metres", vals=as.double(dist))
   #stationdim <- ncdf4::ncdim_def(name="station", units="", vals=1538)
-  stationdim <- ncdf4::ncdim_def(name="station", units="", vals=as.numeric(adp[['station']]))
+  stationdim <- ncdf4::ncdim_def(name="station", units="", vals=as.numeric(length(adp[['station']])))
   dimnchar <- ncdf4::ncdim_def(name='nchar', units='', vals=1:23, create_dimvar = FALSE)
 
   #set fill value
@@ -88,25 +88,25 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     lat_def <- ncdf4::ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
 
     dlname <- "eastward_sea_water_velocity"
-    u_def <- ncdf4::ncvar_def(standardName("EWCT",data=data)$standard_name, standardName("EWCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    u_def <- ncdf4::ncvar_def(standardName("EWCT",data=data)$standard_name, standardName("EWCT",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
 
     dlname <- "northward_sea_water_velocity"
-    v_def <- ncdf4::ncvar_def(standardName("NSCT",data=data)$standard_name, standardName("NSCT",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    v_def <- ncdf4::ncvar_def(standardName("NSCT",data=data)$standard_name, standardName("NSCT",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
 
     dlname <- "upward_sea_water_velocity"
-    w_def <- ncdf4::ncvar_def(standardName("VCSP",data=data)$standard_name, standardName("VCSP",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+    w_def <- ncdf4::ncvar_def(standardName("VCSP",data=data)$standard_name, standardName("VCSP",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
 
     if (has_err) {
       dlname <- "error_velocity_in_sea_water"
-      e_def <- ncdf4::ncvar_def(standardName("ERRV",data=data)$standard_name, standardName("ERRV",data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+      e_def <- ncdf4::ncvar_def(standardName("ERRV",data=data)$standard_name, standardName("ERRV",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
     }
     if (has_a) {
        dlname <- "ADCP_echo_intensity_beam_1"
-       b1_def <- ncdf4::ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+       b1_def <- ncdf4::ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM", data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
     }
     if (has_q) {
       dlname <- "percent_good_beam_1"
-      pg1_def <- ncdf4::ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), standardName("PGDP", data=data)$units, list(timedim, distdim, stationdim), FillValue, dlname, prec = "float")
+      pg1_def <- ncdf4::ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), standardName("PGDP", data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
     }
 
     dlname <- "time_string"

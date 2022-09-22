@@ -52,7 +52,7 @@ getCFData <- function(type="ctd") {
                 paste("Percent", "Good", "Pings"), paste("Current",  "Magnitude"), "Heading"),
             units=c("metres","m/s","metres","m/s","decibars", "degrees","degrees","m/s",
                     "s","m/s","1","m/s","1","degrees C", "%", "m/s", "degree"),
-            "standard_name"= c("sensor_depth_below_sea_surface ","eastward_sea_water_velocity","height_above_mean_sea_level",
+            "standard_name"= c("sensor_depth_below_sea_surface","eastward_sea_water_velocity","height_above_mean_sea_level",
                 "northward_sea_water_velocity","sea_water_pressure","platform_pitch_angle","platform_roll_angle",
                 "speed_of_sound_in_sea_water","time","upward_sea_water_velocity","unknown_WMO_code",
                 "indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water",

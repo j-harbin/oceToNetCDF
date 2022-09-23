@@ -1,3 +1,4 @@
+library(oce)
 # Step one
 data <- getCFData(type="adcp")
 

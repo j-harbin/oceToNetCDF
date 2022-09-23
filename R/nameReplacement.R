@@ -6,7 +6,8 @@
 #' values to abide by CF standards, and the unit is changed to the
 #' specified unit. For rcm types, if horizontal_current_speed and
 #' horizontal_current_direction exist, eastward_sea_water_velocity
-#' and north_ward_sea_water_velocity are added.
+#' and north_ward_sea_water_velocity are calculated if they do not
+#' already exist.
 #'
 #' @param odf an odf object [oce::read.odf()]
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from [getCFData()]
@@ -150,16 +151,22 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
   }
 
   ## Adding eastward and northward velocity for RCM data types (from magnitude and heading)
-  if (unique(data$type) == 'rcm') {
+  if (unique(data$type) == 'rcm' && "horizontal_current_speed" %in% dataNamesOriginal && "horizontal_current_direction" %in% dataNamesOriginal) {
     spd <- odf[['horizontal_current_speed']]
     dir <- odf[['horizontal_current_direction']]
     v <- spd*cos(dir * pi/180)
     u <- spd*sin(dir *pi/180)
+    if (!("eastward_sea_water_velocity" %in% dataNamesOriginal)) {
     odf <- oce::oceSetData(odf, standardName('EWCT', data)$standard_name, u,
-                           unit=list(unit=expression(m/s), scale=''), originalName ="EWCT")
+                           unit=list(unit=expression(m/s), scale=''), originalName =standardName('EWCT', data)$standard_name)
+    }
+    if (!("northward_sea_water_velocity" %in% dataNamesOriginal)) {
     odf <- oce::oceSetData(odf, standardName('NSCT', data)$standard_name, v,
-                           unit=list(unit=expression(m/s), scale=''), originalName ="NSCT")
+                           unit=list(unit=expression(m/s), scale=''), originalName =standardName('NSCT', data)$standard_name)
+    }
   }
+
+  odf@metadata$dataNamesOriginal <- unname(odf@metadata$dataNamesOriginal)
 
   odf
 

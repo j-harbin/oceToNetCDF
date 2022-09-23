@@ -29,7 +29,10 @@ This function replaces DFO codes for dataNamesOriginal and data
 with CF standards. For ctd types, if conductivity ratio (CRAT)
 exists, the values are converted to sea_water_electrical_conductivity
 values to abide by CF standards, and the unit is changed to the
-specified unit.
+specified unit. For rcm types, if horizontal_current_speed and
+horizontal_current_direction exist, eastward_sea_water_velocity
+and north_ward_sea_water_velocity are calculated if they do not
+already exist.
 }
 \examples{
 library(odfToNetCDF)

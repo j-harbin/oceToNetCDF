@@ -22,8 +22,4 @@ odfs <- lapply(odfs, function(x) fixMetadata(x, data=data))
 lapply(odfs, function(x) convertNetCDF(x, data=data))
 
 
-# odfMetadataCheck
-# checkCrat
-
-
 

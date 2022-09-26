@@ -5,8 +5,6 @@
 \title{Convert adp object to netCDF}
 \usage{
 singleAdpNetCDF(adp, name, debug = 0, data = NULL, destination = ".")
-
-singleAdpNetCDF(adp, name, debug = 0, data = NULL, destination = ".")
 }
 \arguments{
 \item{adp}{an adp object from the oce class}
@@ -26,21 +24,8 @@ to the local directory}
 This function exports an adp object to a netCDF using variables
 and metadata within adp combined. Data variables names and units
 are named inserted in CF standards using the \code{\link[=standardName]{standardName()}} function.
-
-This function exports an adp object to a netCDF using variables
-and metadata within adp combined. Data variables names and units
-are named inserted in CF standards using the \code{\link[=standardName]{standardName()}} function.
 }
 \examples{
-\dontrun{
-library(odfToNetCDF)
-library(oce)
-data <- getCFData(type="adcp")
-files <- list.files(pattern="ODF")
-adp <- compileOdfToAdp(files)
-singleAdpNetCDF(adp, name="test", debug=1, data=data)
-}
-
 \dontrun{
 library(odfToNetCDF)
 library(oce)

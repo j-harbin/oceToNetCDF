@@ -135,7 +135,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, d_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     } else if (has_err & has_q) {
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_err & has_q && has_d) {
+    } else if (has_err & has_q & has_d) {
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, d_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     } else if (has_a & has_q) {
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
@@ -145,6 +145,8 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, d_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     } else if (has_q & has_d) {
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, d_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
+    } else if (has_err & has_d) {
+      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, d_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     } else if (has_a) {
       ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
     } else if (has_q) {

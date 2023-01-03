@@ -6,6 +6,9 @@
 #'
 #' @param gf3 a character indicating a GF3 (General Formatting) standard code parameter
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from getCFData
+#' @param debug integer value indicating level of debugging.
+#'  If this is less than 1, no debugging is done. Otherwise,
+#'  some functions will print debugging information.
 #' @return A list containing the standard name and unit of the GF3 code in CF standard
 #' @export
 #'
@@ -13,7 +16,7 @@
 #' library(odfToNetCDF)
 #' data <- getCFData(type="ctd")
 #' standardName("TEMP", data=data)
-standardName <- function(gf3, data=NULL) {
+standardName <- function(gf3, data=NULL, debug=0) {
 
   if (is.null(data)) {
     stop("In standardName, must provide a data frame for data")
@@ -21,6 +24,25 @@ standardName <- function(gf3, data=NULL) {
   if (!(class(data) == "data.frame")) {
     stop("In standardName, data must be a data.frame class, not ", class(data))
   }
+
+  # Adding in a test when code is in Matlab format
+
+  matnames <- c("prDM","t090C","sal00","t190C","sal11","o2ML.L")
+  if (gf3 %in% matnames) {
+    if (debug > 0) {
+      message("matlab format has been identified")
+    }
+    # FIXME: This may not be correct
+    if (gf3 == "prDM")
+      gf3 <- "PRES"
+    if (gf3 %in% c("t090C", "t190C"))
+      gf3 <- "TEMP"
+    if (gf3 %in% c("sal00", "sal11"))
+      gf3 <- "PSAL"
+    if (gf3 %in% c("o2ML.L"))
+      gf3 <- "DOXY"
+  }
+
   line <- grep(data$code, pattern = gf3, ignore.case = TRUE)
 
   if (length(line) == 0) {

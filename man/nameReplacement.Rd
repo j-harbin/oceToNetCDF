@@ -25,7 +25,7 @@ used for ctd type}
 an odf file
 }
 \description{
-This function replaces DFO codes for dataNamesOriginal and data
+This function replaces DFO codes for dataNamesOriginal, data, and units
 with CF standards. For ctd types, if conductivity ratio (CRAT)
 exists, the values are converted to sea_water_electrical_conductivity
 values to abide by CF standards, and the unit is changed to the

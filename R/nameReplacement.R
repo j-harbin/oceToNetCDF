@@ -20,6 +20,7 @@
 #' used for ctd type
 #' @return an odf file
 #' @importFrom oce oceSetMetadata
+#' @importFrom oce oceDeleteData
 #' @examples
 #' library(odfToNetCDF)
 #' library(oce)
@@ -122,7 +123,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
             message("tk= ", tk)
         }
         dataNamesOriginal <- unname(unlist(odf[['dataNamesOriginal']]))
-        ##dataNamesOriginal[which(dataNamesOriginal == "CRAT_01")] <- "CNDC_01"
+
         for (i in seq_along(t)) {
             if (i %in% tk) {
                 if (debug > 0) {
@@ -134,9 +135,10 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
             }
         }
 
-        odf <- oce::oceSetMetadata(odf, name="dataNamesOriginal", value=dataNamesOriginal)
-        names(odf@data) <- odf@metadata$dataNamesOriginal
-        names(odf@metadata$units) <- odf@metadata$dataNamesOriginal
+        #odf <- oce::oceSetMetadata(odf, name="dataNamesOriginal", value=dataNamesOriginal)
+        names(odf@metadata$dataNamesOriginal) <- end
+        names(odf@data) <- end
+        names(odf@metadata$units) <- end
     }
     if (!(is.null(institute))) {
         odf <- oce::oceSetMetadata(odf, name="institute", value=institute)
@@ -166,6 +168,10 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
                     if (!(number)) {
                         odf@metadata$units$sea_water_electrical_conductivity$unit <- "S/m"
                         odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(4.2914*crat))
+                        odf <- oce::oceDeleteData(odf, name="sea_water_electrical_conductivity_ratio")
+                        cr <- which(names(odf[['dataNamesOriginal']]) == "sea_water_electrical_conductivity_ratio")
+                        names(odf[['dataNamesOriginal']])[cr] <- "sea_water_electrical_conductivity"
+                        odf@metadata$dataNamesOriginal$sea_water_electrical_conductivity <- "CNDC"
                     } else {
                         eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'S/m'")))
                         odf <- oce::oceSetData(odf, name=names[keep], value=(4.2914*crat))
@@ -174,6 +180,10 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
                     if (!(number)) {
                         odf@metadata$units$sea_water_electrical_conductivity$unit <- "mS/cm"
                         odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(crat*42.914))
+                        odf <- oce::oceDeleteData(odf, name="sea_water_electrical_conductivity_ratio")
+                        cr <- which(names(odf[['dataNamesOriginal']]) == "sea_water_electrical_conductivity_ratio")
+                        names(odf[['dataNamesOriginal']])[cr] <- "sea_water_electrical_conductivity"
+                        odf@metadata$dataNamesOriginal$sea_water_electrical_conductivity <- "CNDC"
                     } else  {
                         eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'mS/cm'")))
                         odf <- oce::oceSetData(odf, name=names[keep], value=(crat*42.914))
@@ -199,9 +209,6 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
         }
     }
 
-    if (matlabOrigin == FALSE) {
-        odf@metadata$dataNamesOriginal <- unname(odf@metadata$dataNamesOriginal)
-    }
     odf
 
 }

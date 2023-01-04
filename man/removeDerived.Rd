@@ -34,5 +34,6 @@ data <- getCFData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")
+odf2 <- oceSetMetadata(object=odf2,name="mooringType", value="mctd")
 odf3 <- removeDerived(odf2)
 }

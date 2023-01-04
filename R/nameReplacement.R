@@ -39,6 +39,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     }
 
     if (!(is.null(odf[['fileType']])) && odf@metadata$fileType == "matlab") {
+        matlabOrigin <- TRUE
         # FIXME: This could be better
         if (debug > 0) {
             message("Matlab type has been identified")
@@ -54,10 +55,8 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
         if (debug > 0) {
             message("end= ", paste0(end, sep=","), " with length = ",length(end))
         }
-
         #dataNamesOriginal
         names(odf[['dataNamesOriginal']]) <- end
-
         #names of data
         b <- which(names(odf[['data']]) == "scan")
         names(odf@data)[-b] <- names(odf@metadata$dataNamesOriginal)
@@ -67,6 +66,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
 
 
     } else if (is.null(odf[['fileType']])) {
+        matlabOrigin <- FALSE
         header <- odf[['metadata']]$header
         k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
         parameters <- rep(FALSE, length(header[k]))
@@ -135,69 +135,73 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
         }
 
         odf <- oce::oceSetMetadata(odf, name="dataNamesOriginal", value=dataNamesOriginal)
-        if (!(is.null(institute))) {
-            odf <- oce::oceSetMetadata(odf, name="institute", value=institute)
-        }
         names(odf@data) <- odf@metadata$dataNamesOriginal
         names(odf@metadata$units) <- odf@metadata$dataNamesOriginal
+    }
+    if (!(is.null(institute))) {
+        odf <- oce::oceSetMetadata(odf, name="institute", value=institute)
+    }
 
-        # Converting CRAT to conductivity for CF standards
-        if (unique(data$type) == "ctd" && length(which(parameters == "CRAT") != 0)) {
-            if (is.null(unit)) {
-                stop("must provide a unit of either 'S/m' or 'mS/cm' for CTD type to convert CRAT to sea_water_electrical_conducitivity for CF standards")
+    # Converting CRAT to conductivity for CF standards
+    if (matlabOrigin) {
+        parameters <- dataNamesOriginal
+    }
+    if (unique(data$type) == "ctd" && length(which(parameters == "CRAT") != 0)) {
+        if (is.null(unit)) {
+            stop("must provide a unit of either 'S/m' or 'mS/cm' for CTD type to convert CRAT to sea_water_electrical_conducitivity for CF standards")
+        } else {
+            if (!(unit %in% c("S/m", "mS/cm"))) {
+                message("unit must be 'S/m' or'mS/cm', not ", unit)
             } else {
-                if (!(unit %in% c("S/m", "mS/cm"))) {
-                    message("unit must be 'S/m' or'mS/cm', not ", unit)
-                } else {
-                    names <- names(odf[['data']])
-                    keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)
-                    number <- grepl("\\_[0-9]$", names[keep])
+                names <- names(odf[['data']])
+                keep <- which(grepl("sea_water_electrical_conductivity", names) == TRUE)
+                number <- grepl("\\_[0-9]$", names[keep])
 
-                    if (number) {
-                        crat <- unlist(unname(odf@data[names[keep]]))
+                if (number) {
+                    crat <- unlist(unname(odf@data[names[keep]]))
+                } else {
+                    crat <- odf@data$sea_water_electrical_conductivity
+                }
+                if (unit == 'S/m') {
+                    if (!(number)) {
+                        odf@metadata$units$sea_water_electrical_conductivity$unit <- "S/m"
+                        odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(4.2914*crat))
                     } else {
-                        crat <- odf@data$sea_water_electrical_conductivity
+                        eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'S/m'")))
+                        odf <- oce::oceSetData(odf, name=names[keep], value=(4.2914*crat))
                     }
-                    if (unit == 'S/m') {
-                        if (!(number)) {
-                            odf@metadata$units$sea_water_electrical_conductivity$unit <- "S/m"
-                            odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(4.2914*crat))
-                        } else {
-                            eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'S/m'")))
-                            odf <- oce::oceSetData(odf, name=names[keep], value=(4.2914*crat))
-                        }
-                    } else if (unit == 'mS/cm') {
-                        if (!(number)) {
-                            odf@metadata$units$sea_water_electrical_conductivity$unit <- "mS/cm"
-                            odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(crat*42.914))
-                        } else  {
-                            eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'mS/cm'")))
-                            odf <- oce::oceSetData(odf, name=names[keep], value=(crat*42.914))
-                        }
+                } else if (unit == 'mS/cm') {
+                    if (!(number)) {
+                        odf@metadata$units$sea_water_electrical_conductivity$unit <- "mS/cm"
+                        odf <- oce::oceSetData(odf, name="sea_water_electrical_conductivity", value=(crat*42.914))
+                    } else  {
+                        eval(parse(text=paste0("odf@metadata$units$", names[keep], "$unit <- 'mS/cm'")))
+                        odf <- oce::oceSetData(odf, name=names[keep], value=(crat*42.914))
                     }
                 }
             }
         }
-
-        ## Adding eastward and northward velocity for RCM data types (from magnitude and heading)
-        if (unique(data$type) == 'rcm' && "horizontal_current_speed" %in% dataNamesOriginal && "horizontal_current_direction" %in% dataNamesOriginal) {
-            spd <- odf[['horizontal_current_speed']]
-            dir <- odf[['horizontal_current_direction']]
-            v <- spd*cos(dir * pi/180)
-            u <- spd*sin(dir *pi/180)
-            if (!("eastward_sea_water_velocity" %in% dataNamesOriginal)) {
-                odf <- oce::oceSetData(odf, standardName('EWCT', data)$standard_name, u,
-                    unit=list(unit=expression(m/s), scale=''), originalName =standardName('EWCT', data)$standard_name)
-            }
-            if (!("northward_sea_water_velocity" %in% dataNamesOriginal)) {
-                odf <- oce::oceSetData(odf, standardName('NSCT', data)$standard_name, v,
-                    unit=list(unit=expression(m/s), scale=''), originalName =standardName('NSCT', data)$standard_name)
-            }
-        }
-
-        odf@metadata$dataNamesOriginal <- unname(odf@metadata$dataNamesOriginal)
     }
 
+    ## Adding eastward and northward velocity for RCM data types (from magnitude and heading)
+    if (unique(data$type) == 'rcm' && "horizontal_current_speed" %in% dataNamesOriginal && "horizontal_current_direction" %in% dataNamesOriginal) {
+        spd <- odf[['horizontal_current_speed']]
+        dir <- odf[['horizontal_current_direction']]
+        v <- spd*cos(dir * pi/180)
+        u <- spd*sin(dir *pi/180)
+        if (!("eastward_sea_water_velocity" %in% dataNamesOriginal)) {
+            odf <- oce::oceSetData(odf, standardName('EWCT', data)$standard_name, u,
+                unit=list(unit=expression(m/s), scale=''), originalName =standardName('EWCT', data)$standard_name)
+        }
+        if (!("northward_sea_water_velocity" %in% dataNamesOriginal)) {
+            odf <- oce::oceSetData(odf, standardName('NSCT', data)$standard_name, v,
+                unit=list(unit=expression(m/s), scale=''), originalName =standardName('NSCT', data)$standard_name)
+        }
+    }
+
+    if (matlabOrigin == FALSE) {
+        odf@metadata$dataNamesOriginal <- unname(odf@metadata$dataNamesOriginal)
+    }
     odf
 
 }

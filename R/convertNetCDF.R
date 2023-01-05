@@ -57,7 +57,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
 
   var <- list()
   for (i in v) {
-    code <- data$code[which(data$standard_name %in% gsub("_[0-9]$.*","",i))]
+    code <- data$code[which(data$standard_name %in% gsub("_[0-9]$.*","",i))][1]
     var[i] <- code
   }
 
@@ -72,13 +72,17 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   v <- v[-tr]
   vt <- grep(var, pattern = 'SYTM')
   var <- var[-vt]
+  if (debug > 0) {
+    message("After removing time, var =", paste0(var, sep=","))
+  }
 
   #POPULATE VARIABLES WITH APPROPRIATE CODES
   #browser()
   VAR <- list()
   if (debug > 0) {
     message("Step 2: About to determine units and standard_name for each code.")
-  }
+    }
+
 
   for (i in seq_along(var)) {
     VAR[[i]] <- standardName(var[[i]], data=data)
@@ -86,8 +90,10 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   i <- 1
 
   if (debug > 0) {
-    message("class of VAR IS ",class(VAR), " and the names in the first var is =", names(VAR[[1]]))
-  }
+    message("class of VAR IS ",class(VAR), " and the names in the first var is =", names(VAR[[1]]),". The lenght of VAR IS ", length(VAR))
+    message("The gf3 is ", VAR[[1]]$gf3)
+
+    }
 
   if (debug > 0) {
     message("Step 3: About to populate the variable, var, units, max,min, standard_name, and flags.")
@@ -100,12 +106,10 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     variable_9 <- var9 <- units9 <- variable_10 <- var10 <- units10 <-
     variable_11 <- var11 <- units11 <- variable_12 <- var12 <- units12 <-
     NULL
-  for ( vv in VAR ){
-
+  for (vv in VAR) {
     eval(parse(text = paste0("variable_", i, "<- '" , v[[i]], "'")))
     eval(parse(text= paste0("var",i," <-'", v[[i]],"'")))
     eval(parse(text = paste0("units", i, " <-'", vv$units, "'")))
-    #eval(parse(text = paste0("generic_parameter_name", i, " <-'", vv$name, "'")))
     eval(parse(text = paste0('var', i, 'max <-', -10000)))
     eval(parse(text = paste0('var', i, 'min <-' , 10000)))
     if(!is.null(vv$std)){
@@ -127,22 +131,31 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   }
   #CHECK LENGTH OF VARIABLES
   numvar <- length(var)
+  if (debug > 0) {
+      message("numvar is equal to = ", numvar)
+  }
 
   #FILENAME
-  if(missing(filename)){
+  if (missing(filename)) {
     #filename <- paste("MCTD", odf[['cruiseNumber']], odf[['eventNumber']], odf[['eventQualifier']], odf[['samplingInterval']], sep = '_')
     if (MCTD | mctd) {
-    f <- gsub(".*M","",odf[['filename']])
-    ff <-  gsub("\\..*","",f)
-    filename <- paste0("M", ff, sep="")
-    } else if (RCM | rcm) {
-      f <- gsub(".*M","",odf[['filename']])
-      ff <-  gsub("\\..*","",f)
-      filename <- paste0("MCM", ff, sep="")
+    #f <- gsub(".*M","",odf[['filename']])
+    #ff <-  gsub("\\..*","",f)
+    filename <- odf[['eventNumber']]
+    #} else if (RCM | rcm) {
+    #  f <- gsub(".*M","",odf[['filename']])
+    #  ff <-  gsub("\\..*","",f)
+    #  filename <- paste0("MCM", ff, sep="")
     }
   }
+
+
   ncpath <- destination
   ncfname <- paste(ncpath,"/", filename, ".nc", sep = "")
+
+  if (debug > 0) {
+    message("filename = ", filename, " and ncfname =", ncfname)
+  }
 
   if (debug > 0) {
     message("Step 5: Check dimensions of time, station, lon, lat, and dimnchar.")
@@ -154,6 +167,10 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   latdim <- ncdf4::ncdim_def("latitude", "degrees_north", as.double(odf[['latitude']]))
   dimnchar <- ncdf4::ncdim_def('nchar', '', 1:23, create_dimvar = FALSE)
 
+  #if (debug > 0) {
+  #    message("timedim= ", timedim)
+  #}
+
   #FILLVALUE
   FillValue <- 1e35
 
@@ -161,7 +178,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   #VARIABLES
 
   if (debug > 0) {
-    message("Step 6: About to define netCDF variablesusing ncdf4::ncvar_def.")
+    message("Step 6: About to define netCDF variables using ncdf4::ncvar_def.")
   }
   dlname <- 'longitude'
   lon_def <- ncdf4::ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
@@ -182,7 +199,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     if (numvar >2){
       dlname <- variable_3
       v3_def <- ncdf4::ncvar_def(var3, units3, list(timedim, stationdim), FillValue, dlname, prec = 'double')
-
       if (numvar >3){
         dlname <- variable_4
         v4_def <- ncdf4::ncvar_def(var4, units4, list(timedim, stationdim), FillValue, dlname, prec = 'double')
@@ -235,6 +251,9 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   }
   #####write out definitions to new nc file####
   defs <- grep(ls(), pattern = '_def', value = TRUE)
+  if (debug > 0) {
+    message("defs =", defs)
+  }
   dd <- NULL
   for ( i in 1:length(defs)){
     eval(parse(text = paste0("dd[[i]] <- ", defs[[i]])))

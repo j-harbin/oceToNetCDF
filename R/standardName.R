@@ -27,23 +27,29 @@ standardName <- function(gf3, data=NULL, debug=0) {
 
   # Adding in a test when code is in Matlab format
 
-  matnames <- c("prDM","t090C","sal00","t190C","sal11","o2ML.L", "yday")
+  matnames <- c("prDM","t090C","sal00","t190C","sal11","o2ML.L", "yday", "salinity", "temperature", "pressure", "datenum")
   if (gf3 %in% matnames) {
     if (debug > 0) {
       message("matlab format has been identified")
     }
     # FIXME: This may not be correct
-    if (gf3 == "prDM")
+    if (gf3 %in% c("prDM", "pressure")) {
       gf3 <- "PRES"
-    if (gf3 %in% c("t090C", "t190C"))
+    }
+    if (gf3 %in% c("t090C", "t190C", "temperature")) {
       gf3 <- "TEMP"
-    if (gf3 %in% c("sal00", "sal11"))
+    }
+    if (gf3 %in% c("sal00", "sal11", "salinity")) {
       gf3 <- "PSAL"
-    if (gf3 %in% c("o2ML.L"))
+      }
+    if (gf3 %in% c("o2ML.L")) {
       gf3 <- "DOXY"
-    if (gf3 %in% c("yday"))
+    }
+    if (gf3 %in% c("yday", "datenum")) {
       gf3 <- "SYTM"
+    }
   }
+
 
   line <- grep(data$code, pattern = gf3, ignore.case = TRUE)
 

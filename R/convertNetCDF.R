@@ -561,9 +561,10 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
 
   ncdf4::ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
   ncdf4::ncatt_put(ncout, 0, "creator_type", "person")
-
+  if (class(odf[['time']][1])[1] == "POSIXct") {
   ncdf4::ncatt_put(ncout, 0, "time_coverage_start", as.character(as.POSIXct(odf[['time']][1])))
   ncdf4::ncatt_put(ncout, 0, "time_coverage_end", as.character(as.POSIXct(utils::tail(odf[['time']], n= 1))))
+  }
   ncdf4::ncatt_put(ncout, 0, "geospatial_lat_min", odf[['latitude']])
   ncdf4::ncatt_put(ncout, 0, "geospatial_lat_max", odf[['latitude']])
   ncdf4::ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
@@ -672,7 +673,6 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
   }
 
   ####nc close####
-
   ncdf4::nc_close(ncout)
 
 

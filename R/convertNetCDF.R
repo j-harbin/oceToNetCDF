@@ -41,10 +41,40 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     stop("must install.packages(\"oce\") for convertNetCDF() to work")
   if (!requireNamespace("ncdf4", quietly=TRUE))
     stop("must install.packages(\"ncdf4\") for convertNetCDF() to work")
-  MCTD <- grepl("MCTD", odf[['filename']])
-  mctd <- grepl("mctd", odf[['filename']])
-  RCM <- grepl("RCM", odf[['filename']])
-  rcm <- grepl("rcm", odf[['filename']])
+
+
+
+
+
+  if (grepl("MCTD", odf[['filename']]) == FALSE && grepl("mctd", odf[['filename']]) == FALSE && grepl("RCM", odf[['filename']]) == FALSE
+      && grepl("rcm", odf[['filename']]) == FALSE && is.null(odf[['mooringType']])) {
+    stop("Type of file not found in filename. Set your odf[['mooringType']] to be either mctd, rcm, or adcp. See help page for details")
+  }
+
+  if (grepl("MCTD", odf[['filename']]) | !(is.null(odf[['mooringType']])) && odf[['mooringType']] == "mctd") {
+    MCTD <- TRUE
+  } else {
+    MCTD <- FALSE
+  }
+
+  if (grepl("mctd", odf[['filename']]) | !(is.null(odf[['mooringType']])) && odf[['mooringType']] == "mctd") {
+    mctd <- TRUE
+  } else {
+    mctd <- FALSE
+  }
+  if (grepl("RCM", odf[['filename']]) | !(is.null(odf[['mooringType']])) && odf[['mooringType']] == "rcm") {
+    RCM <- TRUE
+  } else {
+    RCM <- FALSE
+  }
+  if (grepl("rcm", odf[['filename']]) | !(is.null(odf[['mooringType']])) && odf[['mooringType']] == "rcm") {
+    rcm <- TRUE
+  } else {
+    rcm <- FALSE
+  }
+
+
+
   v <- names(odf@data)
 
   if (MCTD | mctd) {

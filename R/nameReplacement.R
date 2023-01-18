@@ -201,11 +201,16 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
         u <- spd*sin(dir *pi/180)
         if (!("eastward_sea_water_velocity" %in% dataNamesOriginal)) {
             odf <- oce::oceSetData(odf, standardName('EWCT', data)$standard_name, u,
-                unit=list(unit=expression(m/s), scale=''), originalName =standardName('EWCT', data)$standard_name)
+                unit=list(unit=expression(m/s), scale=''), originalName = standardName('EWCT', data)$code)
+            odf@metadata$dataNamesOriginal$eastward_sea_water_velocity <- "EWCT"
+            message(names(odf[['dataNamesOriginal']]))
         }
         if (!("northward_sea_water_velocity" %in% dataNamesOriginal)) {
             odf <- oce::oceSetData(odf, standardName('NSCT', data)$standard_name, v,
-                unit=list(unit=expression(m/s), scale=''), originalName =standardName('NSCT', data)$standard_name)
+                unit=list(unit=expression(m/s), scale=''), originalName =standardName('NSCT', data)$code)
+            odf@metadata$dataNamesOriginal$northward_sea_water_velocity <- "NSCT"
+
+
         }
     }
 

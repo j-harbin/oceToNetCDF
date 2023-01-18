@@ -118,6 +118,9 @@ removeDerived <- function(odf, debug=0) {
         }
 
     } else {
+        if (debug > 0) {
+            message("A matlab file was NOT identified")
+        }
         matlabFile <- FALSE
         header <- odf[['metadata']]$header
         k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
@@ -127,14 +130,15 @@ removeDerived <- function(odf, debug=0) {
             param2 <- gsub("\\_.*","",param) # Removing if there is digits (ie. "_01")
             parameters[i] <- param2
         }
-
+        parameters <- gsub(".*'","",parameters)
 
         bad <- which(!(parameters %in% codeNames))
+        #message("parameters = ", paste0(parameters, sep=","), " and codeNames = ", paste0(codeNames, sep=","))
     }
 
     if (length(bad) > 0) {
         if (RCM | rcm) {
-            message("RCM TYPE: ", gsub(".*R","",odf[['filename']]), ": removed metadata for ", paste0(parameters[bad], sep=","))
+            message("RCM TYPE: removed metadata for ", paste0(parameters[bad], sep=","))
         } else if (MCTD | mctd) {
             message("MCTD TYPE: ", gsub(".*M","",odf[['filename']]), ": removed metadata for ", paste0(parameters[bad], sep=","))
         }

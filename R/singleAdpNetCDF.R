@@ -35,7 +35,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   }
 
   if (!inherits(adp, "adp")){
-    stop("method is only for adpects of class '", "adp", "'")
+    stop("method is only for obects of class '", "adp", "'")
   }
   #file name and path
   ncpath <- destination

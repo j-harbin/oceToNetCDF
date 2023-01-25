@@ -358,7 +358,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   ncdf4::ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
 
   #FROM ODF
-  ncdf4::ncatt_put(ncout, 0, 'inst_type', odf[['type']])
+  ncdf4::ncatt_put(ncout, 0, 'instument_type', odf[['mooringType']])
   #ncdf4::ncatt_put(ncout, 0, 'model', odf[['model']])
   ncdf4::ncatt_put(ncout, 0, 'sampling_interval', odf[['samplingInterval']])
   ncdf4::ncatt_put(ncout, 0, 'country_code', odf[['countryInstituteCode']])
@@ -368,7 +368,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   ncdf4::ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
   ncdf4::ncatt_put(ncout, 0, "cdm_data_type", "station")
   #ncdf4::ncatt_put(ncout, 0, "serial_number", odf[['serialNumber']])
-  ncdf4::ncatt_put(ncout, 0, "data_type", 'MCTD')
   ncdf4::ncatt_put(ncout, 0, "longitude", odf[['longitude']])
   ncdf4::ncatt_put(ncout, 0, "latitude", odf[['latitude']])
   ncdf4::ncatt_put(ncout, 0, "platform", odf[['cruise']])
@@ -609,7 +608,7 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
   ncdf4::ncatt_put(ncout, 0, "date_modified", date())
   ncdf4::ncatt_put(ncout, 0, "institution", odf[['institute']])
 
-  ncdf4::ncatt_put(ncout, 0, "filename", odf[['filename']])
+  ncdf4::ncatt_put(ncout, 0, "filename", filename)
   #ncdf4::ncatt_put(ncout, 0, "model", gsub(".*M","",odf[['model']]))
   #ncdf4::ncatt_put(ncout, 0, "serialNumber", gsub(".*M","",odf[['serialNumber']]))
   #ncdf4::ncatt_put(ncout, 0, "water_depth", gsub(".*M","",odf[['waterDepth']]))
@@ -622,7 +621,7 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
 
   ncdf4::ncatt_put(ncout, 0, "station", odf[['station']])
   ncdf4::ncatt_put(ncout, 0, "cruise", odf[['cruise']])
-  ncdf4::ncatt_put(ncout, 0, "type", odf[['type']])
+  #ncdf4::ncatt_put(ncout, 0, "type", odf[['type']])
   ncdf4::ncatt_put(ncout, 0, "cruise_number", odf[['cruiseNumber']])
   ncdf4::ncatt_put(ncout, 0, "depth_off_bottom", odf[['depthOffBottom']])
 

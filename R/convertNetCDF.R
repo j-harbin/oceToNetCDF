@@ -358,7 +358,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   ncdf4::ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
 
   #FROM ODF
-  ncdf4::ncatt_put(ncout, 0, 'instument_type', odf[['mooringType']])
+  ncdf4::ncatt_put(ncout, 0, 'instrument_type', odf[['mooringType']])
   #ncdf4::ncatt_put(ncout, 0, 'model', odf[['model']])
   ncdf4::ncatt_put(ncout, 0, 'sampling_interval', odf[['samplingInterval']])
   ncdf4::ncatt_put(ncout, 0, 'country_code', odf[['countryInstituteCode']])

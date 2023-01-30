@@ -28,9 +28,10 @@ are named inserted in CF standards using the \code{\link[=standardName]{standard
 \examples{
 \dontrun{
 library(odfToNetCDF)
-library(oce)
 data <- getCFData(type="adcp")
-files <- list.files(pattern="ODF")
+f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
+f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
+files <- c(f1,f2)
 adp <- compileOdfToAdp(files)
 singleAdpNetCDF(adp, name="test", debug=1, data=data)
 }

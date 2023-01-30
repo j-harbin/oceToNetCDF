@@ -188,8 +188,9 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   message("Step 6: About to write metadata into existing netCDF using ncdf4::ncatt_put")
   }
 
-  bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags"))
+  bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval"))
   namesMeta <- names(adp[['metadata']])[-bad]
+  #browser()
   for (i in seq_along(namesMeta)) {
       ncdf4::ncatt_put(ncout, 0, namesMeta[i], adp[[namesMeta[i]]])
   }

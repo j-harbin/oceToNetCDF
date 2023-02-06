@@ -71,7 +71,7 @@ structureAdp <- function(adp, debug=0) {
     if (debug > 0) {
       message("signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water identified")
     }
-    if (!(is.null(dim(adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]])[3]))) {
+    if (!(is.na(dim(adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]])[3]))) {
       if (debug > 0) {
         message("It was not an average")
       }
@@ -92,6 +92,11 @@ structureAdp <- function(adp, debug=0) {
         message("it was an average")
       }
       # This is an average
+      if (unique(class(adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']][,1][1])) == "raw") {
+        qn <- as.numeric(adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]])
+        dim(qn) <- dim(adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']])
+        adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']] <- qn
+      }
       adp <- oceSetData(adp, name="average_signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water", value=adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]])
       adp <- oceDeleteData(adp, name="signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water")
     }
@@ -102,7 +107,7 @@ structureAdp <- function(adp, debug=0) {
     if (debug > 0) {
       message("percent_good_ping identified")
     }
-    if (!(is.null(dim(adp[["percent_good_ping"]])[3]))) {
+    if (!(is.na(dim(adp[["percent_good_ping"]])[3]))) {
       if (debug > 0) {
         message("It was not an average")
       }
@@ -122,6 +127,12 @@ structureAdp <- function(adp, debug=0) {
         message("It was an average")
       }
       # This is an average
+      if (unique(class(adp[['percent_good_ping']][,1][1])) == "raw") {
+        qn <- as.numeric(adp[["percent_good_ping"]])
+        dim(qn) <- dim(adp[['percent_good_ping']])
+        adp[['percent_good_ping']] <- qn
+      }
+
       adp <- oceSetData(adp, name="average_percent_good_ping", value=adp[["percent_good_ping"]])
       adp <- oceDeleteData(adp, name="percent_good_ping")
     }
@@ -179,10 +190,6 @@ structureAdp <- function(adp, debug=0) {
   }
 
 
-
-
-
-
-
+adp
 
 }

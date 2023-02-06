@@ -90,7 +90,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   for (i in seq_along(namesData)) {
     dlname <- namesData[i]
     uName <- gsub("(.+?)(\\_*[0-9].*)", "\\1", namesData[i])
-    gsub(".*average_","",uName)
+    uName <- gsub(".*average_","",uName)
 
     if (length(adp[[namesData[[i]]]]) == timedim$len) {
       DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim), missval=FillValue, longname=dlname, prec = "float")
@@ -128,7 +128,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   ncdf4::ncvar_put(ncout, ts_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
   keepDefs <- defs[-(which(names(defs) == "time_string"))]
   for (i in seq_along(keepDefs)) {
-    message("This is for ", names(keepDefs)[i])
     ncdf4::ncvar_put(nc=ncout, varid=keepDefs[[i]], vals=adp[[names(keepDefs)[i]]])
 
   }

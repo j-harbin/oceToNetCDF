@@ -3,3 +3,6 @@
 ^sandbox$
 ^vignette$
 ^CODE_OF_CONDUCT.md$
+^R/*swp$
+^sandbox/jlh/.DS_Store$
+^sandbox/.DS_Store$

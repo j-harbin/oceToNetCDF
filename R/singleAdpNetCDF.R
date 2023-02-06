@@ -13,6 +13,7 @@
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
 #' @importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
+#' @importFrom rlist list.append
 #'@examples
 #' \dontrun{
 #' library(odfToNetCDF)
@@ -38,20 +39,10 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   if (!inherits(adp, "adp")){
     stop("method is only for obects of class '", "adp", "'")
   }
-  #file name and path
+  # file name and path
   ncpath <- destination
   ncname <- name
   ncfname <- paste(ncpath,"/", ncname, ".nc", sep = "")
-
-  ## Sometimes adp objects from ODF files don't store error velocity
-  has_err <- ifelse(dim(adp[['v']])[3] > 3, TRUE, FALSE)
-
-  ## Sometimes adp objects from ODF files don't have echo amplitude (a) or percent good (q)
-  ## Has a and q?
-  has_a <- ifelse('a' %in% names(adp[['data']]), TRUE, FALSE)
-  has_q <- ifelse('q' %in% names(adp[['data']]), TRUE, FALSE)
-  has_d <- ifelse('depth' %in% names(adp[['data']]), TRUE, FALSE)
-
 
   # Added 10-SEP-2018 R.Pettipas
   # If the function exits due to an error, close the open netCDF file.
@@ -60,6 +51,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
   ####setting dimensions and definitions####
   #dimension variables from adp adpect
+
   if (debug > 0) {
     message("Step 1: About to set dimension")
   }
@@ -71,128 +63,87 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   #create dimensions
   timedim <- ncdf4::ncdim_def(name="time", units="seconds since 1970-01-01T00:00:00Z", vals=as.double(time))
   distdim <- ncdf4::ncdim_def(name="distance", units="metres", vals=as.double(dist))
-  #stationdim <- ncdf4::ncdim_def(name="station", units="", vals=1538)
   stationdim <- ncdf4::ncdim_def(name="station", units="", vals=as.numeric(length(adp[['station']])))
   dimnchar <- ncdf4::ncdim_def(name='nchar', units='', vals=1:23, create_dimvar = FALSE)
 
   #set fill value
   FillValue <- 1e35
 
-    #define variables
+  #define variables
+  if (debug > 0) {
+    message("Step 2: About to define variables")
+  }
 
-    if (debug > 0) {
-      message("Step 2: About to define variables")
+  dlname <- 'longitude'
+  lon_def <- ncdf4::ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
+
+  dlname <- 'latitude'
+  lat_def <- ncdf4::ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
+
+  dlname <- "time_string"
+  ts_def <- ncdf4::ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
+
+  namesData <- names(adp[['data']])[-which(names(adp[['data']]) %in% c("time", "distance"))]
+  DEFS <- NULL
+  for (i in seq_along(namesData)) {
+    dlname <- namesData[i]
+    uName <- gsub("(.+?)(\\_*[0-9].*)", "\\1", namesData[i])
+    gsub(".*average_","",uName)
+
+    if (length(adp[[namesData[[i]]]]) == timedim$len) {
+      DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim), missval=FillValue, longname=dlname, prec = "float")
+
+
+    } else if (dim(adp[[namesData[[i]]]])[2] == distdim$len) {
+      DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim, distdim), missval=FillValue, longname=dlname, prec = "float")
+
     }
 
-    dlname <- 'longitude'
-    lon_def <- ncdf4::ncvar_def(longname= "longitude", units = 'degrees_east', dim = stationdim, name = dlname, prec = 'double')
 
-    dlname <- 'latitude'
-    lat_def <- ncdf4::ncvar_def( longname = 'latitude', units = 'degrees_north', dim =  stationdim, name = dlname, prec = 'double')
+  }
 
-    dlname <- "eastward_sea_water_velocity"
-    u_def <- ncdf4::ncvar_def(standardName("EWCT",data=data)$standard_name, standardName("EWCT",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
+  defs <- rlist::list.append(DEFS, lon_def, lat_def, ts_def)
+  names(defs) <- c(namesData, "latitude", "longitude", "time_string")
 
-    dlname <- "northward_sea_water_velocity"
-    v_def <- ncdf4::ncvar_def(standardName("NSCT",data=data)$standard_name, standardName("NSCT",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
+  ####writing net CDF####
+  #write out definitions to new nc file
 
-    dlname <- "upward_sea_water_velocity"
-    w_def <- ncdf4::ncvar_def(standardName("VCSP",data=data)$standard_name, standardName("VCSP",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
+  if (debug > 0) {
+    message("Step 3: About to write out definitions to nc file using ncdf4::nc_create")
+  }
 
-    if (has_err) {
-      dlname <- "error_velocity_in_sea_water"
-      e_def <- ncdf4::ncvar_def(standardName("ERRV",data=data)$standard_name, standardName("ERRV",data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
-    }
-    if (has_a) {
-       dlname <- "ADCP_echo_intensity_beam_1"
-       b1_def <- ncdf4::ncvar_def(paste0(standardName("BEAM",data=data)$standard_name, "_1"), standardName("BEAM", data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
-    }
-    if (has_q) {
-      dlname <- "percent_good_beam_1"
-      pg1_def <- ncdf4::ncvar_def(paste0(standardName("PGDP",data=data)$standard_name, "_1"), standardName("PGDP", data=data)$units, list(timedim, distdim), FillValue, dlname, prec = "float")
-    }
+  # vars = an object of class ncvar4 describing the variable to be created, or a vector
+  # (or list of such objects to be created)
+  #browser()
+  ncout <- ncdf4::nc_create(filename=ncfname, vars=defs, force_v4 = TRUE)
 
-    if (has_d) {
-      dlname <- "sensor_depth_below_sea_surface"
-      d_def <- ncdf4::ncvar_def(standardName("DEPH",data=data)$standard_name, standardName("DEPH", data=data)$units, list(timedim), FillValue, dlname, prec = "float")
-    }
-
-    dlname <- "time_string"
-    ts_def <- ncdf4::ncvar_def("DTUT8601", units = "",dim =  list(dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
-
-    ####writing net CDF####
-    #write out definitions to new nc file
-
-    if (debug > 0) {
-      message("Step 3: About to write out definitions to nc file using ncdf4::nc_create")
-    }
-    if (has_a & has_q & has_err & has_d) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def,  pg1_def, lon_def, lat_def, ts_def, d_def), force_v4 = TRUE)
-    } else if (has_a & has_q & has_err) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_err & has_a) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_d & has_err & has_a) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, d_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_err & has_q) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_err & has_q & has_d) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, d_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_a & has_q) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, b1_def,  pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_a & has_q & has_d) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, b1_def,  pg1_def, lon_def, lat_def, ts_def, d_def), force_v4 = TRUE)
-    } else if (has_a & has_d) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, d_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_q & has_d) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, d_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_err & has_d) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, d_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_a) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, b1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_q) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, pg1_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_err) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, e_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else if (has_d) {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, d_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    } else {
-      ncout <- ncdf4::nc_create(ncfname, list(u_def, v_def, w_def, lon_def, lat_def, ts_def), force_v4 = TRUE)
-    }
 
   #insert variables into nc file
   if (debug > 0) {
     message("Step 4: About to insert variables to nc file")
   }
-
-  #browser()
-
-  ncdf4::ncvar_put(ncout, u_def, adp[['v']][,,1])
-  ncdf4::ncvar_put(ncout, v_def, adp[['v']][,,2])
-  ncdf4::ncvar_put(ncout, w_def, adp[['v']][,,3])
-  if (has_err) ncdf4::ncvar_put(ncout, e_def, adp[['v']][,,4])
+  ## varid is an object of class ncvar4. It is the variable to write the data to
   ncdf4::ncvar_put(ncout, ts_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
-  ncdf4::ncvar_put(ncout, lon_def, adp[['longitude']])
-  ncdf4::ncvar_put(ncout, lat_def, adp[['latitude']])
-  if (has_d) ncdf4::ncvar_put(ncout, d_def, adp[['depth']])
+  keepDefs <- defs[-(which(names(defs) == "time_string"))]
+  for (i in seq_along(keepDefs)) {
+    message("This is for ", names(keepDefs)[i])
+    ncdf4::ncvar_put(nc=ncout, varid=keepDefs[[i]], vals=adp[[names(keepDefs)[i]]])
 
-    if (debug > 0) {
-      message("Step 5: About to write data into existing Netcdf using ncdf4::ncvar_put")
-    }
-  if (has_a) ncdf4::ncvar_put(ncout, b1_def, adp[['a', 'numeric']])
-  if (has_q) ncdf4::ncvar_put(ncout, pg1_def, adp[['q', 'numeric']])
-    ncdf4::ncvar_put(ncout, ts_def, adp[['time']])
+  }
 
   ####metadata####
   if (debug > 0) {
-  message("Step 6: About to write metadata into existing netCDF using ncdf4::ncatt_put")
+    message("Step 6: About to write metadata into existing netCDF using ncdf4::ncatt_put")
   }
 
-  bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval"))
+  bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval", "codes", "tiltUsed", "threeBeamUsed", "binMappingUsed", "haveBinaryFixedAttitudeHeader",
+                                               "haveActualData", "oceBeamUnspreaded", "dataNamesOriginal", "transformationMatrix", "ensembleFile",
+                                               "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType"))
   namesMeta <- names(adp[['metadata']])[-bad]
   #browser()
   for (i in seq_along(namesMeta)) {
-      ncdf4::ncatt_put(ncout, 0, namesMeta[i], adp[[namesMeta[i]]])
+    #message("This is for namesMeta = ", namesMeta[i])
+    ncdf4::ncatt_put(ncout, 0, namesMeta[i], adp[[namesMeta[i]]])
   }
 
 }

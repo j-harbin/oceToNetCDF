@@ -27,29 +27,85 @@ standardName <- function(gf3, data=NULL, debug=0) {
 
   # Adding in a test when code is in Matlab format
 
+  # This is for matlab origin files
   matnames <- c("prDM","t090C","sal00","t190C","sal11","o2ML.L", "yday", "salinity", "temperature", "pressure", "datenum")
-  if (gf3 %in% matnames) {
-    if (debug > 0) {
-      message("matlab format has been identified")
-    }
-    # FIXME: This may not be correct
-    if (gf3 %in% c("prDM", "pressure")) {
-      gf3 <- "PRES"
-    }
-    if (gf3 %in% c("t090C", "t190C", "temperature")) {
-      gf3 <- "TEMP"
-    }
-    if (gf3 %in% c("sal00", "sal11", "salinity")) {
-      gf3 <- "PSAL"
-      }
-    if (gf3 %in% c("o2ML.L")) {
-      gf3 <- "DOXY"
-    }
-    if (gf3 %in% c("yday", "datenum")) {
-      gf3 <- "SYTM"
-    }
-  }
+  namesRDI <- c("v", "q", "a", "bv", "ba", "br", "bg", "roll", "pitch", "heading", "temperature",
+      "salinity", "depth", "soundSpeed", "heading", "time", "distance") # This is not all of them
+  specialNames <- unique(c(matnames, namesRDI))
 
+  if (gf3 %in% specialNames) {
+      if (gf3 %in% c("prDM", "pressure")) {
+          gf3 <- "PRES"
+      }
+      if (gf3 %in% c("t090C", "t190C", "temperature")) {
+          gf3 <- "TEMP"
+      }
+      if (gf3 %in% c("sal00", "sal11", "salinity")) {
+          gf3 <- "PSAL"
+      }
+      if (gf3 %in% c("o2ML.L")) {
+          gf3 <- "DOXY"
+      }
+      if (gf3 %in% c("yday", "datenum", "time")) {
+          gf3 <- "SYTM"
+      }
+
+    if (gf3 %in% c("distance")) {
+      gf3 <- "DIST"
+    }
+
+      # This is for RDI origin files
+      #FIXME: This doesn't include all of them
+
+      if ("v" %in% gf3) { # FIXME this is a bandaid until nameReplacement
+          gf3 <- "NSCT"
+
+      }
+      if ("a" %in% gf3) {
+          gf3 <- "BEAM"
+
+      }
+
+      if ("q" %in% gf3) {
+          gf3 <- "PGDP"
+      }
+      if ("bv" %in% gf3) {
+          gf3 <- "BV"
+      }
+
+      if ("ba" %in% gf3) {
+          gf3 <- "BA"
+      }
+
+      if ("bg" %in% gf3) {
+          gf3 <- "BG"
+      }
+
+      if ("br" %in% gf3) {
+          gf3 <- "BR"
+      }
+
+      if ("depth" %in% gf3) {
+          gf3 <- "DEPH"
+      }
+
+      if ("soundSpeed" %in% gf3) {
+          gf3 <- "SVEL"
+      }
+
+      if ("pitch" %in% gf3) {
+          gf3 <- "PTCH"
+      }
+
+      if ("roll" %in% gf3) {
+          gf3 <- "ROLL"
+      }
+      if ("heading" %in% gf3) {
+          gf3 <- "HEAD"
+      }
+
+
+  }
 
   line <- grep(data$code, pattern = gf3, ignore.case = TRUE)
 

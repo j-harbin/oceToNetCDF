@@ -41,7 +41,6 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
 
     if (!(is.null(odf[['fileType']])) && odf@metadata$fileType == "matlab") {
         matlabOrigin <- TRUE
-        # FIXME: This could be better
         if (debug > 0) {
             message("Matlab type has been identified")
         }
@@ -66,9 +65,57 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
         names(odf@metadata$units) <- names(odf@metadata$dataNamesOriginal)
 
 
-    } else if (is.null(odf[['fileType']])) {
+    } else if (!(is.null(odf[['fileType']])) && odf@metadata$fileType == "rdi") {
+      matlabOrigin <- FALSE
+        if (debug > 0) {
+            message("rdi type has been identified")
+        }
+       namesData <- names(odf[['data']])
+       keep <- which(namesData %in% c("v", "q", "a", "bv", "ba", "br", "bg", "roll", "pitch", "heading", "temperature",
+                                      "salinity", "depth", "soundSpeed", "time", "distance"))
+       dataNamesOriginal <- namesData[keep]
+       badData <- namesData[which(!(namesData %in% dataNamesOriginal))]
+
+       ADP <- NULL
+       for (i in seq_along(badData)) {
+         odf <- oceDeleteData(odf, name=badData[i])
+         if (i == max(seq_along(badData))) {
+           ADP[[1]] <- odf
+         }
+       }
+
+       odf <- ADP[[1]]
+
+
+       if (debug > 0) {
+         message("dataNamesOriginal= ", paste0(dataNamesOriginal, sep=","), " with length =", length(dataNamesOriginal))
+       }
+       end <- NULL
+       for (i in seq_along(dataNamesOriginal)) {
+         end[[i]] <- standardName(dataNamesOriginal[[i]], data=data)$standard_name
+       }
+       if (debug > 0) {
+         message("end= ", paste0(end, sep=","), " with length = ",length(end))
+       }
+       #dataNamesOriginal
+       odf <- oceSetMetadata(odf, name="dataNamesOriginal", value=as.list(dataNamesOriginal))
+       names(odf[['dataNamesOriginal']]) <- end
+       #names of data
+       names(odf@data) <- names(odf@metadata$dataNamesOriginal)
+       # names of units
+       unitNames <- names(odf[['units']])
+       CFunits <- unlist(lapply(unitNames, function(x) standardName(x, data=data)$standard_name))
+       names(odf[['units']]) <- CFunits
+
+    } else if (is.null(odf[['fileType']]) && !(unique(data$type) == "adcp")) {
         matlabOrigin <- FALSE
         header <- odf[['metadata']]$header
+        if (is.null(header)) {
+          stop("must set fileType of either 'matlab' or 'rdi' using oceSetMetadata()")
+        }
+        if (is.null(header)) {
+            stop("Must set fileType to be either 'rdi' or 'matlab' using oceSetMetadata()")
+        }
         k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
         parameters <- rep(FALSE, length(header[k]))
         raw <- rep(FALSE, length(header[k]))
@@ -135,11 +182,11 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
             }
         }
 
-        #odf <- oce::oceSetMetadata(odf, name="dataNamesOriginal", value=dataNamesOriginal)
         names(odf@metadata$dataNamesOriginal) <- end
         names(odf@data) <- end
         names(odf@metadata$units) <- end
     }
+
     if (!(is.null(institute))) {
         odf <- oce::oceSetMetadata(odf, name="institute", value=institute)
     }

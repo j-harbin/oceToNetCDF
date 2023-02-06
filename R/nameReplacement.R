@@ -65,7 +65,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
         names(odf@metadata$units) <- names(odf@metadata$dataNamesOriginal)
 
 
-    } else if (!(is.null(odf[['fileType']])) && odf@metadata$fileType == "rdi") {
+    } else if ((!(is.null(odf[['fileType']])) && odf@metadata$fileType == "rdi") | unique(data$type) == "adcp") {
       matlabOrigin <- FALSE
         if (debug > 0) {
             message("rdi type has been identified")
@@ -74,17 +74,18 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
        keep <- which(namesData %in% c("v", "q", "a", "bv", "ba", "br", "bg", "roll", "pitch", "heading", "temperature",
                                       "salinity", "depth", "soundSpeed", "time", "distance"))
        dataNamesOriginal <- namesData[keep]
-       badData <- namesData[which(!(namesData %in% dataNamesOriginal))]
+           badData <- namesData[which(!(namesData %in% dataNamesOriginal))]
+           if (!(length(badData) == 0)) {
+           ADP <- NULL
+           for (i in seq_along(badData)) {
+               odf <- oceDeleteData(odf, name=badData[i])
+               if (i == max(seq_along(badData))) {
+                   ADP[[1]] <- odf
+               }
+           }
 
-       ADP <- NULL
-       for (i in seq_along(badData)) {
-         odf <- oceDeleteData(odf, name=badData[i])
-         if (i == max(seq_along(badData))) {
-           ADP[[1]] <- odf
-         }
+           odf <- ADP[[1]]
        }
-
-       odf <- ADP[[1]]
 
 
        if (debug > 0) {

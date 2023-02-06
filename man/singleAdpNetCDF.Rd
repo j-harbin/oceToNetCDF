@@ -33,7 +33,9 @@ f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
 f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
 files <- c(f1,f2)
 adp <- compileOdfToAdp(files)
-singleAdpNetCDF(adp, name="test", debug=1, data=data)
+adp2 <- nameReplacement(adp, data=data)
+adp3 <- structureAdp(adp2)
+singleAdpNetCDF(adp3, name="test", debug=1, data=data)
 }
 
 }

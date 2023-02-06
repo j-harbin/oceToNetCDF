@@ -9,7 +9,7 @@
 #'@param name name of the netCDF file (not including the extension) to be produced
 #'@param destination the specified location to save the NetCDF. By default this is set
 #' to the local directory
-#' @param debug integer value indicating level of debugging.
+#'@param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
 #' @importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
@@ -22,7 +22,9 @@
 #' f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
 #' files <- c(f1,f2)
 #' adp <- compileOdfToAdp(files)
-#' singleAdpNetCDF(adp, name="test", debug=1, data=data)
+#' adp2 <- nameReplacement(adp, data=data)
+#' adp3 <- structureAdp(adp2)
+#' singleAdpNetCDF(adp3, name="test", debug=1, data=data)
 #' }
 #'
 #'@export

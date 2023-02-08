@@ -34,14 +34,14 @@ If a or q are identified as raw, it turns it into number.
 \examples{
 \dontrun{
 library(odfToNetCDF)
-library(oce)
-data <- getCFData(type="data")
-adp <- read.oce(f)
+data <- getCFData(type="adcp")
+f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
+f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
+files <- c(f1,f2)
+adp <- compileOdfToAdp(files)
 adp2 <- nameReplacement(adp, data=data)
-adp3 <- structureAdp(adp)
+adp3 <- structureAdp(adp2)
 names(adp2[['data']])
-dim(adp2[['percent_good_ping']])
 names(adp3[['data']])
-dim(adp2[['percent_good_ping_1']])
 }
 }

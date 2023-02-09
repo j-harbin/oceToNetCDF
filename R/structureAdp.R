@@ -14,7 +14,10 @@
 #' For bottom tracking, all data are broken up into vectors.
 #' If a or q are identified as raw, it turns it into number.
 #' Lastly, if the oceCoordinate is identified to be beam or xyz,
-#' it is converted to be enu using [oce::beamToXyz()] and [oce::xyzToEnu()].
+#' it is converted to be enu using [oce::beamToXyz()] and [oce::xyzToEnu()]
+#' while correcting for declination using [oce::magneticField()].
+#' If oceCoordinate is identified as enu, velocities are corrected
+#' for declination using [oce::enuToOtherAdp].
 #'
 #' @param adp an adp object [oce::read.odf()]
 #' @param debug integer value indicating level of debugging.
@@ -25,6 +28,8 @@
 #' @importFrom oce oceDeleteData
 #' @importFrom oce beamToXyz
 #' @importFrom oce xyzToEnu
+#' @importFrom oce enuToOtherAdp
+#' @importFrom oce magneticField
 #'@examples
 #' \dontrun{
 #' library(odfToNetCDF)
@@ -193,14 +198,23 @@ structureAdp <- function(adp, debug=0) {
   }
 
   if (!(is.null(adp[['oceCoordinate']]))) {
-      message(adp[['oceCoordinate']], " is identified as ", adp[['oceCoordinate']])
+      if (debug > 0 ) {
+          message(adp[['oceCoordinate']], " is identified as ", adp[['oceCoordinate']])
+      }
+      declination <- magneticField(longitude=rep(adp[['longitude']], length(adp[['time']])), latitude=rep(adp[['latitude']], length(adp[['time']])),time = adp[['time']])$declination
       if (adp[['oceCoordinate']] == "beam") {
           adp <- beamToXyz(adp)
-          adp <- xyzToEnu(adp)
+          adp <- xyzToEnu(adp, declination=declination)
           oceSetMetadata(adp, name="oceCoordinate", value="enu")
       } else if (adp[['oceCoordinate']] == "xyz") {
-          adp <- xyzToEnu(adp)
+          adp <- xyzToEnu(adp, declination=declination)
           oceSetMetadata(adp, name="oceCoordinate", value="enu")
+      } else if (adp[['oceCoordinate']] == "enu") {
+          if (!(is.null(adp[['heading']])) && !(is.null(adp[['pitch']])) && !(is.null(adp[['roll']]))) {
+              #adp <- enuToOther(adp, declination=declination)
+              adp <- enuToOtherAdp(adp, heading=declination)
+              oceSetMetadata(adp, name="oceCoordinate", value="enu")
+          }
       }
 
   }

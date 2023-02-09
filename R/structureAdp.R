@@ -13,6 +13,8 @@
 #' signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water.
 #' For bottom tracking, all data are broken up into vectors.
 #' If a or q are identified as raw, it turns it into number.
+#' Lastly, if the oceCoordinate is identified to be beam or xyz,
+#' it is converted to be enu using [oce::beamToXyz()] and [oce::xyzToEnu()].
 #'
 #' @param adp an adp object [oce::read.odf()]
 #' @param debug integer value indicating level of debugging.
@@ -21,6 +23,8 @@
 #' @return an adp object
 #' @importFrom oce oceSetMetadata
 #' @importFrom oce oceDeleteData
+#' @importFrom oce beamToXyz
+#' @importFrom oce xyzToEnu
 #'@examples
 #' \dontrun{
 #' library(odfToNetCDF)
@@ -47,7 +51,6 @@ structureAdp <- function(adp, debug=0) {
   if (debug > 0) {
     message("namesData =", paste0(namesData, sep=","))
   }
-
 
   if ("northward_sea_water_velocity" %in% namesData) {
     if (debug > 0) {
@@ -189,7 +192,18 @@ structureAdp <- function(adp, debug=0) {
     adp <- oceDeleteData(adp, name="bottom_percent_good_ping")
   }
 
+  if (!(is.null(adp[['oceCoordinate']]))) {
+      message(adp[['oceCoordinate']], " is identified as ", adp[['oceCoordinate']])
+      if (adp[['oceCoordinate']] == "beam") {
+          adp <- beamToXyz(adp)
+          adp <- xyzToEnu(adp)
+          oceSetMetadata(adp, name="oceCoordinate", value="enu")
+      } else if (adp[['oceCoordinate']] == "xyz") {
+          adp <- xyzToEnu(adp)
+          oceSetMetadata(adp, name="oceCoordinate", value="enu")
+      }
 
-adp
+  }
+  adp
 
 }

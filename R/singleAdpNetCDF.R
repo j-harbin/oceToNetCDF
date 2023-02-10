@@ -91,13 +91,26 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     dlname <- namesData[i]
     uName <- gsub("(.+?)(\\_*[0-9].*)", "\\1", namesData[i])
     uName <- gsub(".*average_","",uName)
+    longName <- data$name[which(data$standard_name == uName)]
+    message("uName =", uName, " for ", i, " and longname =", longName)
+    #FIXME: This will include Heading with the new applyDeclination() oce function
+    if (longName %in% c("East Component of Current", "North Component of Current", "Vertical Current Speed", "Error Velocity")) {
+      if (adp[['northdec']] == "magnetic") {
+        longName <- paste0(longName, "(magnetic)")
+      } else if (adp[['northdec']] == "true") {
+        longName <- paste0(longName, "(true)", collapse=" ")
+
+      }
+
+
+    }
 
     if (length(adp[[namesData[[i]]]]) == timedim$len) {
-      DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim), missval=FillValue, longname=dlname, prec = "float")
+      DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim), missval=FillValue, longname=longName, prec = "float")
 
 
     } else if (dim(adp[[namesData[[i]]]])[2] == distdim$len) {
-      DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim, distdim), missval=FillValue, longname=dlname, prec = "float")
+      DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim, distdim), missval=FillValue, longname=longName, prec = "float")
 
     }
 
@@ -139,7 +152,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
   bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval", "codes", "tiltUsed", "threeBeamUsed", "binMappingUsed", "haveBinaryFixedAttitudeHeader",
                                                "haveActualData", "oceBeamUnspreaded", "dataNamesOriginal", "transformationMatrix", "ensembleFile",
-                                               "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType"))
+                                               "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "northdec"))
   namesMeta <- names(adp[['metadata']])[-bad]
   #browser()
   for (i in seq_along(namesMeta)) {

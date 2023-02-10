@@ -199,22 +199,24 @@ structureAdp <- function(adp, debug=0) {
 
   if (!(is.null(adp[['oceCoordinate']]))) {
       if (debug > 0 ) {
-          message(adp[['oceCoordinate']], " is identified as ", adp[['oceCoordinate']])
+          message("adp[['oceCoordinate']] is identified as ", adp[['oceCoordinate']])
       }
+    adp <- oceSetMetadata(adp, name="northdec", value="magnetic") # Assuming declination needs to be corrected
       declination <- magneticField(longitude=rep(adp[['longitude']], length(adp[['time']])), latitude=rep(adp[['latitude']], length(adp[['time']])),time = adp[['time']])$declination
       if (adp[['oceCoordinate']] == "beam") {
           adp <- beamToXyz(adp)
           adp <- xyzToEnu(adp, declination=declination)
-          oceSetMetadata(adp, name="oceCoordinate", value="enu")
+          adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
+          adp <- oceSetMetadata(adp, name="northdec", value="true")
       } else if (adp[['oceCoordinate']] == "xyz") {
           adp <- xyzToEnu(adp, declination=declination)
-          oceSetMetadata(adp, name="oceCoordinate", value="enu")
+          adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
+          adp <- oceSetMetadata(adp, name="northdec", value="true")
       } else if (adp[['oceCoordinate']] == "enu") {
-          if (!(is.null(adp[['heading']])) && !(is.null(adp[['pitch']])) && !(is.null(adp[['roll']]))) {
-              #adp <- enuToOther(adp, declination=declination)
-              adp <- enuToOtherAdp(adp, heading=declination)
-              oceSetMetadata(adp, name="oceCoordinate", value="enu")
-          }
+        # This will occur with oce
+              #adp <- enuToOtherAdp(adp, heading=declination)
+              #adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
+              #adp <- oceSetMetadata(adp, name="northdec", value="true")
       }
 
   }

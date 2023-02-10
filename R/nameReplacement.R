@@ -21,6 +21,7 @@
 #' @return an odf file
 #' @importFrom oce oceSetMetadata
 #' @importFrom oce oceDeleteData
+#' @importFrom oce oceDeleteMetadata
 #' @examples
 #' library(odfToNetCDF)
 #' library(oce)
@@ -40,6 +41,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     }
 
     if (!(is.null(odf[['fileType']])) && odf@metadata$fileType == "matlab") {
+      # Matlab origin
         matlabOrigin <- TRUE
         if (debug > 0) {
             message("Matlab type has been identified")
@@ -66,6 +68,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
 
 
     } else if ((!(is.null(odf[['fileType']])) && odf@metadata$fileType == "rdi") | unique(data$type) == "adcp") {
+      # RDI origin
       matlabOrigin <- FALSE
         if (debug > 0) {
             message("rdi type has been identified")
@@ -109,6 +112,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
        names(odf[['units']]) <- CFunits
 
     } else if (is.null(odf[['fileType']]) && !(unique(data$type) == "adcp")) {
+      # ODF (NOT ADP)
         matlabOrigin <- FALSE
         header <- odf[['metadata']]$header
         if (is.null(header)) {
@@ -118,74 +122,99 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
             stop("Must set fileType to be either 'rdi' or 'matlab' using oceSetMetadata()")
         }
         k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
-        parameters <- rep(FALSE, length(header[k]))
-        raw <- rep(FALSE, length(header[k]))
-        for (i in seq_along(header[k])) {
-            param <- header[k][[i]][[paste0("CODE_",i)]]
-            param2 <- gsub("\\_.*","",param) # Removing if there is digits (ie. "_01")
-            parameters[i] <- param2
-            raw[i] <- param
-        }
-        parameters <- gsub("'", "", parameters)
-        raw <- gsub("'", "", raw)
-        if (length(which(parameters == "CRAT")) != 0) {
-            message('Warning: Found CRAT instead of CNDC')
-            ##parameters[which(parameters == "CRAT")] <- "CNDC"
-        }
-        if (!(length(parameters) == length(unique(parameters)))) {
-            message("Warning: One of the parameters has a duplicate (ie. more than one sensor)")
-        }
-        if (debug > 0) {
-            message("parameters= ", paste0(parameters, sep=","))
-            message("raw= ", paste0(raw, sep=","))
-        }
+        if (length(k) == 0) {
+            parameters <- unlist(unname(odf[['dataNamesOriginal']]))
+            parameters <- parameters[-which(parameters == "flag")]
+            dataNames <- names(odf[['data']])
 
-        # Getting standard names of the GF3 CODE
-        t <- unlist(lapply(parameters, function(x) standardName(x, data=data)$standard_name))
-        end <- list()
-        for (i in seq_along(raw)) {
-            if (grepl("01", paste0("_",gsub(".*_","",raw[i])))) {
-                #end[i] <- paste0(t[i], "_1")
-                end[i] <- t[i]
-            } else if (grepl("02", paste0("_",gsub(".*_","",raw[i])))) {
-                end[i] <- paste0(t[i], "_2")
-            } else if (grepl("03", paste0("_",gsub(".*_","",raw[i])))) {
-                end[i] <- paste0(t[i], "_3")
-            } else if (grepl("04", paste0("_",gsub(".*_","",raw[i])))) {
-                end[i] <- paste0(t[i], "_4")
-            } else {
-                end[i] <- t[i]
+            if (debug > 0) {
+                message("parameters= ", paste0(parameters, sep=","), " with length= ", length(parameters))
             }
-        }
 
-        if (debug > 0) {
-            message("end= ", paste0(end, sep=","))
-        }
+            standardNames <- NULL
+            for (i in seq_along(dataNames)) {
+                sN <- standardName(dataNames[i], data=data)$standard_name
+                standardNames[[i]] <- sN
+            }
+            if (debug > 0) {
+                message("standardNames= ", paste0(standardNames, sep=","), "with  length ", length(standardNames))
+            }
+            odf <- oceDeleteMetadata(odf, name="dataNamesOriginal")
+            odf <- oceSetMetadata(odf, name="dataNamesOriginal", value=as.list(parameters))
+            names(odf@metadata$dataNamesOriginal) <- standardNames
+            names(odf@data) <- standardNames
+            names(odf@metadata$units)[-which(names(odf@metadata$units) == "flag")] <- standardNames[-which(standardNames == 'time')]
 
-        if (debug > 0) {
-            message("t= ", paste0(t, sep=","))
-        }
-        # Replacing NAME with standard name
-        tk <- which(!(t %in% ""))
-        if (debug > 0) {
-            message("tk= ", tk)
-        }
-        dataNamesOriginal <- unname(unlist(odf[['dataNamesOriginal']]))
+        } else {
+            parameters <- rep(FALSE, length(header[k]))
+            raw <- rep(FALSE, length(header[k]))
+            for (i in seq_along(header[k])) {
+                param <- header[k][[i]][[paste0("CODE_",i)]]
+                param2 <- gsub("\\_.*","",param) # Removing if there is digits (ie. "_01")
+                parameters[i] <- param2
+                raw[i] <- param
+            }
+            parameters <- gsub("'", "", parameters)
+            raw <- gsub("'", "", raw)
+            if (length(which(parameters == "CRAT")) != 0) {
+                message('Warning: Found CRAT instead of CNDC')
+                ##parameters[which(parameters == "CRAT")] <- "CNDC"
+            }
+            if (!(length(parameters) == length(unique(parameters)))) {
+                message("Warning: One of the parameters has a duplicate (ie. more than one sensor)")
+            }
+            if (debug > 0) {
+                message("parameters= ", paste0(parameters, sep=","))
+                message("raw= ", paste0(raw, sep=","))
+            }
 
-        for (i in seq_along(t)) {
-            if (i %in% tk) {
-                if (debug > 0) {
-                    message(dataNamesOriginal[i], "  is being replaced with ", end[i])
+            # Getting standard names of the GF3 CODE
+            t <- unlist(lapply(parameters, function(x) standardName(x, data=data)$standard_name))
+            end <- list()
+            for (i in seq_along(raw)) {
+                if (grepl("01", paste0("_",gsub(".*_","",raw[i])))) {
+                    #end[i] <- paste0(t[i], "_1")
+                    end[i] <- t[i]
+                } else if (grepl("02", paste0("_",gsub(".*_","",raw[i])))) {
+                    end[i] <- paste0(t[i], "_2")
+                } else if (grepl("03", paste0("_",gsub(".*_","",raw[i])))) {
+                    end[i] <- paste0(t[i], "_3")
+                } else if (grepl("04", paste0("_",gsub(".*_","",raw[i])))) {
+                    end[i] <- paste0(t[i], "_4")
+                } else {
+                    end[i] <- t[i]
                 }
-                dataNamesOriginal[i] <- end[i]
-            } else {
-                message("standard names are not known for", parameters[i])
             }
-        }
 
-        names(odf@metadata$dataNamesOriginal) <- end
-        names(odf@data) <- end
-        names(odf@metadata$units) <- end
+            if (debug > 0) {
+                message("end= ", paste0(end, sep=","))
+            }
+
+            if (debug > 0) {
+                message("t= ", paste0(t, sep=","))
+            }
+            # Replacing NAME with standard name
+            tk <- which(!(t %in% ""))
+            if (debug > 0) {
+                message("tk= ", tk)
+            }
+            dataNamesOriginal <- unname(unlist(odf[['dataNamesOriginal']]))
+
+            for (i in seq_along(t)) {
+                if (i %in% tk) {
+                    if (debug > 0) {
+                        message(dataNamesOriginal[i], "  is being replaced with ", end[i])
+                    }
+                    dataNamesOriginal[i] <- end[i]
+                } else {
+                    message("standard names are not known for", parameters[i])
+                }
+            }
+
+            names(odf@metadata$dataNamesOriginal) <- end
+            names(odf@data) <- end
+            names(odf@metadata$units) <- end
+        }
     }
 
     if (!(is.null(institute))) {

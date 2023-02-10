@@ -73,8 +73,8 @@ removeDerived <- function(odf, debug=0) {
         if (debug > 0) {
             message("This is an MCTD type")
         }
-        dataNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4), "sea_water_dissolved_oxygen", paste0("sea_water_dissolved_oxygen_", 1:4))
-        originalNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4), "sea_water_dissolved_oxygen", paste0("sea_water_dissolved_oxygen_", 1:5))
+        dataNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4), "sea_water_dissolved_oxygen", paste0("sea_water_dissolved_oxygen_", 1:4), "sea_water_fluorescence", paste0("sea_water_fluorescence_", 1:4))
+        originalNames <- c("time", paste0("time_", 1:4),"sea_water_electrical_conductivity",paste0("sea_water_electrical_conductivity_", 1:4), "sea_water_practical_salinity",paste0("sea_water_practical_salinity_", 1:4), "sea_water_temperature",paste0("sea_water_temperature_", 1:4), "sea_water_pressure",paste0("sea_water_pressure_", 1:4), "sea_water_dissolved_oxygen", paste0("sea_water_dissolved_oxygen_", 1:5), "sea_water_fluorescence", paste0("sea_water_fluorescence_", 1:4))
     }
     # Removing data
     throwAway <- list()
@@ -106,7 +106,7 @@ removeDerived <- function(odf, debug=0) {
     if (RCM | rcm) {
         codeNames <- c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP", "EWCT", "NSCT")
     } else if (MCTD | mctd) {
-        codeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES", "DOXY", "sal11", "t090C", "prDM", "o2ML.L", "yday", "temperature", "salinity", "pressure", "datenum")
+        codeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES", "DOXY", "sal11", "t090C", "prDM", "o2ML.L", "yday", "temperature", "salinity", "pressure", "datenum", "FLO", "c0mS/cm", "sal00", "tv290C", "flECO-AFL", "timeJ", "prdM")
     }
     if (!(is.null(odf[['fileType']])) && odf[["fileType"]] == "matlab") {
         matlabfile <- TRUE
@@ -124,7 +124,11 @@ removeDerived <- function(odf, debug=0) {
         matlabFile <- FALSE
         header <- odf[['metadata']]$header
         k <- grep("PARAMETER_HEADER",names(odf[['metadata']]$header))
-        parameters <- rep(FALSE, length(header[k]))
+        if (length(k) == 0) {
+            parameters <- unlist(unname(odf[['dataNamesOriginal']]))
+            bad <- which(!(parameters %in% codeNames))
+        } else {
+            parameters <- rep(FALSE, length(header[k]))
         for (i in seq_along(header[k])) {
             param <- header[k][[i]][[paste0("CODE_",i)]]
             param2 <- gsub("\\_.*","",param) # Removing if there is digits (ie. "_01")
@@ -135,7 +139,7 @@ removeDerived <- function(odf, debug=0) {
         bad <- which(!(parameters %in% codeNames))
         #message("parameters = ", paste0(parameters, sep=","), " and codeNames = ", paste0(codeNames, sep=","))
     }
-
+    }
     if (length(bad) > 0) {
         if (RCM | rcm) {
             message("RCM TYPE: removed metadata for ", paste0(parameters[bad], sep=","))

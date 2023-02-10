@@ -107,7 +107,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   }
 
   #POPULATE VARIABLES WITH APPROPRIATE CODES
-  #browser()
   VAR <- list()
   if (debug > 0) {
     message("Step 2: About to determine units and standard_name for each code.")
@@ -349,322 +348,22 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (debug > 0) {
     message("Step 9: About to insert attributes (metadata) into a netCDF file")
   }
-  ncdf4::ncatt_put(ncout, 'station', 'longitude', odf[['longitude']])
-  ncdf4::ncatt_put(ncout, 'station', 'latitiude', odf[['latitude']])
-  ncdf4::ncatt_put(ncout, 'station', 'standard_name', 'platform_name')
-  ncdf4::ncatt_put(ncout, 'station', 'cf_role', 'timeseries_id')
-  ncdf4::ncatt_put(ncout, 'time' , 'calendar', 'gregorian')
-  #ncdf4::ncatt_put(ncout, 'time_string', 'note', 'time values as ISO8601 string, YY-MM-DD hh:mm:ss')
-  ncdf4::ncatt_put(ncout, 'time_string', 'time_zone', 'UTC')
-
-  #FROM ODF
-  ncdf4::ncatt_put(ncout, 0, 'instrument_type', odf[['mooringType']])
-  #ncdf4::ncatt_put(ncout, 0, 'model', odf[['model']])
-  ncdf4::ncatt_put(ncout, 0, 'sampling_interval', odf[['samplingInterval']])
-  ncdf4::ncatt_put(ncout, 0, 'country_code', odf[['countryInstituteCode']])
-  ncdf4::ncatt_put(ncout, 0, 'cruise_number', odf[['cruiseNumber']])
-  ncdf4::ncatt_put(ncout, 0, "mooring_number", odf[['station']])
-  ncdf4::ncatt_put(ncout, 0, "time_coverage_duration", (utils::tail(odf[['time']], n = 1) - odf[['time']][[1]]))
-  ncdf4::ncatt_put(ncout, 0, "time_coverage_duration_units", "days")
-  ncdf4::ncatt_put(ncout, 0, "cdm_data_type", "station")
-  #ncdf4::ncatt_put(ncout, 0, "serial_number", odf[['serialNumber']])
-  ncdf4::ncatt_put(ncout, 0, "longitude", odf[['longitude']])
-  ncdf4::ncatt_put(ncout, 0, "latitude", odf[['latitude']])
-  ncdf4::ncatt_put(ncout, 0, "platform", odf[['cruise']])
-  ncdf4::ncatt_put(ncout, 0, "sounding", odf[['sounding']])
-  ncdf4::ncatt_put(ncout, 0, "chief_scientist", odf[['scientist']])
-  #ncdf4::ncatt_put(ncout, 0, "water_depth", odf[['waterDepth']])
-  ncdf4::ncatt_put(ncout, 0, "cruise_name", odf[['cruise']])
-
-  ####variable ATTRIBUTES####
-
-  ncdf4::ncatt_put(ncout, var1, 'reference_scale', 'IPTS-68')
-
-
-var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
-  var4max <- var4min <- var5max <- var5min <- var6max <- var6min <-
-  var7max <- var7min <- var8max <- var8min <- var9max <- var9min <-
-  var10max <- var10min <- var11max <- var11min <- var12max <- var12min <-
-  NULL
-
-  #ncdf4::ncatt_put(ncout, var1, "sensor_type", odf[['model']])
-  ncdf4::ncatt_put(ncout, var1, "sensor_depth", odf[['depthMin']])
-  #ncdf4::ncatt_put(ncout, var1, "serial_number", odf[['serialNumber']])
-  ncdf4::ncatt_put(ncout, var1, "generic_parameter_name", data$name[which(data$code == var[1])])
-
-
-  #if (!is.null(std_variable_1)){
-  #  ncdf4::ncatt_put(ncout, var1, "standard_name", variable_1)
-  #}
-  ncdf4::ncatt_put(ncout, var1, "data_max", max(odf[[variable_1]], na.rm = TRUE))
-  ncdf4::ncatt_put(ncout, var1, "data_min", min(odf[[variable_1]], na.rm = TRUE))
-  ncdf4::ncatt_put(ncout, var1, "valid_max", var1max)
-  ncdf4::ncatt_put(ncout, var1, "valid_min", var1min)
-
-  if (numvar > 1){
-    #ncdf4::ncatt_put(ncout, var2, "sensor_type", odf[['model']])
-    ncdf4::ncatt_put(ncout, var2, "sensor_depth", odf[['depthMin']])
-    #ncdf4::ncatt_put(ncout, var2, "serial_number", odf[['serialNumber']])
-    ncdf4::ncatt_put(ncout, var2, "generic_parameter_name", data$name[which(data$code == var[2])])
-
-    #if (!is.null(std_variable_2)){
-    #  ncdf4::ncatt_put(ncout, var2, "standard_name", variable_2)
-    #}
-    ncdf4::ncatt_put(ncout, var2, "data_max", max(odf[[variable_2]], na.rm = TRUE))
-    ncdf4::ncatt_put(ncout, var2, "data_min", min(odf[[variable_2]], na.rm = TRUE))
-    ncdf4::ncatt_put(ncout, var2, "valid_max", var2max)
-    ncdf4::ncatt_put(ncout, var2, "valid_min", var2min)
-
-    if (numvar >2){
-      #ncdf4::ncatt_put(ncout, var3, "sensor_type", odf[['model']])
-      ncdf4::ncatt_put(ncout, var3, "sensor_depth", odf[['depthMin']])
-      #ncdf4::ncatt_put(ncout, var3, "serial_number", odf[['serialNumber']])
-      ncdf4::ncatt_put(ncout, var3, "generic_parameter_name", data$name[which(data$code == var[3])])
-
-            #if (!is.null(std_variable_3)){
-      #  ncdf4::ncatt_put(ncout, var3, "standard_name", variable_3)
-      #}
-      ncdf4::ncatt_put(ncout, var3, "data_max", max(odf[[variable_3]], na.rm = TRUE))
-      ncdf4::ncatt_put(ncout, var3, "data_min", min(odf[[variable_3]], na.rm = TRUE))
-      ncdf4::ncatt_put(ncout, var3, "valid_max", var3max)
-      ncdf4::ncatt_put(ncout, var3, "valid_min", var3min)
-
-
-      if (numvar >3){
-        #ncdf4::ncatt_put(ncout, var4, "sensor_type", odf[['model']])
-        ncdf4::ncatt_put(ncout, var4, "sensor_depth", odf[['depthMin']])
-        #ncdf4::ncatt_put(ncout, var4, "serial_number", odf[['serialNumber']])
-        ncdf4::ncatt_put(ncout, var4, "generic_parameter_name", data$name[which(data$code == var[4])])
-
-        #ncdf4::ncatt_put(ncout, var4, "generic_name", variable_4)
-        #if (!is.null(std_variable_4)){
-        #  ncdf4::ncatt_put(ncout, var4, "standard_name", variable_4)
-        #}
-        ncdf4::ncatt_put(ncout, var4, "data_max", max(odf[[variable_4]], na.rm = TRUE))
-        ncdf4::ncatt_put(ncout, var4, "data_min", min(odf[[variable_4]], na.rm = TRUE))
-        ncdf4::ncatt_put(ncout, var4, "valid_max", var4max)
-        ncdf4::ncatt_put(ncout, var4, "valid_min", var4min)
-
-
-        if (numvar >4){
-          #ncdf4::ncatt_put(ncout, var5, "sensor_type", odf[['model']])
-          ncdf4::ncatt_put(ncout, var5, "sensor_depth", odf[['depthMin']])
-          #ncdf4::ncatt_put(ncout, var5, "serial_number", odf[['serialNumber']])
-          ncdf4::ncatt_put(ncout, var5, "generic_parameter_name", data$name[which(data$code == var[5])])
-
-          #ncdf4::ncatt_put(ncout, var5, "generic_name", variable_5)
-          #if (!is.null(std_variable_5)){
-          #  ncdf4::ncatt_put(ncout, var5, "standard_name", variable_5)
-          #}
-          ncdf4::ncatt_put(ncout, var5, "data_max", max(odf[[variable_5]], na.rm = TRUE))
-          ncdf4::ncatt_put(ncout, var5, "data_min", min(odf[[variable_5]], na.rm = TRUE))
-          ncdf4::ncatt_put(ncout, var5, "valid_max", var5max)
-          ncdf4::ncatt_put(ncout, var5, "valid_min", var5min)
-
-
-          if (numvar >5){
-            #ncdf4::ncatt_put(ncout, var6, "sensor_type", odf[['model']])
-            ncdf4::ncatt_put(ncout, var6, "sensor_depth", odf[['depthMin']])
-            #ncdf4::ncatt_put(ncout, var6, "serial_number", odf[['serialNumber']])
-            ncdf4::ncatt_put(ncout, var6, "generic_parameter_name", data$name[which(data$code == var[6])])
-
-            #ncdf4::ncatt_put(ncout, var6, "generic_name", variable_6)
-            #if (!is.null(std_variable_6)){
-            #  ncdf4::ncatt_put(ncout, var6, "standard_name", variable_6)
-            #}
-            ncdf4::ncatt_put(ncout, var6, "data_max", max(odf[[variable_6]], na.rm = TRUE))
-            ncdf4::ncatt_put(ncout, var6, "data_min", min(odf[[variable_6]], na.rm = TRUE))
-            ncdf4::ncatt_put(ncout, var6, "valid_max", var6max)
-            ncdf4::ncatt_put(ncout, var6, "valid_min", var6min)
-
-
-            if (numvar > 6){
-              #ncdf4::ncatt_put(ncout, var7, "sensor_type", odf[['model']])
-              ncdf4::ncatt_put(ncout, var7, "sensor_depth", odf[['depthMin']])
-              #ncdf4::ncatt_put(ncout, var7, "serial_number", odf[['serialNumber']])
-              ncdf4::ncatt_put(ncout, var7, "generic_parameter_name", data$name[which(data$code == var[7])])
-
-              #ncdf4::ncatt_put(ncout, var7, "generic_name", variable_7)
-              #if (!is.null(std_variable_7)){
-              #  ncdf4::ncatt_put(ncout, var7, "standard_name", variable_7)
-              #}
-              ncdf4::ncatt_put(ncout, var7, "data_max", max(odf[[variable_7]], na.rm = TRUE))
-              ncdf4::ncatt_put(ncout, var7, "data_min", min(odf[[variable_7]], na.rm = TRUE))
-              ncdf4::ncatt_put(ncout, var7, "valid_max", var7max)
-              ncdf4::ncatt_put(ncout, var7, "valid_min", var7min)
-
-
-              if (numvar > 7){
-                #ncdf4::ncatt_put(ncout, var8, "sensor_type", odf[['model']])
-                ncdf4::ncatt_put(ncout, var8, "sensor_depth", odf[['depthMin']])
-                #ncdf4::ncatt_put(ncout, var8, "serial_number", odf[['serialNumber']])
-                ncdf4::ncatt_put(ncout, var8, "generic_parameter_name", data$name[which(data$code == var[8])])
-
-                #ncdf4::ncatt_put(ncout, var8, "generic_name", variable_8)
-                #if (!is.null(std_variable_8)){
-                #  ncdf4::ncatt_put(ncout, var8, "standard_name", variable_8)
-                #}
-                ncdf4::ncatt_put(ncout, var8, "data_max", max(odf[[variable_8]], na.rm = TRUE))
-                ncdf4::ncatt_put(ncout, var8, "data_min", min(odf[[variable_8]], na.rm = TRUE))
-                ncdf4::ncatt_put(ncout, var8, "valid_max", var8max)
-                ncdf4::ncatt_put(ncout, var8, "valid_min", var8min)
-
-
-                if (numvar > 8){
-                  #ncdf4::ncatt_put(ncout, var9, "sensor_type", odf[['model']])
-                  ncdf4::ncatt_put(ncout, var9, "sensor_depth", odf[['depthMin']])
-                  #ncdf4::ncatt_put(ncout, var9, "serial_number", odf[['serialNumber']])
-                  ncdf4::ncatt_put(ncout, var9, "generic_parameter_name", data$name[which(data$code == var[9])])
-
-                  #ncdf4::ncatt_put(ncout, var9, "generic_name", variable_9)
-                  #if (!is.null(std_variable_9)){
-                  #  ncdf4::ncatt_put(ncout, var9, "standard_name", variable_9)
-                  #}
-                  ncdf4::ncatt_put(ncout, var9, "data_max", max(odf[[variable_9]], na.rm = TRUE))
-                  ncdf4::ncatt_put(ncout, var9, "data_min", min(odf[[variable_9]], na.rm = TRUE))
-                  ncdf4::ncatt_put(ncout, var9, "valid_max", var9max)
-                  ncdf4::ncatt_put(ncout, var9, "valid_min", var9min)
-
-
-                  if (numvar >9){
-                    #ncdf4::ncatt_put(ncout, var10, "sensor_type", odf[['model']])
-                    ncdf4::ncatt_put(ncout, var10, "sensor_depth", odf[['depthMin']])
-                    #ncdf4::ncatt_put(ncout, var10, "serial_number", odf[['serialNumber']])
-                    ncdf4::ncatt_put(ncout, var10, "generic_parameter_name", data$name[which(data$code == var[10])])
-
-                    #ncdf4::ncatt_put(ncout, var10, "generic_name", variable_10)
-                    #if (!is.null(std_variable_10)){
-                    #  ncdf4::ncatt_put(ncout, var10, "standard_name", variable_10)
-                    #}
-                    ncdf4::ncatt_put(ncout, var10, "data_max", max(odf[[variable_10]], na.rm = TRUE))
-                    ncdf4::ncatt_put(ncout, var10, "data_min", min(odf[[variable_10]], na.rm = TRUE))
-                    ncdf4::ncatt_put(ncout, var10, "valid_max", var10max)
-                    ncdf4::ncatt_put(ncout, var10, "valid_min", var10min)
-
-
-                    if (numvar >10){
-                      #ncdf4::ncatt_put(ncout, var11, "sensor_type", odf[['model']])
-                      ncdf4::ncatt_put(ncout, var11, "sensor_depth", odf[['depthMin']])
-                      #ncdf4::ncatt_put(ncout, var11, "serial_number", odf[['serialNumber']])
-                      ncdf4::ncatt_put(ncout, var11, "generic_parameter_name", data$name[which(data$code == var[11])])
-
-                      #ncdf4::ncatt_put(ncout, var11, "generic_name", variable_11)
-                      #if (!is.null(std_variable_11)){
-                      #  ncdf4::ncatt_put(ncout, var11, "standard_name", variable_11)
-                      #}
-                      ncdf4::ncatt_put(ncout, var11, "data_max", max(odf[[variable_11]], na.rm = TRUE))
-                      ncdf4::ncatt_put(ncout, var11, "data_min", min(odf[[variable_11]], na.rm = TRUE))
-                      ncdf4::ncatt_put(ncout, var11, "valid_max", var11max)
-                      ncdf4::ncatt_put(ncout, var11, "valid_min", var11min)
-
-
-                      if (numvar >11){
-                        #ncdf4::ncatt_put(ncout, var12, "sensor_type", odf[['model']])
-                        ncdf4::ncatt_put(ncout, var12, "sensor_depth", odf[['depthMin']])
-                        #ncdf4::ncatt_put(ncout, var12 , "serial_number", odf[['serialNumber']])
-                        ncdf4::ncatt_put(ncout, var12, "generic_parameter_name", data$name[which(data$code == var[12])])
-
-                        #ncdf4::ncatt_put(ncout, var12, "generic_name", variable_12)
-                        #if (!is.null(std_variable_12)){
-                        #  ncdf4::ncatt_put(ncout, var12, "standard_name", variable_12)
-                        #}
-                        ncdf4::ncatt_put(ncout, var12, "data_max", max(odf[[variable_12]], na.rm = TRUE))
-                        ncdf4::ncatt_put(ncout, var12, "data_min", min(odf[[variable_12]], na.rm = TRUE))
-                        ncdf4::ncatt_put(ncout, var12, "valid_max", var12max)
-                        ncdf4::ncatt_put(ncout, var12, "valid_min", var12min)
-
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+   bad <- which(names(odf[['metadata']]) %in% c("units", "header", "hexfilename", "filename", "dataNamesOriginal", "flags", "waterDepth", "date", "recoveryTime", "sampleInterval"))
+  namesMeta <- names(odf[['metadata']])[-bad]
+  for (i in seq_along(namesMeta)) {
+      #message("This is for namesMeta = ", namesMeta[i])
+      ncdf4::ncatt_put(ncout, 0, namesMeta[i], odf[[namesMeta[i]]])
   }
-
-
-  ####CF conventions & BODC standards####
-
-  ncdf4::ncatt_put(ncout, 0, 'Conventions', 'CF-1.7')
-  ncdf4::ncatt_put(ncout, 0, "creator_type", "person")
-  #if (class(odf[['time']][1])[1] == "POSIXct") {
-  #ncdf4::ncatt_put(ncout, 0, "time_coverage_start", as.character(as.POSIXct(odf[['time']][1])))
-  #ncdf4::ncatt_put(ncout, 0, "time_coverage_end", as.character(as.POSIXct(utils::tail(odf[['time']], n= 1))))
-  #}
-  ncdf4::ncatt_put(ncout, 0, "geospatial_lat_min", odf[['latitude']])
-  ncdf4::ncatt_put(ncout, 0, "geospatial_lat_max", odf[['latitude']])
-  ncdf4::ncatt_put(ncout, 0, "geospatial_lat_units", "degrees_north")
-  ncdf4::ncatt_put(ncout, 0, "geospatial_lon_min", odf[['longitude']])
-  ncdf4::ncatt_put(ncout, 0, "geospatial_lon_max", odf[['longitude']])
-  ncdf4::ncatt_put(ncout, 0, "geospatial_lon_units", "degrees_east")
-  ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_max", odf[['depthMax']])
-  ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_min", odf[['depthMin']])
-  ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_units", "metres")
-  ncdf4::ncatt_put(ncout, 0, "geospatial_vertical_positive", 'down')
-  ncdf4::ncatt_put(ncout,0, "_FillValue", "1e35")
-  ncdf4::ncatt_put(ncout, 0, "date_modified", date())
-  ncdf4::ncatt_put(ncout, 0, "institution", odf[['institute']])
-
-  ncdf4::ncatt_put(ncout, 0, "filename", filename)
-  #ncdf4::ncatt_put(ncout, 0, "model", gsub(".*M","",odf[['model']]))
-  #ncdf4::ncatt_put(ncout, 0, "serialNumber", gsub(".*M","",odf[['serialNumber']]))
-  #ncdf4::ncatt_put(ncout, 0, "water_depth", gsub(".*M","",odf[['waterDepth']]))
-
-
-  #ncdf4::ncatt_put(ncout, 0, "country_institute_code", gsub(".*M","",odf[['countryInstituteCode']]))
-  ncdf4::ncatt_put(ncout, 0, "institute", odf[['institute']])
-  #ncdf4::ncatt_put(ncout, 0, "sample_interval", odf[['sampleInterval']])
-  ncdf4::ncatt_put(ncout, 0, "ship", odf[['ship']])
-
-  ncdf4::ncatt_put(ncout, 0, "station", odf[['station']])
-  ncdf4::ncatt_put(ncout, 0, "cruise", odf[['cruise']])
-  #ncdf4::ncatt_put(ncout, 0, "type", odf[['type']])
-  ncdf4::ncatt_put(ncout, 0, "cruise_number", odf[['cruiseNumber']])
-  ncdf4::ncatt_put(ncout, 0, "depth_off_bottom", odf[['depthOffBottom']])
-
-
-  ####BODC P01 names####
-  #ncdf4::ncatt_put(ncout, "ELTMEP01", "sdn_parameter_urn", "SDN:P01::ELTMEP01")
-  #ncdf4::ncatt_put(ncout, "lon", "sdn_parameter_urn", "SDN:P01::ALONZZ01")
-  #ncdf4::ncatt_put(ncout, "lat", "sdn_parameter_urn", "SDN:P01::ALATZZ01")
-  #ncdf4::ncatt_put(ncout, "time_string", "sdn_parameter_urn", "SDN:P01::DTUT8601")
-
-
-
-  ncdf4::ncatt_put(ncout, "longitude", "generic_parameter_name", "Longitude east")
-  ncdf4::ncatt_put(ncout, "latitude", "generic_parameter_name", "Latitude north")
-  ncdf4::ncatt_put(ncout, 'time_string', "generic_parameter_name", "String corresponding to format 'YYYY-MM-DDThh:mm:ss.sssZ' or other valid ISO8601 string")
-
-
-
-  #ncdf4::ncatt_put(ncout, "lon", "sdn_uom_urn", "SDN:P06::DEGE")
-  #ncdf4::ncatt_put(ncout, "lat", "sdn_uom_urn", "SDN:P06:DEGN")
-  #ncdf4::ncatt_put(ncout, "ELTMEP01", "sdn_uom_urn", "SDN:P06::UTBB")
-  #ncdf4::ncatt_put(ncout, "time_string", "sdn_uom_urn", "SDN:P06::TISO")
-
-
-
-  ncdf4::ncatt_put(ncout, "longitude", "sdn_uom_name", "Degrees east")
-  ncdf4::ncatt_put(ncout, "latitude", "sdn_uom_name", "Degrees north")
-  #ncdf4::ncatt_put(ncout, "ELTMEP01", "sdn_uom_name", "Seconds")
-  ncdf4::ncatt_put(ncout, "time_string", "sdn_uom_name", "ISO8601")
-
-
-  #####CF standard names####
-  #ncdf4::ncatt_put(ncout, "ELTMEP01", "standard_name", "time")
-  #ncdf4::ncatt_put(ncout, "latitude", "standard_name", "latitude")
-  #ncdf4::ncatt_put(ncout, "longitude", "standard_name", "longitude")
-
-  ####data max and min####
 
   ####preserve ODF history header####
   if (!is.null(odf@metadata$header)){
     if (length(odf@metadata$header) != 0){
       head <- odf@metadata$header
       hi <- list(grep(names(head), pattern = "HISTORY"))
+      if (!(length(unlist(hi)) == 0)) {
+        if (debug > 0) {
+          message('were not doing header')
+        }
       hist <- NULL
       for ( i in 1:length(hi[[1]])){
         hist[[i]] <- unlist(head[[hi[[1]][i]]])
@@ -680,7 +379,12 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
       for (i in 1:length(history)){
         ncdf4::ncatt_put(ncout, 0, paste0("ODF_HISTORY_", i), history[[i]])
       }
+      }
       #PRESERVE EVENT_COMMENTS
+      if (!(is.null(names(head)))) {
+        if (debug >0) {
+          message('were not doing event comments')
+        }
       ec <- list(grep(names(head$EVENT_HEADER), pattern = 'EVENT_COMMENTS'))
       if (length(ec[[1]] != 0)){
         evc <- NULL
@@ -697,15 +401,12 @@ var1max <- var1min <- var2max <- var2min <- var3max <- var3min <-
           ncdf4::ncatt_put(ncout, 0, paste0("EVENT_COMMENTS_", i), eventc[[i]])
         }
       }
-
+}
     }
   }
 
   ####nc close####
   ncdf4::nc_close(ncout)
-
-
-
 
 }
 

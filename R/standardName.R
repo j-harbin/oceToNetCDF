@@ -31,12 +31,19 @@ standardName <- function(gf3, data=NULL, debug=0) {
   matnames <- c("prDM","t090C","sal00","t190C","sal11","o2ML.L", "yday", "salinity", "temperature", "pressure", "datenum")
   namesRDI <- c("v", "q","g", "a", "bv", "ba", "br", "bg", "bc", "bq", "roll", "pitch", "heading", "temperature",
       "salinity", "depth", "soundSpeed", "heading", "time", "distance") # This is not all of them
-  specialNames <- unique(c(matnames, namesRDI))
+  namesLIA <- c("conductivity", "fluorescence")
+  specialNames <- unique(c(matnames, namesRDI, namesLIA))
 
   if (gf3 %in% specialNames) {
       if (gf3 %in% c("prDM", "pressure")) {
           gf3 <- "PRES"
       }
+    if (gf3 == "conductivity") {
+      gf3 <- "CNDC"
+    }
+    if (gf3 == "fluorescence") {
+      gf3 <- "FLO"
+    }
       if (gf3 %in% c("t090C", "t190C", "temperature")) {
           gf3 <- "TEMP"
       }

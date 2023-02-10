@@ -18,9 +18,9 @@ an adp object
 }
 \description{
 This function identifies when v, a (signal_intensity_from_multibeam
-_acoustic_doppler_velocity_sensor_in_sea_water), q (percent_good_ping),
-br (bottom_range), bv (bottom_velocity), ba, and bq
-are stored within an adp object. If v is an array, the components get
+_acoustic_doppler_velocity_sensor_in_sea_water), g (percent_good_ping),
+q (correlation_magnitude), br (bottom_range), bv (bottom_velocity), ba,
+bq, and bg are stored within an adp object. If v is an array, the components get
 broken up into eastward_sea_water_velocity, northward_sea_water_velocity,
 upward_sea_water_velocity, and indicative_error_from_multibeam_acoustic
 _doppler_velocity_profiler_in_sea_water. If q is identified as an array

@@ -1,9 +1,9 @@
 #' Structure adp data in matrix instead of array
 #'
 #' This function identifies when v, a (signal_intensity_from_multibeam
-#' _acoustic_doppler_velocity_sensor_in_sea_water), q (percent_good_ping),
-#' br (bottom_range), bv (bottom_velocity), ba, and bq
-#' are stored within an adp object. If v is an array, the components get
+#' _acoustic_doppler_velocity_sensor_in_sea_water), g (percent_good_ping),
+#' q (correlation_magnitude), br (bottom_range), bv (bottom_velocity), ba,
+#' bq, and bg are stored within an adp object. If v is an array, the components get
 #' broken up into eastward_sea_water_velocity, northward_sea_water_velocity,
 #' upward_sea_water_velocity, and indicative_error_from_multibeam_acoustic
 #' _doppler_velocity_profiler_in_sea_water. If q is identified as an array
@@ -148,10 +148,42 @@ structureAdp <- function(adp, debug=0) {
 
   }
 
+  if ("correlation_magnitude" %in% namesData) {
+      if (debug > 0) {
+          message("correlation_magnitude identified")
+      }
+      if (!(is.na(dim(adp[["correlation_magnitude"]])[3]))) {
+          if (debug > 0) {
+              message("It was not an average")
+          }
+          # This is not an average
+          if (unique(class(adp[['correlation_magnitude']][,,1][,1])) == "raw") {
+              qn <- as.numeric(adp[["correlation_magnitude"]])
+              dim(qn) <- dim(adp[['correlation_magnitude']])
+              adp[['correlation_magnitude']] <- qn
+          }
+          adp <- oceSetData(adp, name="correlation_magnitude_1", value=adp[["correlation_magnitude"]][,,1])
+          adp <- oceSetData(adp, name="correlation_magnitude_2", value=adp[["correlation_magnitude"]][,,2])
+          adp <- oceSetData(adp, name="correlation_magnitude_3", value=adp[["correlation_magnitude"]][,,3])
+          adp <- oceSetData(adp, name="correlation_magnitude_4", value=adp[["correlation_magnitude"]][,,4])
+          adp <- oceDeleteData(adp, name="correlation_magnitude")
+      } else {
+          if (debug > 0) {
+              message("It was an average")
+          }
+          # This is an average
+          if (unique(class(adp[['correlation_magnitude']][,1][1])) == "raw") {
+              qn <- as.numeric(adp[["correlation_magnitude"]])
+              dim(qn) <- dim(adp[['correlation_magnitude']])
+              adp[['correlation_magnitude']] <- qn
+          }
+          adp <- oceSetData(adp, name="average_correlation_magnitude", value=adp[["correlation_magnitude"]])
+          adp <- oceDeleteData(adp, name="correlation_magnitude")
+      }
 
 
-
-
+  }
+  # Starting bottom here
 
   if ("bottom_velocity" %in% namesData) {
     if (debug > 0) {
@@ -162,6 +194,17 @@ structureAdp <- function(adp, debug=0) {
       adp <- oceSetData(adp, name="bottom_velocity_3", value=adp[["bottom_velocity"]][,3])
       adp <- oceSetData(adp, name="bottom_velocity_4", value=adp[["bottom_velocity"]][,4])
       adp <- oceDeleteData(adp, name="bottom_velocity")
+  }
+
+  if ("bottom_correlation_magnitude" %in% namesData) {
+      if (debug > 0) {
+          message("bottom_corrlation_magnitude identified")
+      }
+      adp <- oceSetData(adp, name="bottom_correlation_magnitude_1", value=adp[["bottom_correlation_magnitude"]][,1])
+      adp <- oceSetData(adp, name="bottom_correlation_magnitude_2", value=adp[["bottom_correlation_magnitude"]][,2])
+      adp <- oceSetData(adp, name="bottom_correlation_magnitude_3", value=adp[["bottom_correlation_magnitude"]][,3])
+      adp <- oceSetData(adp, name="bottom_correlation_magnitude_4", value=adp[["bottom_correlation_magnitude"]][,4])
+      adp <- oceDeleteData(adp, name="bottom_correlation_magnitude")
   }
 
   if ("bottom_range" %in% namesData) {

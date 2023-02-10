@@ -45,7 +45,7 @@ getCFData <- function(type="ctd") {
 
     DF <- data.frame("code"= c("DEPH", "EWCT", "HGHT", "NSCT", "PRES", "PTCH",
                                "ROLL", "SVEL", "SYTM", "VCSP", "UNKN", "ERRV", "BEAM", "TE90", "PGDP", "CMAG", "HEAD", "BR", "BV", "BA", "BG", "TEMP",
-                               "PSAL", "DIST"),
+                               "PSAL", "DIST", "COMA", "BQ"),
                      "name"= c(paste("Sensor", "Depth", "below", "Sea", "Surface"),paste("East", "Component", "of", "Current"),
                                paste("Height/Altitude", "above", "Sea Surface"),paste("North", "Component", "of", "Current"),
                                paste("Sea", "Pressure", "(sea surface - 0)"),paste("Pitch", "Angle"),paste("Roll", "Angle"),paste("Sound", "Velocity"),
@@ -53,9 +53,11 @@ getCFData <- function(type="ctd") {
                                "Unknown WMO Code","Error Velocity","ADCP Echo Intensity","Temperature (1990 scale)",
                                paste("Percent", "Good", "Pings"), paste("Current",  "Magnitude"), "Heading (true)", paste("Bottom", "Range"),
                                paste("Bottom", "Speed"), paste("Bottom", "ADCP", "Echo", "Intensity"), paste("Bottom", "Percent", "Good", "Pings"),
-                               paste("Sea", "Temperature"), paste("Practical", "Salinity"), "Distance"),
+                               paste("Sea", "Temperature"), paste("Practical", "Salinity"), "Distance", "Correlation Magnitude",
+                               "Bottom Correlation Magnitude"),
                      units=c("metres","m/s","metres","m/s","decibars", "degrees","degrees","m/s",
-                             "s","m/s","1","m/s","1","degrees C", "%", "m/s", "degree", "m", "m/s", "1", "%", "degrees C", "1", "m"),
+                             "s","m/s","1","m/s","1","degrees C", "%", "m/s", "degree", "m", "m/s", "1", "%", "degrees C", "1", "m", "1",
+                             "1"),
                      "standard_name"= c("sensor_depth_below_sea_surface","eastward_sea_water_velocity","height_above_mean_sea_level",
                                         "northward_sea_water_velocity","sea_water_pressure","platform_pitch_angle","platform_roll_angle",
                                         "speed_of_sound_in_sea_water","time","upward_sea_water_velocity","unknown_WMO_code",
@@ -63,8 +65,9 @@ getCFData <- function(type="ctd") {
                                         "signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water",
                                         "temperature_1990_scale","percent_good_ping", "current_magnitude", "heading", "bottom_range",
                                         "bottom_velocity", "bottom_signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water",
-                                        "bottom_percent_good_ping", "sea_water_temperature", "sea_water_practical_salinity", "distance"),
-                     "type"=rep("adcp", 24))
+                                        "bottom_percent_good_ping", "sea_water_temperature", "sea_water_practical_salinity", "distance",
+                                        "correlation_magnitude", "bottom_correlation_magnitude"),
+                     "type"=rep("adcp", 26))
   }
 
 

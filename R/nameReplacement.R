@@ -71,7 +71,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
             message("rdi type has been identified")
         }
        namesData <- names(odf[['data']])
-       keep <- which(namesData %in% c("v", "q", "a", "bv", "ba", "br", "bg", "roll", "pitch", "heading", "temperature",
+       keep <- which(namesData %in% c("v", "q", "g", "a", "bv", "ba", "br", "bg", "bc", "bq", "roll", "pitch", "heading", "temperature",
                                       "salinity", "depth", "soundSpeed", "time", "distance"))
        dataNamesOriginal <- namesData[keep]
            badData <- namesData[which(!(namesData %in% dataNamesOriginal))]

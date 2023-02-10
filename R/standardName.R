@@ -29,7 +29,7 @@ standardName <- function(gf3, data=NULL, debug=0) {
 
   # This is for matlab origin files
   matnames <- c("prDM","t090C","sal00","t190C","sal11","o2ML.L", "yday", "salinity", "temperature", "pressure", "datenum")
-  namesRDI <- c("v", "q", "a", "bv", "ba", "br", "bg", "roll", "pitch", "heading", "temperature",
+  namesRDI <- c("v", "q","g", "a", "bv", "ba", "br", "bg", "bc", "bq", "roll", "pitch", "heading", "temperature",
       "salinity", "depth", "soundSpeed", "heading", "time", "distance") # This is not all of them
   specialNames <- unique(c(matnames, namesRDI))
 
@@ -50,9 +50,9 @@ standardName <- function(gf3, data=NULL, debug=0) {
           gf3 <- "SYTM"
       }
 
-    if (gf3 %in% c("distance")) {
-      gf3 <- "DIST"
-    }
+      if (gf3 %in% c("distance")) {
+          gf3 <- "DIST"
+      }
 
       # This is for RDI origin files
       #FIXME: This doesn't include all of them
@@ -66,8 +66,11 @@ standardName <- function(gf3, data=NULL, debug=0) {
 
       }
 
-      if ("q" %in% gf3) {
+      if ("g" %in% gf3) {
           gf3 <- "PGDP"
+      }
+      if ("q" %in% gf3) {
+          gf3 <- "COMA"
       }
       if ("bv" %in% gf3) {
           gf3 <- "BV"
@@ -77,8 +80,11 @@ standardName <- function(gf3, data=NULL, debug=0) {
           gf3 <- "BA"
       }
 
-      if ("bg" %in% gf3) {
+      if (gf3 %in% c("bg")) {
           gf3 <- "BG"
+      }
+      if (gf3 %in% c("bg", "bc")) {
+          gf3 <- "BQ"
       }
 
       if ("br" %in% gf3) {

@@ -4,12 +4,16 @@
 \alias{standardName}
 \title{Obtain standard name, name, and units from GF3 code}
 \usage{
-standardName(gf3, data = NULL)
+standardName(gf3, data = NULL, debug = 0)
 }
 \arguments{
 \item{gf3}{a character indicating a GF3 (General Formatting) standard code parameter}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getCFData}
+
+\item{debug}{integer value indicating level of debugging.
+If this is less than 1, no debugging is done. Otherwise,
+some functions will print debugging information.}
 }
 \value{
 A list containing the standard name and unit of the GF3 code in CF standard

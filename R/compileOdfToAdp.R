@@ -12,6 +12,7 @@
 #' @importFrom oce read.oce read.odf as.adp oceSetMetadata processingLogAppend
 #' @examples
 #' library(odfToNetCDF)
+#' data <- getCFData(type="adcp")
 #' f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
 #' f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
 #' files <- c(f1,f2)
@@ -40,6 +41,9 @@ compileOdfToAdp <- function(files, debug=0) {
   u <- v <- w <- errorVelocity <- a <- unknown <- NULL
 
   # Create array
+  if (debug > 0) {
+    message("Creating an array below for all vars= ", paste0(vars, sep=","), " with dim =", paste0(c(nt,nd), sep=","))
+  }
   for (vr in vars) {
     assign(vr, array(NA, dim=c(nt, nd)))
   }
@@ -85,6 +89,9 @@ compileOdfToAdp <- function(files, debug=0) {
     return(adp)
 
   } else {
+    if (debug > 0) {
+      message("No depth was identified")
+    }
     depth <- NULL
     for (f in 1:length(files)) {
       d <- oce::read.odf(files[f])
@@ -103,6 +110,10 @@ compileOdfToAdp <- function(files, debug=0) {
       eval(parse(text=paste0(vr, "<- ", vr, "[, o]")))
     }
     distance <- max(depth) - depth
+    if (debug > 0) {
+      message("dim(u)= ", paste0(dim(u), sep=","), " and dim(a)= ", paste0(dim(a), sep=","))
+
+    }
     adp <- oce::as.adp(t, distance, v=abind::abind(u, v, w, errorVelocity, along=3), a=a, q=unknown)
     for (m in names(d@metadata)) {
       if (m != 'units' & m != 'flags' & m != 'dataNamesOriginal') {

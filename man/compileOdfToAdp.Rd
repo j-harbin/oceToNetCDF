@@ -21,6 +21,7 @@ data variables.
 }
 \examples{
 library(odfToNetCDF)
+data <- getCFData(type="adcp")
 f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
 f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
 files <- c(f1,f2)

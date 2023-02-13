@@ -1,6 +1,6 @@
 #' Converts odf object to netCDF
 #'
-#' This function converts and odf object to a netCDF files for CTD
+#' This function converts an odf object to a NetCDF file for CTD
 #' and RCM types.
 #'
 #' @param odf an odf object from oce which contains mctd or rcm data

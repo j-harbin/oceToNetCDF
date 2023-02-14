@@ -25,7 +25,7 @@ to the local directory}
 netCDF file with a maximum of 12 variables
 }
 \description{
-This function converts and odf object to a netCDF files for CTD
+This function converts an odf object to a NetCDF file for CTD
 and RCM types.
 }
 \examples{

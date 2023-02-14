@@ -13,11 +13,6 @@
 #' signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water.
 #' For bottom tracking, all data are broken up into vectors.
 #' If a or q are identified as raw, it turns it into number.
-#' Lastly, if the oceCoordinate is identified to be beam or xyz,
-#' it is converted to be enu using [oce::beamToXyz()] and [oce::xyzToEnu()]
-#' while correcting for declination using [oce::magneticField()].
-#' If oceCoordinate is identified as enu, velocities are corrected
-#' for declination using [oce::enuToOtherAdp].
 #'
 #' @param adp an adp object [oce::read.odf()]
 #' @param debug integer value indicating level of debugging.
@@ -26,10 +21,6 @@
 #' @return an adp object
 #' @importFrom oce oceSetMetadata
 #' @importFrom oce oceDeleteData
-#' @importFrom oce beamToXyz
-#' @importFrom oce xyzToEnu
-#' @importFrom oce enuToOtherAdp
-#' @importFrom oce magneticField
 #'@examples
 #' \dontrun{
 #' library(odfToNetCDF)
@@ -240,29 +231,30 @@ structureAdp <- function(adp, debug=0) {
     adp <- oceDeleteData(adp, name="bottom_percent_good_ping")
   }
 
-  if (!(is.null(adp[['oceCoordinate']]))) {
-      if (debug > 0 ) {
-          message("adp[['oceCoordinate']] is identified as ", adp[['oceCoordinate']])
-      }
-    adp <- oceSetMetadata(adp, name="northdec", value="magnetic") # Assuming declination needs to be corrected
-      declination <- magneticField(longitude=rep(adp[['longitude']], length(adp[['time']])), latitude=rep(adp[['latitude']], length(adp[['time']])),time = adp[['time']])$declination
-      if (adp[['oceCoordinate']] == "beam") {
-          adp <- beamToXyz(adp)
-          adp <- xyzToEnu(adp, declination=declination)
-          adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
-          adp <- oceSetMetadata(adp, name="northdec", value="true")
-      } else if (adp[['oceCoordinate']] == "xyz") {
-          adp <- xyzToEnu(adp, declination=declination)
-          adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
-          adp <- oceSetMetadata(adp, name="northdec", value="true")
-      } else if (adp[['oceCoordinate']] == "enu") {
-        # This will occur with oce
-              #adp <- enuToOtherAdp(adp, heading=declination)
-              #adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
-              #adp <- oceSetMetadata(adp, name="northdec", value="true")
-      }
+ # if (!(is.null(adp[['oceCoordinate']]))) {
+ #     if (debug > 0 ) {
+ #         message("adp[['oceCoordinate']] is identified as ", adp[['oceCoordinate']])
+ #     }
+ #   adp <- oceSetMetadata(adp, name="northdec", value="magnetic") # Assuming declination needs to be corrected
+ #   declination <- magneticField(longitude=adp[['longitude']], latitude=adp[['latitude']],time = adp[['time']])$declination
+ #   if (adp[['oceCoordinate']] == "beam") {
+ #         adp <- beamToXyz(adp)
+ #         adp <- xyzToEnu(adp, declination=declination)
+ #         adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
+ #         adp <- oceSetMetadata(adp, name="northdec", value="true")
+ #     } else if (adp[['oceCoordinate']] == "xyz") {
+ #         adp <- xyzToEnu(adp, declination=declination)
+ #         adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
+ #         adp <- oceSetMetadata(adp, name="northdec", value="true")
+ #   } else if (adp[['oceCoordinate']] == "enu") {
+ #     browser()
+ #       # Require new version of oce
+ #       adp <- applyMagneticDeclination(adp, declination=declination)
+ #       adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
+ #       adp <- oceSetMetadata(adp, name="northdec", value="true")
+ #   }
 
-  }
+ # }
   adp
 
 }

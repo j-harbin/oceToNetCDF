@@ -30,11 +30,6 @@ to be average_percent_ping. The same can be said for a, expect as
 signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water.
 For bottom tracking, all data are broken up into vectors.
 If a or q are identified as raw, it turns it into number.
-Lastly, if the oceCoordinate is identified to be beam or xyz,
-it is converted to be enu using \code{\link[oce:beamToXyz]{oce::beamToXyz()}} and \code{\link[oce:xyzToEnu]{oce::xyzToEnu()}}
-while correcting for declination using \code{\link[oce:magneticField]{oce::magneticField()}}.
-If oceCoordinate is identified as enu, velocities are corrected
-for declination using \link[oce:enuToOtherAdp]{oce::enuToOtherAdp}.
 }
 \examples{
 \dontrun{

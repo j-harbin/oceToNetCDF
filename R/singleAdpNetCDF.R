@@ -87,17 +87,18 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
   namesData <- names(adp[['data']])[-which(names(adp[['data']]) %in% c("time", "distance"))]
   DEFS <- NULL
+  #browser()
   for (i in seq_along(namesData)) {
     dlname <- namesData[i]
     uName <- gsub("(.+?)(\\_*[0-9].*)", "\\1", namesData[i])
     uName <- gsub(".*average_","",uName)
     longName <- data$name[which(data$standard_name == uName)]
     message("uName =", uName, " for ", i, " and longname =", longName)
-    #FIXME: This will include Heading with the new applyDeclination() oce function
-    if (longName %in% c("East Component of Current", "North Component of Current", "Vertical Current Speed", "Error Velocity")) {
-      if (adp[['northdec']] == "magnetic") {
-        longName <- paste0(longName, "(magnetic)")
-      } else if (adp[['northdec']] == "true") {
+    if (longName %in% c("East Component of Current", "North Component of Current", "Vertical Current Speed", "Error Velocity", "Heading")) {
+      if (!(is.null(adp[['north']])) && adp[['north']] == "geographic") {
+        message("YUPPER JAIM")
+        longName <- paste0(longName, "(geographic)")
+      } else {
         longName <- paste0(longName, "(true)", collapse=" ")
 
       }
@@ -152,7 +153,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
   bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval", "codes", "tiltUsed", "threeBeamUsed", "binMappingUsed", "haveBinaryFixedAttitudeHeader",
                                                "haveActualData", "oceBeamUnspreaded", "dataNamesOriginal", "transformationMatrix", "ensembleFile",
-                                               "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "northdec"))
+                                               "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "north"))
   namesMeta <- names(adp[['metadata']])[-bad]
   #browser()
   for (i in seq_along(namesMeta)) {

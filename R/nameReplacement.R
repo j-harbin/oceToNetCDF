@@ -143,7 +143,9 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
             odf <- oceSetMetadata(odf, name="dataNamesOriginal", value=as.list(parameters))
             names(odf@metadata$dataNamesOriginal) <- standardNames
             names(odf@data) <- standardNames
+            if ("flags" %in% names(odf@metadata$units)) {
             names(odf@metadata$units)[-which(names(odf@metadata$units) == "flag")] <- standardNames[-which(standardNames == 'time')]
+            }
 
         } else {
             parameters <- rep(FALSE, length(header[k]))

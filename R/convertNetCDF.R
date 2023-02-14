@@ -78,7 +78,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   v <- names(odf@data)
 
   if (MCTD | mctd) {
-      DF <- data[which(data$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES")),]
+      DF <- data[which(data$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES", "FLO")),]
   } else if (RCM | rcm) {
       DF <- data[which(data$code %in% c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP", "EWCT", "NSCT")),]
   } else {
@@ -166,17 +166,8 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
 
   #FILENAME
   if (missing(filename)) {
-    #filename <- paste("MCTD", odf[['cruiseNumber']], odf[['eventNumber']], odf[['eventQualifier']], odf[['samplingInterval']], sep = '_')
-    if (MCTD | mctd) {
-    #f <- gsub(".*M","",odf[['filename']])
-    #ff <-  gsub("\\..*","",f)
-    filename <- odf[['eventNumber']]
-    #} else if (RCM | rcm) {
-    #  f <- gsub(".*M","",odf[['filename']])
-    #  ff <-  gsub("\\..*","",f)
-    #  filename <- paste0("MCM", ff, sep="")
+    filename <- "MCAT"
     }
-  }
 
 
   ncpath <- destination
@@ -302,6 +293,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (debug > 0) {
   message("Step 8: About to insert data to an existing netCDF using ncdf4::ncdf4::ncvar_put.")
   }
+  #browser()
 
   ####INSERT DATA####
   ncdf4::ncvar_put(ncout, ts_def, odf[['time']])

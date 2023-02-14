@@ -51,7 +51,7 @@ getCFData <- function(type="ctd") {
                                paste("Sea", "Pressure", "(sea surface - 0)"),paste("Pitch", "Angle"),paste("Roll", "Angle"),paste("Sound", "Velocity"),
                                paste("PIPE", "Time", "Format", "DD-MMM-YYYY", "HH:MM:SS.ss"), paste("Vertical", "Current", "Speed"),
                                "Unknown WMO Code","Error Velocity","ADCP Echo Intensity","Temperature (1990 scale)",
-                               paste("Percent", "Good", "Pings"), paste("Current",  "Magnitude"), "Heading (true)", paste("Bottom", "Range"),
+                               paste("Percent", "Good", "Pings"), paste("Current",  "Magnitude"), "Heading", paste("Bottom", "Range"),
                                paste("Bottom", "Speed"), paste("Bottom", "ADCP", "Echo", "Intensity"), paste("Bottom", "Percent", "Good", "Pings"),
                                paste("Sea", "Temperature"), paste("Practical", "Salinity"), "Distance", "Correlation Magnitude",
                                "Bottom Correlation Magnitude"),

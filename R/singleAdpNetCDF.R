@@ -96,7 +96,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     message("uName =", uName, " for ", i, " and longname =", longName)
     if (longName %in% c("East Component of Current", "North Component of Current", "Vertical Current Speed", "Error Velocity", "Heading")) {
       if (!(is.null(adp[['north']])) && adp[['north']] == "geographic") {
-        message("YUPPER JAIM")
         longName <- paste0(longName, "(geographic)")
       } else {
         longName <- paste0(longName, "(true)", collapse=" ")

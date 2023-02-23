@@ -230,31 +230,6 @@ structureAdp <- function(adp, debug=0) {
     adp <- oceSetData(adp, name="bottom_percent_good_ping_4", value=adp[["bottom_percent_good_ping"]][,4])
     adp <- oceDeleteData(adp, name="bottom_percent_good_ping")
   }
-
- # if (!(is.null(adp[['oceCoordinate']]))) {
- #     if (debug > 0 ) {
- #         message("adp[['oceCoordinate']] is identified as ", adp[['oceCoordinate']])
- #     }
- #   adp <- oceSetMetadata(adp, name="northdec", value="magnetic") # Assuming declination needs to be corrected
- #   declination <- magneticField(longitude=adp[['longitude']], latitude=adp[['latitude']],time = adp[['time']])$declination
- #   if (adp[['oceCoordinate']] == "beam") {
- #         adp <- beamToXyz(adp)
- #         adp <- xyzToEnu(adp, declination=declination)
- #         adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
- #         adp <- oceSetMetadata(adp, name="northdec", value="true")
- #     } else if (adp[['oceCoordinate']] == "xyz") {
- #         adp <- xyzToEnu(adp, declination=declination)
- #         adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
- #         adp <- oceSetMetadata(adp, name="northdec", value="true")
- #   } else if (adp[['oceCoordinate']] == "enu") {
- #     browser()
- #       # Require new version of oce
- #       adp <- applyMagneticDeclination(adp, declination=declination)
- #       adp <- oceSetMetadata(adp, name="oceCoordinate", value="enu")
- #       adp <- oceSetMetadata(adp, name="northdec", value="true")
- #   }
-
- # }
   adp
 
 }

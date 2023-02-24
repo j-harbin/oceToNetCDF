@@ -35,13 +35,14 @@ are then replaced to only contain the distance bins with at least one finite val
 \dontrun{
 library(oce)
 library(odfToNetCDF)
-data <- getCFData(type="adcp")
-adp <- system.file("extdata", "adcpNA.000", package="odfToNetCDF")
-adp2 <- adpFlagPastBoundary(adp)
-adp3 <- adpRemoveEmptyBins(adp2, debug=1)
+load(system.file("extdata", "adcpNA", package="odfToNetCDF"))
+adp2 <- adpFlagPastBoundary(adcpNA)
+adp3 <- adpConvertRawToNumeric(adp2)
+adp4 <- handleFlags(adp3, flags=4)
+adp5 <- adpRemoveEmptyBins(adp4, debug=1)
 par(mfrow=c(2,1))
-plot(adp2, which="a1")
-plot(adp3, which="a1")
+plot(adp4, which="a1")
+plot(adp5, which="a1")
 }
 
 }

@@ -23,7 +23,7 @@ grViz("digraph flowchart {
       tab5 -> tab6;
       tab6 -> tab7;
       tab7 -> tab8;
-      tab4 -> tab7;
+      tab4 -> tab6;
 
       }
 

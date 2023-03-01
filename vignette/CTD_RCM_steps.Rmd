@@ -11,12 +11,12 @@ This vignette discusses the steps to convert a moored conductivity-temperature-d
 
 ![Figure 1: Work flow of the odfToNetCDF package for CTD and RCM data types with descriptions on the left and relevant functions on the right](ctd_rcm_diagram.png)
 
-# 1: getCFData()
+# 1: Get necessary CF data
 
 To get the necessary data, use the `getCFData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
 
 
-# 2: read.oce() and matlabToOce()
+# 2: Creating oce objects
 
 ## read.oce()
 

@@ -7,11 +7,9 @@ output: pdf_document
 
 # Introduction
 
-This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) ODF file to a NetCDF file. To convert a list of CTD or RCM ODF files follow the work flow provided below. The data used in this example is from the Davis Strait.
+This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) ODF file to a NetCDF file. To convert a list of CTD or RCM ODF files follow the work flow provided below. To date, the `odfToNetCDF` package can convert MCAT files from ODF or from matlab and can convert RCMs from ODFs. The data used in this example is from the Davis Strait.
 
 ![Figure 1: Work flow of the odfToNetCDF package for CTD and RCM data types with descriptions on the left and relevant functions on the right](ctd_rcm_diagram.png)
-
-
 
 # 1: Get necessary data
 
@@ -20,7 +18,7 @@ To get the necessary data, use the `getCFData()` function. This function gets th
 
 # 2: Read an oceanographic data file
 
-To read an oceanographic data file, use `read.oce()` from the `oce package`. This function "reads an oceanographic data file, auto-discovering the file type from the first line of the file. This function tries to infer the file type from the first line, using oceMagic(). If it can be discovered, then an instrument-specific file reading function is called, with the file and with any additional arguments being supplied." (Kelley and Richards, 2022)
+To read an oceanographic data file, use `read.oce()` from the `oce package`. This function "reads an oceanographic data file, auto-discovering the file type from the first line of the file. This function tries to infer the file type from the first line, using `oceMagic()`. If it can be discovered, then an instrument-specific file reading function is called, with the file and with any additional arguments being supplied." (Kelley and Richards, 2022). Note, if the origin of the file is a matlab file for a MCTD, the user must instead use the `matlabToOce()` function.
 
 # 3 Rename variables in climate forecast (CF) standard
 

@@ -7,18 +7,24 @@ output: pdf_document
 
 # Introduction
 
-This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) ODF file to a NetCDF file. To convert a list of CTD or RCM ODF files follow the work flow provided below. To date, the `odfToNetCDF` package can convert MCAT files from ODF or from matlab and can convert RCMs from ODFs. The data used in this example is from the Davis Strait.
+This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) ODF file to a NetCDF file. To convert a list of CTD or RCM ODF files follow the work flow provided below. To date, the `odfToNetCDF` package can convert MCAT files from ODF or from matlab and can convert RCMs from ODFs. The data used in this example is from the Davis Strait with an ODF origin.
 
 ![Figure 1: Work flow of the odfToNetCDF package for CTD and RCM data types with descriptions on the left and relevant functions on the right](ctd_rcm_diagram.png)
 
-# 1: Get necessary data
+# 1: getCFData()
 
 To get the necessary data, use the `getCFData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
 
 
-# 2: Read an oceanographic data file
+# 2: read.oce() and matlabToOce()
 
-To read an oceanographic data file, use `read.oce()` from the `oce package`. This function "reads an oceanographic data file, auto-discovering the file type from the first line of the file. This function tries to infer the file type from the first line, using `oceMagic()`. If it can be discovered, then an instrument-specific file reading function is called, with the file and with any additional arguments being supplied." (Kelley and Richards, 2022). Note, if the origin of the file is a matlab file for a MCTD, the user must instead use the `matlabToOce()` function.
+## read.oce()
+
+To read an oceanographic data file of origin ODF, use `read.oce()` from the `oce package`. This function "reads an oceanographic data file, auto-discovering the file type from the first line of the file. This function tries to infer the file type from the first line, using `oceMagic()`. If it can be discovered, then an instrument-specific file reading function is called, with the file and with any additional arguments being supplied." (Kelley and Richards, 2022).
+
+## matlabToOce()
+
+If the origin of the file is a matlab file for a MCTD, the user must instead use the `matlabToOce()` function. This function removes NaN values in moored CTD Matlab files. It starts by reading a matlab file `readMat()`, then cycling through the multiple profiles of multiple stations to determine which data values are finite. The finite data values are then used to create an oce ctd object using `as.ctd()`.
 
 # 3 Rename variables in climate forecast (CF) standard
 
@@ -51,7 +57,7 @@ Step 9: Insert attributes (metadata) into a netCDF file
 
 # Workflow
 
-A typical workflow is as follows:
+A typical workflow for an ODF derived file is as follows:
 
 ```{r, eval=FALSE}
 library(odfToNetCDF)

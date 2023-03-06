@@ -210,50 +210,50 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   ts_def <- ncdf4::ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
   dlname <- variable_1
-  v1_def <- ncdf4::ncvar_def(var1, units1, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+  v1_def <- ncdf4::ncvar_def(var1, units1, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_1)]), prec = 'double')
 
   if (numvar >1){
     dlname <- variable_2
-    v2_def <- ncdf4::ncvar_def(var2, units2, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+    v2_def <- ncdf4::ncvar_def(var2, units2, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_2)]), prec = 'double')
 
     if (numvar >2){
       dlname <- variable_3
-      v3_def <- ncdf4::ncvar_def(var3, units3, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+      v3_def <- ncdf4::ncvar_def(var3, units3, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_3)]), prec = 'double')
       if (numvar >3){
         dlname <- variable_4
-        v4_def <- ncdf4::ncvar_def(var4, units4, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+        v4_def <- ncdf4::ncvar_def(var4, units4, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_4)]), prec = 'double')
 
         if (numvar >4){
           dlname <- variable_5
-          v5_def <- ncdf4::ncvar_def(var5, units5, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+          v5_def <- ncdf4::ncvar_def(var5, units5, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_5)]), prec = 'double')
 
           if (numvar >5){
             dlname <- variable_6
-            v6_def <- ncdf4::ncvar_def(var6, units6, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+            v6_def <- ncdf4::ncvar_def(var6, units6, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_6)]), prec = 'double')
 
             if (numvar >6){
               dlname <- variable_7
-              v7_def <- ncdf4::ncvar_def(var7, units7, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+              v7_def <- ncdf4::ncvar_def(var7, units7, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_7)]), prec = 'double')
 
               if (numvar >7){
                 dlname <- variable_8
-                v8_def <- ncdf4::ncvar_def(var8, units8, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+                v8_def <- ncdf4::ncvar_def(var8, units8, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_8)]), prec = 'double')
 
                 if (numvar >8){
                   dlname <- variable_9
-                  v9_def <- ncdf4::ncvar_def(var9, units9, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+                  v9_def <- ncdf4::ncvar_def(var9, units9, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_9)]), prec = 'double')
 
                   if (numvar >9){
                     dlname <- variable_10
-                    v10_def <- ncdf4::ncvar_def(var10, units10, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+                    v10_def <- ncdf4::ncvar_def(var10, units10, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_10)]), prec = 'double')
 
                     if (numvar > 10){
                       dlname <- variable_11
-                      v11_def <- ncdf4::ncvar_def(var11, units11, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+                      v11_def <- ncdf4::ncvar_def(var11, units11, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_11)]), prec = 'double')
 
                       if (numvar > 11){
                         dlname <- variable_12
-                        v12_def <- ncdf4::ncvar_def(var12, units12, list(timedim, stationdim), FillValue, dlname, prec = 'double')
+                        v12_def <- ncdf4::ncvar_def(var12, units12, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_12)]), prec = 'double')
 
                         if (numvar >12){
                           warning ("Maximum of 12 variables exceeded, not all data has been exported!")

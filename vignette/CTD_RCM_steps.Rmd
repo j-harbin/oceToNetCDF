@@ -79,7 +79,7 @@ provided by Emily O'Grady. This function checks that the ODF file has all of the
 
 # Caution
 
-It's important to note for RCM files, code HCDT (Horizontal current direction (true)) and HCSP do not have a CF standard. The standard name has been added as horizontal_current_direction and horizontal_current_speed respectively. Additionally, unlike mCTD files, no data ranges are being checked. It's recommended that the user investigates the data themselves.
+It's important to note for MCTD files, there was no CF standard name or DFO code for Florescence. A code of FLOR and a standard_name of sea_water_fluorescence is used. For RCM files, code HCDT (Horizontal current direction (true)) and HCSP do not have a CF standard. The standard name has been added as horizontal_current_direction and horizontal_current_speed respectively. Additionally, unlike mCTD files, no data ranges are being checked. It's recommended that the user investigates the data themselves.
 
 # Acknowlegments
 

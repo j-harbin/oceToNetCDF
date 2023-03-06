@@ -36,6 +36,7 @@ getCFData <- function(type="ctd", standard="cf") {
                                         "sea_water_pressure", "sea_water_practical_salinity","sea_water_sigma_theta", "sea_water_sigma_theta", "time", "sea_water_temperature",
                                         "sea_water_temperature", "sea_water_dissolved_oxygen", "sea_water_fluorescence"),
                      "type"=rep("ctd", 12))
+    warning("There is no DFO code or standard_name for Fluorescence. FLOR and sea_water_fluorescence are used respectively.")
                      if (standard == "bodc") {
                        DF$bodc=c("CNDCZZ01","CRAT", "POTM", "PRESPR01",
                                  "PSLTZZ01", "SIGTEQ01", "SIGTEQST", "SYTM", "TEMPPR01",
@@ -56,6 +57,7 @@ getCFData <- function(type="ctd", standard="cf") {
                                        "sea_water_pressure","sea_water_practical_salinity", "sea_water_conductivity_ratio",
                                        "time","sea_water_temperature", "eastward_sea_water_velocity", "northward_sea_water_velocity"),
                      "type"=rep("rcm", 9))
+    warning("There is no CF standard_name for HCDT or HCSP. They have been created to be horizontal_current_direction and horizontal_current_speed respectively ")
 
     if (standard == "bodc") {
       DF$bodc <- c("CDTASS01", "LCSAZZ01", "PRESPR01", "PSLTZZ01", "CRAT", "SYTM*", "TEMPPR01",
@@ -89,6 +91,8 @@ getCFData <- function(type="ctd", standard="cf") {
                                         "bottom_percent_good_ping", "sea_water_temperature", "sea_water_practical_salinity", "distance",
                                         "correlation_magnitude", "bottom_correlation_magnitude"),
                      "type"=rep("adcp", 26))
+    warning("See caution section of ADCP vignette.")
+
 
     if (standard == "bodc") {
       DF$bodc <- c("DEPH", "LCEWZZ01", "HGHT", "LCNSZZ01", "PRESPR01", "PTCHGP01", "ROLLGP01",

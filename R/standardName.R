@@ -42,7 +42,7 @@ standardName <- function(gf3, data=NULL, debug=0) {
       gf3 <- "CNDC"
     }
     if (gf3 == "fluorescence") {
-      gf3 <- "FLO"
+      gf3 <- "FLOR"
     }
       if (gf3 %in% c("t090C", "t190C", "temperature")) {
           gf3 <- "TEMP"

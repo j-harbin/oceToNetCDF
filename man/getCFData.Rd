@@ -4,11 +4,14 @@
 \alias{getCFData}
 \title{Get required data for specified instrument type}
 \usage{
-getCFData(type = "ctd")
+getCFData(type = "ctd", standard = "cf")
 }
 \arguments{
 \item{type}{the type of data that will eventually be converted into a netCDF.
 The options are ctd, rcm, or adcp}
+
+\item{standard}{parameter equal to either 'cf' (Climate or Forecast) or "bodc"
+British Oceanographic Data Center) indicating which standard data to obtain}
 }
 \value{
 a data frame containing the necessary standard names, units, codes, names, and type of data
@@ -19,6 +22,6 @@ type of data for the required information for the specified instrument type
 of either ctd, rcm, or adcp.
 }
 \examples{
-data <- getCFData(type="ctd")
+data <- getCFData(type="ctd", standard="cf")
 names(data)
 }

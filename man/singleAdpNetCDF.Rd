@@ -15,7 +15,7 @@ singleAdpNetCDF(adp, name, debug = 0, data = NULL, destination = ".")
 If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getCFData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getStandardData}
 
 \item{destination}{the specified location to save the NetCDF. By default this is set
 to the local directory}
@@ -28,7 +28,7 @@ are named inserted in CF standards using the \code{\link[=standardName]{standard
 \examples{
 \dontrun{
 library(odfToNetCDF)
-data <- getCFData(type="adcp")
+data <- getStandardData(type="adcp")
 f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
 f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
 files <- c(f1,f2)

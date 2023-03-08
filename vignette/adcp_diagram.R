@@ -27,7 +27,7 @@ grViz("digraph flowchart {
 
       }
 
-      [1]: 'getCFData()'
+      [1]: 'getStandardData()'
       [2]: 'Does the data need to be compiled?'
       [3]: 'Yes'
       [4]: 'No'

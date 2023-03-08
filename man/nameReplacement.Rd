@@ -9,7 +9,7 @@ nameReplacement(odf, data = NULL, debug = 0, institute = NULL, unit = NULL)
 \arguments{
 \item{odf}{an odf object \code{\link[oce:read.odf]{oce::read.odf()}}}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getCFData]{getCFData()}}}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getStandardData]{getStandardData()}}}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
@@ -37,7 +37,7 @@ already exist.
 \examples{
 library(odfToNetCDF)
 library(oce)
-data <- getCFData(type="ctd")
+data <- getStandardData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")

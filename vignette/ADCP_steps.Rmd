@@ -184,11 +184,11 @@ knitr::include_graphics("adcp_diagram.png")
 
 \pagebreak
 
-The first step in using the `odfToNetCDF` package was to get the available climate and forecast (CF) data using `getCFData`. An optional function was then used on the data, `adpRemoveEmptyBins` which removes distance bins that have been flagged as bad by `adpFlagPastBoundary`. The effect of `adpRemoveEmptyBins` can be seen in Figure 4.
+The first step in using the `odfToNetCDF` package was to get the available climate and forecast (CF) data using `getStandardData`. An optional function was then used on the data, `adpRemoveEmptyBins` which removes distance bins that have been flagged as bad by `adpFlagPastBoundary`. The effect of `adpRemoveEmptyBins` can be seen in Figure 4.
 
 ```{r, eval=FALSE}
 # odfToNetCDF package
-data <- getCFData(type="adcp") # Get CF standard names
+data <- getStandardData(type="adcp") # Get CF standard names
 ADP5 <- adpRemoveEmptyBins(ADP4) # Optional to remove bins that are beyond the water column
 par(mfrow=c(2,1))
 plot(ADP4, which="a1")

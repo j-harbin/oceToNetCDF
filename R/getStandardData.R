@@ -10,14 +10,16 @@
 #' @param standard parameter equal to either 'cf' (Climate or Forecast) or "bodc"
 #' British Oceanographic Data Center) indicating which standard data to obtain
 #'
+#' @param silent logical value indicating whether to silence some CF compliant warnings. The default is to silent such indicators.
+#'
 #' @return a data frame containing the necessary standard names, units, codes, names, and type of data
 #'
 #' @examples
-#' data <- getCFData(type="ctd", standard="cf")
+#' data <- getStandardData(type="ctd", standard="cf")
 #' names(data)
 #' @export
 
-getCFData <- function(type="ctd", standard="cf") {
+getStandardData <- function(type="ctd", standard="cf", silent=TRUE) {
   if (!(type %in% c("ctd", "rcm", "adcp"))) {
     stop("can only work for data type ctd, rcm, or adcp")
   }
@@ -36,12 +38,16 @@ getCFData <- function(type="ctd", standard="cf") {
                                         "sea_water_pressure", "sea_water_practical_salinity","sea_water_sigma_theta", "sea_water_sigma_theta", "time", "sea_water_temperature",
                                         "sea_water_temperature", "sea_water_dissolved_oxygen", "sea_water_fluorescence"),
                      "type"=rep("ctd", 12))
-    warning("There is no DFO code or standard_name for Fluorescence. FLOR and sea_water_fluorescence are used respectively.")
-                     if (standard == "bodc") {
-                       DF$bodc=c("CNDCZZ01","CRAT", "POTM", "PRESPR01",
-                                 "PSLTZZ01", "SIGTEQ01", "SIGTEQST", "SYTM", "TEMPPR01",
-                                 "TEMPP901", "DOXYZZ01", "FLOR")
-                       warning("There were no BODC standards for CRAT, POTM, SYTM, or FLOR. DFO codes are used.")
+  if (silent == FALSE) {
+      warning("There is no DFO code or standard_name for Fluorescence. FLOR and sea_water_fluorescence are used respectively.")
+  }
+  if (standard == "bodc") {
+      DF$bodc=c("CNDCZZ01","CRAT", "POTM", "PRESPR01",
+          "PSLTZZ01", "SIGTEQ01", "SIGTEQST", "SYTM", "TEMPPR01",
+          "TEMPP901", "DOXYZZ01", "FLOR")
+      if (silent == FALSE) {
+          warning("There were no BODC standards for CRAT, POTM, SYTM, or FLOR. DFO codes are used.")
+      }
 
                        }
 
@@ -56,13 +62,17 @@ getCFData <- function(type="ctd", standard="cf") {
                      "standard_name"=c("horizontal_current_direction","horizontal_current_speed",
                                        "sea_water_pressure","sea_water_practical_salinity", "sea_water_conductivity_ratio",
                                        "time","sea_water_temperature", "eastward_sea_water_velocity", "northward_sea_water_velocity"),
-                     "type"=rep("rcm", 9))
-    warning("There is no CF standard_name for HCDT or HCSP. They have been created to be horizontal_current_direction and horizontal_current_speed respectively ")
+                                   "type"=rep("rcm", 9))
+  if (silent == FALSE) {
+      warning("There is no CF standard_name for HCDT or HCSP. They have been created to be horizontal_current_direction and horizontal_current_speed respectively ")
+  }
 
     if (standard == "bodc") {
       DF$bodc <- c("CDTASS01", "LCSAZZ01", "PRESPR01", "PSLTZZ01", "CRAT", "SYTM*", "TEMPPR01",
-                   "LCEWZZ01", "LCNSZZ01")
+          "LCEWZZ01", "LCNSZZ01")
+  if (silent == FALSE) {
       warning("There were no BODC standards for CRAT, or SYTM. DFO codes are used.")
+  }
     }
   } else if (type == "adcp") {
 
@@ -90,8 +100,10 @@ getCFData <- function(type="ctd", standard="cf") {
                                         "bottom_velocity", "bottom_signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water",
                                         "bottom_percent_good_ping", "sea_water_temperature", "sea_water_practical_salinity", "distance",
                                         "correlation_magnitude", "bottom_correlation_magnitude"),
-                     "type"=rep("adcp", 26))
-    warning("See caution section of ADCP vignette.")
+                                    "type"=rep("adcp", 26))
+  if (silent == FALSE) {
+      warning("See caution section of ADCP vignette.")
+  }
 
 
     if (standard == "bodc") {
@@ -101,9 +113,11 @@ getCFData <- function(type="ctd", standard="cf") {
                    "bottom_amplitude", "bottom_percent_good", "TEMPPR01", "PSLTZZ01", "distance",
                    "correlation_magnitude", "bottom_correlation_magnitude")
 
+  if (silent == FALSE) {
       warning("There were no BODC standards for DEPH, HGHT, SYTM, UNKN, CMAG, HEAD. DFO codes are used. There are
-              also no BODC standards for bottom_range, bottom_velocity, bottom_amplitude, bottom_percent_good,
-              bottom_correlation_magnitude, or distance. In these cases, created CF standards are used.")
+          also no BODC standards for bottom_range, bottom_velocity, bottom_amplitude, bottom_percent_good,
+          bottom_correlation_magnitude, or distance. In these cases, created CF standards are used.")
+  }
     }
 
   }

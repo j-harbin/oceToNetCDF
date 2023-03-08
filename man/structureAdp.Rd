@@ -34,7 +34,7 @@ If a or q are identified as raw, it turns it into number.
 \examples{
 \dontrun{
 library(odfToNetCDF)
-data <- getCFData(type="adcp")
+data <- getStandardData(type="adcp")
 f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
 f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
 files <- c(f1,f2)

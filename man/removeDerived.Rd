@@ -30,7 +30,7 @@ time, and sea_water_temperature
 \examples{
 library(odfToNetCDF)
 library(oce)
-data <- getCFData(type="ctd")
+data <- getStandardData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")

@@ -7,20 +7,29 @@
 #' @param type the type of data that will eventually be converted into a netCDF.
 #' The options are ctd, rcm, or adcp
 #'
+#' @param standard parameter equal to either 'cf' (Climate or Forecast) or "bodc"
+#' British Oceanographic Data Center) indicating which standard data to obtain
+#'
+#' @param silent logical value indicating whether to silence some CF compliant warnings. The default is to silent such indicators.
+#'
 #' @return a data frame containing the necessary standard names, units, codes, names, and type of data
 #'
 #' @examples
-#' data <- getCFData(type="ctd")
+#' data <- getStandardData(type="ctd", standard="cf")
 #' names(data)
 #' @export
 
-getCFData <- function(type="ctd") {
+getStandardData <- function(type="ctd", standard="cf", silent=TRUE) {
   if (!(type %in% c("ctd", "rcm", "adcp"))) {
-    stop("getCFData() can only work for data type ctd, rcm, or adcp")
+    stop("can only work for data type ctd, rcm, or adcp")
+  }
+
+  if (!(standard %in% c("cf", "bodc"))) {
+    stop("can only obtain standards for cf and bodc")
   }
 
   if (type == "ctd") {
-    DF <- data.frame("code"= c("CNDC", "CRAT", "POTM", "PRES", "PSAL", "SIGP", "SIGT", "SYTM", "TEMP", "TE90", "DOXY", "FLO"),
+    DF <- data.frame("code"= c("CNDC", "CRAT", "POTM", "PRES", "PSAL", "SIGP", "SIGT", "SYTM", "TEMP", "TE90", "DOXY", "FLOR"),
                      "name"= c(paste("Electrical", "Conductivity"), paste("Conductivity", "Ratio"), paste("Potential", "Temperature"),paste("Sea", "Pressure", "(sea surface - 0)"),
                                paste("Practical", "Salinity"),"Sigma-Theta", "Sigma-Theta", paste("PIPE", "Time", "Format", "DD-MMM-YYYY", "HH:MM:SS.ss"),
                                paste("Sea", "Temperature"), paste("Sea", "Temperature"), paste("Dissolved", "Oxygen"), "Fluorescence"),
@@ -29,6 +38,19 @@ getCFData <- function(type="ctd") {
                                         "sea_water_pressure", "sea_water_practical_salinity","sea_water_sigma_theta", "sea_water_sigma_theta", "time", "sea_water_temperature",
                                         "sea_water_temperature", "sea_water_dissolved_oxygen", "sea_water_fluorescence"),
                      "type"=rep("ctd", 12))
+  if (silent == FALSE) {
+      warning("There is no DFO code or standard_name for Fluorescence. FLOR and sea_water_fluorescence are used respectively.")
+  }
+  if (standard == "bodc") {
+      DF$bodc=c("CNDCZZ01","CRAT", "POTM", "PRESPR01",
+          "PSLTZZ01", "SIGTEQ01", "SIGTEQST", "SYTM", "TEMPPR01",
+          "TEMPP901", "DOXYZZ01", "FLOR")
+      if (silent == FALSE) {
+          warning("There were no BODC standards for CRAT, POTM, SYTM, or FLOR. DFO codes are used.")
+      }
+
+                       }
+
   } else if (type == "rcm") {
     DF <- data.frame("code"= c("HCDT", "HCSP", "PRES", "PSAL", "CRAT", "SYTM", "TEMP", "EWCT", "NSCT"),
                      "name"= c(paste("Horizontal", "Current", "Direction (true)"),paste("Horizontal", "Current", "Speed"),
@@ -40,7 +62,18 @@ getCFData <- function(type="ctd") {
                      "standard_name"=c("horizontal_current_direction","horizontal_current_speed",
                                        "sea_water_pressure","sea_water_practical_salinity", "sea_water_conductivity_ratio",
                                        "time","sea_water_temperature", "eastward_sea_water_velocity", "northward_sea_water_velocity"),
-                     "type"=rep("rcm", 9))
+                                   "type"=rep("rcm", 9))
+  if (silent == FALSE) {
+      warning("There is no CF standard_name for HCDT or HCSP. They have been created to be horizontal_current_direction and horizontal_current_speed respectively ")
+  }
+
+    if (standard == "bodc") {
+      DF$bodc <- c("CDTASS01", "LCSAZZ01", "PRESPR01", "PSLTZZ01", "CRAT", "SYTM*", "TEMPPR01",
+          "LCEWZZ01", "LCNSZZ01")
+  if (silent == FALSE) {
+      warning("There were no BODC standards for CRAT, or SYTM. DFO codes are used.")
+  }
+    }
   } else if (type == "adcp") {
 
     DF <- data.frame("code"= c("DEPH", "EWCT", "HGHT", "NSCT", "PRES", "PTCH",
@@ -67,7 +100,26 @@ getCFData <- function(type="ctd") {
                                         "bottom_velocity", "bottom_signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water",
                                         "bottom_percent_good_ping", "sea_water_temperature", "sea_water_practical_salinity", "distance",
                                         "correlation_magnitude", "bottom_correlation_magnitude"),
-                     "type"=rep("adcp", 26))
+                                    "type"=rep("adcp", 26))
+  if (silent == FALSE) {
+      warning("See caution section of ADCP vignette.")
+  }
+
+
+    if (standard == "bodc") {
+      DF$bodc <- c("DEPH", "LCEWZZ01", "HGHT", "LCNSZZ01", "PRESPR01", "PTCHGP01", "ROLLGP01",
+                   "SVELXXXX", "SYTM", "LRZAZZZ", "UNKN", "LERRAP01", "TNIHCE", "TEMPP901",
+                   "PCGDAP01", "CMAG", "HEAD", "bottom_range", "bottom_velocity",
+                   "bottom_amplitude", "bottom_percent_good", "TEMPPR01", "PSLTZZ01", "distance",
+                   "correlation_magnitude", "bottom_correlation_magnitude")
+
+  if (silent == FALSE) {
+      warning("There were no BODC standards for DEPH, HGHT, SYTM, UNKN, CMAG, HEAD. DFO codes are used. There are
+          also no BODC standards for bottom_range, bottom_velocity, bottom_amplitude, bottom_percent_good,
+          bottom_correlation_magnitude, or distance. In these cases, created CF standards are used.")
+  }
+    }
+
   }
 
 

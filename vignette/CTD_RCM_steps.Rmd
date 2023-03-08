@@ -2,7 +2,9 @@
 title: "Steps to convert moored CTD and RCM ODF files to NetCDF files"
 author: "Jaimie Harbin"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 # Introduction
@@ -13,7 +15,7 @@ This vignette discusses the steps to convert a moored conductivity-temperature-d
 
 # 1: Get necessary CF data
 
-To get the necessary data, use the `getCFData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
+To get the necessary data, use the `getStandardData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type.
 
 
 # 2: Creating oce objects
@@ -62,7 +64,7 @@ A typical workflow for an ODF derived file is as follows:
 ```{r, eval=FALSE}
 library(odfToNetCDF)
 library(oce)
-data <- getCFData(type="ctd")
+data <- getStandardData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")
@@ -79,7 +81,7 @@ provided by Emily O'Grady. This function checks that the ODF file has all of the
 
 # Caution
 
-It's important to note for RCM files, code HCDT (Horizontal current direction (true)) and HCSP do not have a CF standard. The standard name has been added as horizontal_current_direction and horizontal_current_speed respectively. Additionally, unlike mCTD files, no data ranges are being checked. It's recommended that the user investigates the data themselves.
+It's important to note for MCTD files, there was no CF standard name or DFO code for Florescence. A code of FLOR and a standard_name of sea_water_fluorescence is used. For RCM files, code HCDT (Horizontal current direction (true)) and HCSP do not have a CF standard. The standard name has been added as horizontal_current_direction and horizontal_current_speed respectively. Additionally, unlike mCTD files, no data ranges are being checked. It's recommended that the user investigates the data themselves.
 
 # Acknowlegments
 

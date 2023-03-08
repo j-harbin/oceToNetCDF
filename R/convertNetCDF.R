@@ -4,7 +4,7 @@
 #' and RCM types.
 #'
 #' @param odf an odf object from oce which contains mctd or rcm data
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getCFData()]
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from [getStandardData()]
 #' @param filename the desired name for the netCDF file produced (not including the extension), if left NULL
 #'   the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions
 #'@param destination the specified location to save the NetCDF. By default this is set
@@ -19,7 +19,7 @@
 #' \dontrun{
 #' library(odfToNetCDF)
 #' library(oce)
-#' data <- getCFData(type="ctd")
+#' data <- getStandardData(type="ctd")
 #' f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 #' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data, unit="S/m")
@@ -78,7 +78,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   v <- names(odf@data)
 
   if (MCTD | mctd) {
-      DF <- data[which(data$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES", "FLO")),]
+      DF <- data[which(data$code %in% c("SYTM", "CNDC", "PSAL", "TEMP", "PRES", "FLOR")),]
   } else if (RCM | rcm) {
       DF <- data[which(data$code %in% c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP", "EWCT", "NSCT")),]
   } else {
@@ -141,19 +141,12 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     eval(parse(text = paste0("units", i, " <-'", vv$units, "'")))
     eval(parse(text = paste0('var', i, 'max <-', -10000)))
     eval(parse(text = paste0('var', i, 'min <-' , 10000)))
-    if(!is.null(vv$std)){
-      eval(parse(text = paste0("std_variable_", i, " <- '", vv$std, "'")))
-    }else{
-      eval(parse(text = paste0("std_variable_", i, " <- NULL")))
-    }
     #check if variable also has quality flag
     if (v[[i]] %in% names(odf[['flags']])) {
       eval(parse(text = paste0("var", i, "_QC <- '", vv$gf3, "_QC'")))
       eval(parse(text = paste0("variable", i , "_QC <- 'quality flag for " , v[[i]], "'")))
     }
     i <- i+1
-
-
   }
   if (debug > 0) {
   message("Step 4: About to check number of variables.")
@@ -210,50 +203,49 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   ts_def <- ncdf4::ncvar_def("DTUT8601", units = "",dim =  list( dimnchar, timedim), missval = NULL, name =  dlname, prec = "char")
 
   dlname <- variable_1
-  v1_def <- ncdf4::ncvar_def(var1, units1, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_1)]), prec = 'double')
+  v1_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var1, data$bodc[which(data$standard_name == var1)]), units1, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_1)]), prec = 'double')
 
   if (numvar >1){
     dlname <- variable_2
-    v2_def <- ncdf4::ncvar_def(var2, units2, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_2)]), prec = 'double')
-
+    v2_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var2, data$bodc[which(data$standard_name == var2)]), units2, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_2)]), prec = 'double')
     if (numvar >2){
       dlname <- variable_3
-      v3_def <- ncdf4::ncvar_def(var3, units3, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_3)]), prec = 'double')
+      v3_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var3, data$bodc[which(data$standard_name == var3)]), units3, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_3)]), prec = 'double')
       if (numvar >3){
         dlname <- variable_4
-        v4_def <- ncdf4::ncvar_def(var4, units4, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_4)]), prec = 'double')
+        v4_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var4, data$bodc[which(data$standard_name == var4)]), units4, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_4)]), prec = 'double')
 
         if (numvar >4){
           dlname <- variable_5
-          v5_def <- ncdf4::ncvar_def(var5, units5, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_5)]), prec = 'double')
+          v5_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var5, data$bodc[which(data$standard_name == var5)]), units5, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_5)]), prec = 'double')
 
           if (numvar >5){
             dlname <- variable_6
-            v6_def <- ncdf4::ncvar_def(var6, units6, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_6)]), prec = 'double')
+            v6_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var6, data$bodc[which(data$standard_name == var6)]), units6, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_6)]), prec = 'double')
 
             if (numvar >6){
               dlname <- variable_7
-              v7_def <- ncdf4::ncvar_def(var7, units7, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_7)]), prec = 'double')
+              v7_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var7, data$bodc[which(data$standard_name == var7)]), units7, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_7)]), prec = 'double')
 
               if (numvar >7){
                 dlname <- variable_8
-                v8_def <- ncdf4::ncvar_def(var8, units8, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_8)]), prec = 'double')
+                v8_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var8, data$bodc[which(data$standard_name == var8)]), units8, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_8)]), prec = 'double')
 
                 if (numvar >8){
                   dlname <- variable_9
-                  v9_def <- ncdf4::ncvar_def(var9, units9, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_9)]), prec = 'double')
+                  v9_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var9, data$bodc[which(data$standard_name == var9)]), units9, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_9)]), prec = 'double')
 
                   if (numvar >9){
                     dlname <- variable_10
-                    v10_def <- ncdf4::ncvar_def(var10, units10, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_10)]), prec = 'double')
+                    v10_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var10, data$bodc[which(data$standard_name == var10)]), units10, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_10)]), prec = 'double')
 
                     if (numvar > 10){
                       dlname <- variable_11
-                      v11_def <- ncdf4::ncvar_def(var11, units11, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_11)]), prec = 'double')
+                      v11_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var11, data$bodc[which(data$standard_name == var11)]), units11, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_11)]), prec = 'double')
 
                       if (numvar > 11){
                         dlname <- variable_12
-                        v12_def <- ncdf4::ncvar_def(var12, units12, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_12)]), prec = 'double')
+                        v12_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var12, data$bodc[which(data$standard_name == var12)]), units12, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_12)]), prec = 'double')
 
                         if (numvar >12){
                           warning ("Maximum of 12 variables exceeded, not all data has been exported!")
@@ -345,6 +337,12 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   for (i in seq_along(namesMeta)) {
       #message("This is for namesMeta = ", namesMeta[i])
       ncdf4::ncatt_put(ncout, 0, namesMeta[i], odf[[namesMeta[i]]])
+  }
+
+  #JAIM2
+  for (i in 1:numvar) {
+  ncdf4::ncatt_put(nc=ncout, varid=eval(parse(text=paste0("v",i, "_def"))), attname="standard_name", attval=eval(parse(text=paste0("variable_",i))))
+  #ncdf4::ncatt_put(nc=ncout, varid=v1_def, attname="standard_name", attval=variable_1)
   }
 
   ####preserve ODF history header####

@@ -184,11 +184,11 @@ knitr::include_graphics("adcp_diagram.png")
 
 \pagebreak
 
-The first step in using the `odfToNetCDF` package was to get the available climate and forecast (CF) data using `getCFData`. An optional function was then used on the data, `adpRemoveEmptyBins` which removes distance bins that have been flagged as bad by `adpFlagPastBoundary`. The effect of `adpRemoveEmptyBins` can be seen in Figure 4.
+The first step in using the `odfToNetCDF` package was to get the available climate and forecast (CF) data using `getStandardData`. An optional function was then used on the data, `adpRemoveEmptyBins` which removes distance bins that have been flagged as bad by `adpFlagPastBoundary`. The effect of `adpRemoveEmptyBins` can be seen in Figure 4.
 
 ```{r, eval=FALSE}
 # odfToNetCDF package
-data <- getCFData(type="adcp") # Get CF standard names
+data <- getStandardData(type="adcp") # Get CF standard names
 ADP5 <- adpRemoveEmptyBins(ADP4) # Optional to remove bins that are beyond the water column
 par(mfrow=c(2,1))
 plot(ADP4, which="a1")
@@ -217,8 +217,8 @@ singleAdpNetCDF(adp=ADP7, name=ADP7[['station']], data=data, debug=1, destinatio
 # Caution
 
 It should be noted that for code PGDP (percent good pings), TE90 (Temperature (1990 scale)), and DEPH (Sensor Depth below Sea Surface) there were no CF standards. Their standard names have been entered as percent_good_pings, temperature_1990_scale, and sensor_depth_below_sea_surface respectively.
-
-Additionally, codes CMAG and HEAD were not identified in the list of DFO codes (Government of Canada, 2022), but were given standard names of current_magnitude and heading respectively.
+Additionally, codes CMAG, HEAD, BR, BV,BA,BG, DIST, COMA, and BQ were not identified in the list of DFO codes (Government of Canada, 2022), but were given standard names of current_magnitude,  heading respectively,bottom_range, bottom_velocity,                                                                 bottom_signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water, 
+bottom_percent_good_ping, distance,correlation_magnitude, and bottom_correlation_magnitude respectively.
 
 # References
 

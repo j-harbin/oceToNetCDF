@@ -37,7 +37,7 @@ grViz("digraph flowchart {
 
       }
 
-      [1]: 'getCFData()'
+      [1]: 'getStandardData()'
       [2]: 'Is the file origin an ODF?'
       [3]: 'Yes'
       [4]: 'No'

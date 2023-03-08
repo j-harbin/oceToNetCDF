@@ -9,7 +9,7 @@ standardName(gf3, data = NULL, debug = 0)
 \arguments{
 \item{gf3}{a character indicating a GF3 (General Formatting) standard code parameter}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getCFData}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from getStandardData}
 
 \item{debug}{integer value indicating level of debugging.
 If this is less than 1, no debugging is done. Otherwise,
@@ -25,6 +25,6 @@ code parameter.
 }
 \examples{
 library(odfToNetCDF)
-data <- getCFData(type="ctd")
+data <- getStandardData(type="ctd")
 standardName("TEMP", data=data)
 }

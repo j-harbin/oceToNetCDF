@@ -16,7 +16,7 @@ the default will conform to Bedford Institute of Oceanography ("BIO") naming con
 If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
-\item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getCFData]{getCFData()}}}
+\item{data}{a data frame of standard name, name, units, and GF3 codes likely from \code{\link[=getStandardData]{getStandardData()}}}
 
 \item{destination}{the specified location to save the NetCDF. By default this is set
 to the local directory}
@@ -32,7 +32,7 @@ and RCM types.
 \dontrun{
 library(odfToNetCDF)
 library(oce)
-data <- getCFData(type="ctd")
+data <- getStandardData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")

@@ -5,7 +5,7 @@
 #'code parameter.
 #'
 #' @param gf3 a character indicating a GF3 (General Formatting) standard code parameter
-#' @param data a data frame of standard name, name, units, and GF3 codes likely from getCFData
+#' @param data a data frame of standard name, name, units, and GF3 codes likely from getStandardData
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' library(odfToNetCDF)
-#' data <- getCFData(type="ctd")
+#' data <- getStandardData(type="ctd")
 #' standardName("TEMP", data=data)
 standardName <- function(gf3, data=NULL, debug=0) {
 
@@ -42,7 +42,7 @@ standardName <- function(gf3, data=NULL, debug=0) {
       gf3 <- "CNDC"
     }
     if (gf3 == "fluorescence") {
-      gf3 <- "FLO"
+      gf3 <- "FLOR"
     }
       if (gf3 %in% c("t090C", "t190C", "temperature")) {
           gf3 <- "TEMP"
@@ -133,7 +133,7 @@ standardName <- function(gf3, data=NULL, debug=0) {
 
   }
   if (length(line) == 0) {
-    stop(gf3, " is not recognized in the codes for data type =", unique(data$type), ". Make sure you used the proper 'type' argument in getCFData()")
+    stop(gf3, " is not recognized in the codes for data type =", unique(data$type), ". Make sure you used the proper 'type' argument in getStandardData()")
   }
 
   gf3 <- list(gf3 = gf3)

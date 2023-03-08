@@ -1,5 +1,5 @@
 library(testthat)
-library(odfToNetCDF)
+library(oceToNetCDF)
 
-test_check("odfToNetCDF")
+test_check("oceToNetCDF")
 

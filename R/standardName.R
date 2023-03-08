@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-#' library(odfToNetCDF)
+#' library(oceToNetCDF)
 #' data <- getStandardData(type="ctd")
 #' standardName("TEMP", data=data)
 standardName <- function(gf3, data=NULL, debug=0) {

@@ -27,10 +27,10 @@ This function checks that an ODF object has all the metadata
 required to build a complete netCDF file
 }
 \examples{
-library(odfToNetCDF)
+library(oceToNetCDF)
 library(oce)
 data <- getStandardData(type="ctd")
-f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+f <- system.file("extdata", "mctd.ODF", package="oceToNetCDF")
 odf1 <- read.odf(f)
 odfMetadataCheck(odf1, data=data)
 }

@@ -23,10 +23,10 @@
 #' @importFrom oce oceDeleteData
 #' @importFrom oce oceDeleteMetadata
 #' @examples
-#' library(odfToNetCDF)
+#' library(oceToNetCDF)
 #' library(oce)
 #' data <- getStandardData(type="ctd")
-#' f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+#' f <- system.file("extdata", "mctd.ODF", package="oceToNetCDF")
 #' odf1 <- read.odf(f)
 #' odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 #' @export

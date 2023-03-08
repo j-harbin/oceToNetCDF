@@ -11,10 +11,10 @@
 #'  some functions will print debugging information
 #' @importFrom oce read.oce read.odf as.adp oceSetMetadata processingLogAppend
 #' @examples
-#' library(odfToNetCDF)
+#' library(oceToNetCDF)
 #' data <- getStandardData(type="adcp")
-#' f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
-#' f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
+#' f1 <- system.file("extdata", "adcp1.ODF", package="oceToNetCDF")
+#' f2 <- system.file("extdata", "adcp2.ODF", package="oceToNetCDF")
 #' files <- c(f1,f2)
 #' adp <- compileOdfToAdp(files)
 #'

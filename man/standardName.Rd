@@ -24,7 +24,7 @@ forecast (CF) standards from a General Formatting (GF3) standard
 code parameter.
 }
 \examples{
-library(odfToNetCDF)
+library(oceToNetCDF)
 data <- getStandardData(type="ctd")
 standardName("TEMP", data=data)
 }

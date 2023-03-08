@@ -16,10 +16,10 @@
 #' @importFrom rlist list.append
 #'@examples
 #' \dontrun{
-#' library(odfToNetCDF)
+#' library(oceToNetCDF)
 #' data <- getStandardData(type="adcp")
-#' f1 <- system.file("extdata", "adcp1.ODF", package="odfToNetCDF")
-#' f2 <- system.file("extdata", "adcp2.ODF", package="odfToNetCDF")
+#' f1 <- system.file("extdata", "adcp1.ODF", package="oceToNetCDF")
+#' f2 <- system.file("extdata", "adcp2.ODF", package="oceToNetCDF")
 #' files <- c(f1,f2)
 #' adp <- compileOdfToAdp(files)
 #' adp2 <- nameReplacement(adp, data=data)

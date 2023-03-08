@@ -22,13 +22,13 @@ editor_options:
 
 # Introduction
 
-This vignette discusses the steps to process and convert a moored acoustic doppler current profiler (ADCP) file to a NetCDF file. Currently (2023/03/01) the `odfToNetCDF` package has the ability to convert ADCP files with an ODF origin (both those that need to be compiled into one `adp` object and those that do not) and files with a raw RDI origin to NetCDFs following CF standards. This document will demonstrate the conversion of an ADCP object of raw RDI origin from the Davis Strait.
+This vignette discusses the steps to process and convert a moored acoustic doppler current profiler (ADCP) file to a NetCDF file. Currently (2023/03/01) the `oceToNetCDF` package has the ability to convert ADCP files with an ODF origin (both those that need to be compiled into one `adp` object and those that do not) and files with a raw RDI origin to NetCDFs following CF standards. This document will demonstrate the conversion of an ADCP object of raw RDI origin from the Davis Strait.
 
 To being, the file is read as an `oce` object.
 
 ```{r, eval=FALSE}
 library(oce)
-library(odfToNetCDF)
+library(oceToNetCDF)
 ADP <- read.oce("adcpRDI.000")
 ```
 
@@ -176,18 +176,18 @@ adpFlagCorrelation <- function(x=NULL, fields=NULL, debug=0, correlation=70)
 #ADP5 <- adpFlagCorrelation(ADP4, correlation=70)
 ```
 
-It it then time to use the `odfToNetCDF` package following the workflow below (Figure 3).
+It it then time to use the `oceToNetCDF` package following the workflow below (Figure 3).
 
-```{r echo=FALSE, fig.cap = "Work flow of the odfToNetCDF package for ADCP data types."}
+```{r echo=FALSE, fig.cap = "Work flow of the oceToNetCDF package for ADCP data types."}
 knitr::include_graphics("adcp_diagram.png")
 ```
 
 \pagebreak
 
-The first step in using the `odfToNetCDF` package was to get the available climate and forecast (CF) data using `getStandardData`. An optional function was then used on the data, `adpRemoveEmptyBins` which removes distance bins that have been flagged as bad by `adpFlagPastBoundary`. The effect of `adpRemoveEmptyBins` can be seen in Figure 4.
+The first step in using the `oceToNetCDF` package was to get the available climate and forecast (CF) data using `getStandardData`. An optional function was then used on the data, `adpRemoveEmptyBins` which removes distance bins that have been flagged as bad by `adpFlagPastBoundary`. The effect of `adpRemoveEmptyBins` can be seen in Figure 4.
 
 ```{r, eval=FALSE}
-# odfToNetCDF package
+# oceToNetCDF package
 data <- getStandardData(type="adcp") # Get CF standard names
 ADP5 <- adpRemoveEmptyBins(ADP4) # Optional to remove bins that are beyond the water column
 par(mfrow=c(2,1))

@@ -1,6 +1,6 @@
 ## vim:textwidth=128:expandtab:shiftwidth=4:softtabstop=4
 
-library(odfToNetCDF)
+library(oceToNetCDF)
 
 context("getStandardData")
 

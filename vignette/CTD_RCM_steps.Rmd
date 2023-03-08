@@ -9,9 +9,9 @@ output:
 
 # Introduction
 
-This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) ODF file to a NetCDF file. To convert a list of CTD or RCM ODF files follow the work flow provided below. To date, the `odfToNetCDF` package can convert MCAT files from ODF or from matlab and can convert RCMs from ODFs. The data used in this example is from the Davis Strait with an ODF origin.
+This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) ODF file to a NetCDF file. To convert a list of CTD or RCM ODF files follow the work flow provided below. To date, the `oceToNetCDF` package can convert MCAT files from ODF or from matlab and can convert RCMs from ODFs. The data used in this example is from the Davis Strait with an ODF origin.
 
-![Figure 1: Work flow of the odfToNetCDF package for CTD and RCM data types with descriptions on the left and relevant functions on the right](ctd_rcm_diagram.png)
+![Figure 1: Work flow of the oceToNetCDF package for CTD and RCM data types with descriptions on the left and relevant functions on the right](ctd_rcm_diagram.png)
 
 # 1: Get necessary CF data
 
@@ -62,10 +62,10 @@ Step 9: Insert attributes (metadata) into a netCDF file
 A typical workflow for an ODF derived file is as follows:
 
 ```{r, eval=FALSE}
-library(odfToNetCDF)
+library(oceToNetCDF)
 library(oce)
 data <- getStandardData(type="ctd")
-f <- system.file("extdata", "mctd.ODF", package="odfToNetCDF")
+f <- system.file("extdata", "mctd.ODF", package="oceToNetCDF")
 odf1 <- read.odf(f)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 odf3 <- removeDerived(odf2)

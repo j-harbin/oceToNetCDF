@@ -31,8 +31,8 @@
 #' @examples
 #' \dontrun{
 #' library(oce)
-#' library(odfToNetCDF)
-#' load(system.file("extdata", "adcpNA", package="odfToNetCDF"))
+#' library(oceToNetCDF)
+#' load(system.file("extdata", "adcpNA", package="oceToNetCDF"))
 #' adp2 <- adpFlagPastBoundary(adcpNA)
 #' adp3 <- adpConvertRawToNumeric(adp2)
 #' adp4 <- handleFlags(adp3, flags=4)

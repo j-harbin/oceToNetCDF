@@ -141,19 +141,12 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     eval(parse(text = paste0("units", i, " <-'", vv$units, "'")))
     eval(parse(text = paste0('var', i, 'max <-', -10000)))
     eval(parse(text = paste0('var', i, 'min <-' , 10000)))
-    if(!is.null(vv$std)){
-      eval(parse(text = paste0("std_variable_", i, " <- '", vv$std, "'")))
-    }else{
-      eval(parse(text = paste0("std_variable_", i, " <- NULL")))
-    }
     #check if variable also has quality flag
     if (v[[i]] %in% names(odf[['flags']])) {
       eval(parse(text = paste0("var", i, "_QC <- '", vv$gf3, "_QC'")))
       eval(parse(text = paste0("variable", i , "_QC <- 'quality flag for " , v[[i]], "'")))
     }
     i <- i+1
-
-
   }
   if (debug > 0) {
   message("Step 4: About to check number of variables.")
@@ -215,7 +208,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (numvar >1){
     dlname <- variable_2
     v2_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var2, data$bodc[which(data$standard_name == var2)]), units2, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_2)]), prec = 'double')
-
     if (numvar >2){
       dlname <- variable_3
       v3_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var3, data$bodc[which(data$standard_name == var3)]), units3, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_3)]), prec = 'double')
@@ -345,6 +337,12 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   for (i in seq_along(namesMeta)) {
       #message("This is for namesMeta = ", namesMeta[i])
       ncdf4::ncatt_put(ncout, 0, namesMeta[i], odf[[namesMeta[i]]])
+  }
+
+  #JAIM2
+  for (i in 1:numvar) {
+  ncdf4::ncatt_put(nc=ncout, varid=eval(parse(text=paste0("v",i, "_def"))), attname="standard_name", attval=eval(parse(text=paste0("variable_",i))))
+  #ncdf4::ncatt_put(nc=ncout, varid=v1_def, attname="standard_name", attval=variable_1)
   }
 
   ####preserve ODF history header####

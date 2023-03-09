@@ -3,18 +3,17 @@ title: "Steps to convert moored ADCP files to a single NetCDF file"
 author: "Jaimie Harbin"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette:
-    toc: true
-    number_sections: true
-    fig_caption: yes
-    fig_width: 3.5
-    fig_height: 3.5
-    dpi: 72
-    dev.args: list(pointsize=11)
-vignette: >
-  %\VignetteIndexEntry{Steps to convert moored ADCP files to a single NetCDF file}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  html_document: default
+  toc: yes
+  number_sections: yes
+  fig_caption: yes
+  fig_width: 3.5
+  fig_height: 3.5
+  dpi: 72
+  dev.args: list(pointsize=11)
+  pdf_document: null
+vignette: |
+  %\VignetteIndexEntry{Steps to convert moored ADCP files to a single NetCDF file} %\VignetteEncoding{UTF-8} %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   markdown:
     wrap: 72
@@ -38,7 +37,8 @@ Now that the `adp` object had the desired `data` and `metadata`, processing bega
 ```{r, eval=FALSE}
 # Processing the data
 # Correct declination
-declination <- magneticField(longitude=ADP[['longitude']], latitude=ADP[['latitude']],time = ADP[['time']])$declination
+declination <- magneticField(longitude=ADP[['longitude']], 
+                             latitude=ADP[['latitude']],time = ADP[['time']])$declination
 ADP2 <- applyMagneticDeclination(ADP, declination=declination)
 ```
 

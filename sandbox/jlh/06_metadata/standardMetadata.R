@@ -1,11 +1,44 @@
-standardMetadata <- function(x) # oce
+#' Insert Metadata names to be compliant with IOOS
+#'
+#' This function inserts the required global attributes that are
+#' "highly recommended" for the IOOS (Integrated Ocean Observing
+#' System) standards (see Reference 1). This function works by
+#' extracting what it can from the data and metadata within the
+#' `oce` object, but if it required field is determined to be NULL
+#' the user will be prompted to enter in the required information.
+#' If `fixed=TRUE`, the information that is input by the user will
+#' be saved and applied to a list of `oce` objects.
+#'
+#' @param x an [oce-class] object containing bottom ranges.
+#'
+#' @param fixed a Boolean indicating if the answers input by the user
+#' should be saved and applied to a list of `oce` objects
+#'
+#'
+#' @importFrom oce oceSetMetadata
+#'
+#' @return `an [oce-class] object containing highly reccommended IOOS metadata
+#'
+#' @references
+#' 1. https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3#Global_Attributes
+#'
+#' @author Jaimie Harbin
+#'
+#' @examples
+#' \dontrun{
+#' library(oce)
+#' data(ctd)
+#' ctdMeta <- standardMetadata(ctd)
+#' }
+#'
+#' @export
+
+standardMetadata <- function(x, fixed=FALSE) # oce
 {
 
     if (!inherits(x, "oce")) {
         stop("x must be an oce object")
     }
-
-    namesMeta <- names(x[['metadata']])
 
     needNames <- c("Conventions", "date_created", "institution", "source", "creator_type", "creator_name",
         "creator_country", "creator_email", "creator_institution", "creator_address", "creator_city",
@@ -22,131 +55,278 @@ standardMetadata <- function(x) # oce
 
     for (i in seq_along(needNames)) {
         if (needNames[[i]] == 'Conventions') {
-            # USER
+            fun <- function(){
+                ans <- readline("Enter your value for Conventions (eg. CF-1.6, ACDD-1.3, IOOS-1.2) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="Conventions", value=answer)
         } else if (needNames[[i]] == "date_created") {
-            oceSetMetadata(x, name="date_created", value=Sys.Date())
+            x <- oceSetMetadata(x, name="date_created", value=Sys.Date())
         } else if (needNames[[i]] == "source") {
-            oceSetMetadata(x, name = "source", value=x[['filename']])
+            x <- oceSetMetadata(x, name = "source", value=x[['filename']])
         } else if (needNames[[i]] == "creator_type") {
-            oceSetMetadata(x, name = "creator_type", value="person")
+            x <- oceSetMetadata(x, name = "creator_type", value="person")
         } else if (needNames[[i]] == "creator_name") {
-            # USER
+            fun <- function(){
+                ans <- readline("Enter your creator_name (eg. John Smith) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_name", value=answer)
         } else if (needNames[[i]] == "creator_country") {
-            # USER
+            fun <- function(){
+                ans <- readline("Enter your creator_country (eg. Canada) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_country", value=answer)
         } else if (needNames[[i]] == "creator_email") {
-          #USER
+            fun <- function(){
+                ans <- readline("Enter your creator_email (eg. john.smith@example.com) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_email", value=answer)
         } else if (needNames[[i]] == "creator_institution") {
-          # USER
+            fun <- function(){
+                ans <- readline("Enter your creator_institution (eg. Bedford Institute of Oceanography) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_institution", value=answer)
         } else if (needNames[[i]] == "creator_address") {
-          # USER
+            fun <- function(){
+                ans <- readline("Enter your creator_address (eg. 123 Example Drive) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_address", value=answer)
         } else if (needNames[[i]] == "creator_city") {
-          #USER
+            fun <- function(){
+                ans <- readline("Enter your creator_city (eg. Halifax) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_city", value=answer)
         } else if (needNames[[i]] == "creator_sector") {
-          # USER
+            fun <- function(){
+                ans <- readline("Enter your creator_sector (eg. Science) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_sector", value=answer)
 
         } else if (needNames[[i]] == "creator_url") {
-          #USER
+            fun <- function(){
+                ans <- readline("Enter your creator_url (eg. www.bio.gc.ca/index-en.php) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="creator_url", value=answer)
         } else if (needNames[[i]] == "featureType") {
-          oceSetMetadata(x, name = "featureType", value="timeSeries")
+            x <- oceSetMetadata(x, name = "featureType", value="timeSeries")
 
         } else if (needNames[[i]] == "id") {
-          oceSetMetadata(x, name = "id", value=x[['filename']])
-        } else if (needNames[[i]] == "naming_authority") { #FIXME
-          oceSetMetadata(x, name = "naming_authority", value="ca.gc.bio")
-
-        } else if (needNames[[i]] == "infoUrl") { #FIXME
-          oceSetMetadata(x, name = "infoUrl", value="https://www.dfo-mpo.gc.ca/science/data-donnees/azmp-pmza/index-eng.html")
-
+          if (!(is.null(x[['filename']]))) {
+            x <- oceSetMetadata(x, name = "id", value=x[['filename']])
+          } else {
+            fun <- function(){
+              ans <- readline("Enter your id (eg. MCAT1234) ")
+              ans <- unlist(strsplit(ans, ","))
+              out1 <- ans
+              return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name = "id", value=answer)
+          }
+        } else if (needNames[[i]] == "naming_authority") {
+          fun <- function(){
+            ans <- readline("Enter your naming_authority (eg. 'ca.gc.bio') ")
+            ans <- unlist(strsplit(ans, ","))
+            out1 <- ans
+            return(out1)
+          }
+          answer <- fun()
+          x <- oceSetMetadata(x, name = "naming_authority", value=answer)
+        } else if (needNames[[i]] == "infoUrl") {
+          fun <- function(){
+            ans <- readline("Enter your infoUrl (eg. 'https://www.dfo-mpo.gc.ca/science/data-donnees/azmp-pmza/index-eng.html') ")
+            ans <- unlist(strsplit(ans, ","))
+            out1 <- ans
+            return(out1)
+          }
+          answer <- fun()
+          x <- oceSetMetadata(x, name = "infoUrl", value=answer)
 
         } else if (needNames[[i]] == "license") { #FIXME
-          oceSetMetadata(x, name = "license", value="https://open.canada.ca/en/open-government-licence-canada")
-
+          fun <- function(){
+            ans <- readline("Enter your license (eg. 'https://open.canada.ca/en/open-government-licence-canada') ")
+            ans <- unlist(strsplit(ans, ","))
+            out1 <- ans
+            return(out1)
+          }
+          answer <- fun()
+          x <- oceSetMetadata(x, name = "license", value=answer)
 
         } else if (needNames[[i]] == "summary") { #FIXME
-          # Make cheecks here # JAIM FIXTHIS
+            # Make cheecks here # JAIM FIXTHIS
 
 
         } else if (needNames[[i]] == "title") { #FIXME
-          # Make checks this is JAIM
+            # Make checks this is JAIM
 
 
         } else if (needNames[[i]] == "project") { #FIXME
-          # USER
+          fun <- function(){
+            ans <- readline("Enter your project (eg. 'AZMP') ")
+            ans <- unlist(strsplit(ans, ","))
+            out1 <- ans
+            return(out1)
+          }
+          answer <- fun()
+          x <- oceSetMetadata(x, name = "project", value=answer)
 
         } else if (needNames[[i]] == "keywords") {
-
-          # USER
+            fun <- function(){
+                ans <- readline("Enter your keywords (eg. Argo) ")
+                ans <- unlist(strsplit(ans, ","))
+                out1 <- ans
+                return(out1)
+            }
+            answer <- fun()
+            x <- oceSetMetadata(x, name="keywords", value=answer)
         } else if (needNames[[i]] == "platform") {
-          # USER (example mooring)
-        } else if (needNames[[i]] == "platform_name") {
-          oceSetMetadata(x, name="platform_name", value=x[['station']]) #mooring number
-        } else if (needNames[[i]] == "platform_id") {
-          oceSetMetadata(x, name="platform_name", value=x[['station']]) #mooring number
-
-        } else if (needNames[[i]] == "platform_vocabulary") {
-          oceSetMetadata(x, name="platform_vocabulary", "https://vocab.nerc.ac.uk/collection/L06/current/") #FIXME
-        } else if (needNames[[i]] == "deployment_platform_name") {
-          # User (ship name)
-          # Could check if there is an odf
-        } else if (needNames[[i]] == "instrument") {
-          # Check for things (user could add it in)
-        } else if (needNames[[i]] == "instrument_vocabulary") { #
-          oceSetMetadata(x, name="instrument_vocabulary", value="http://vocab.nerc.ac.uk/collection/L22/current/") #FIXME
-
-        } else if (needNames[[i]] == "time_coverage_resolution") {
-          # FIXME
-        } else if (needNames[[i]] == "time_coverage_duration") {
-          #FIXME
-        } else if (needNames[[i]] == "time_coverage_start") {
-          oceSetMetadata(x, name="time_coverage_start", value=x[['time']][1])
-        } else if (needNames[[i]] == "time_coverage_end") {
-          oceSetMetadata(x, name="time_coverage_start", value=x[['time']][length(x[['time']])])
-
-        } else if (needNames[[i]] == "geospatial_lat_min") {
-          oceSetMetadata(x, name="geospatial_lat_min", value=min(x[['latitude']]))
-        } else if (needNames[[i]] == "geospatial_lat_max") {
-          oceSetMetadata(x, name="geospatial_lat_max", value=max(x[['latitude']]))
-        } else if (needNames[[i]] == "geospatial_lat_units") {
-          oceSetMetadata(x, name="geospatial_lat_units", value="degrees_north")
-
-        } else if (needNames[[i]] == "geospatial_lon_min") {
-          oceSetMetadata(x, name="geospatial_lon_min", value=min(x[['longitude']]))
-        } else if (needNames[[i]] == "geospatial_lon_max") {
-          oceSetMetadata(x, name="geospatial_lon_max", value=max(x[['longitude']]))
-        } else if (needNames[[i]] == "geospatial_lon_units") {
-          oceSetMetadata(x, name="geospatial_lon_units", value="degrees_east")
-        } else if (needNames[[i]] == "geospatial_vertical_max") {
-          oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
-        } else if (needNames[[i]] == "geospatial_vertical_min") {
-          oceSetMetadata(x, name="geospatial_vertical_min", value=min(x[['pressure']]))
-        } else if (needNames[[i]] == "geospatial_vertical_max") {
-          oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
-
-        } else if (needNames[[i]] == "geospatial_vertical_units") {
-          oceSetMetadata(x, name="geospatial_vertical_units", value=x[['units']][['pressure']][['unit']])
-
-
-        } else if (needNames[[i]] == "geospatial_veterical_positive") {
-          oceSetMetadata(x, name="geospatial_vertical_positive", value="down")
-        } else if (needNames[[i]] == "FillValue") {
-          oceSetMetadata(x, name="FillValue", value=1e35)
-        } else if (needNames[[i]] == "date_modified") {
-          oceSetMetadata(x, name="date_modified", value=date())
-        } else if (needNames[[i]] == "standard_name_vocabulary") {
-          oceSetMetadata(x, name="standard_name_vocabulary", value= "https://vocab.nerc.ac.uk/search_nvs/P01/")
-        } else if (needNames[[i]] == "history") {
-          # FIXME
+            fun <- function(){
+            ans <- readline("Enter your platform (eg. mooring) ")
+            ans <- unlist(strsplit(ans, ","))
+            out1 <- ans
+            return(out1)
         }
+        answer <- fun()
+        x <- oceSetMetadata(x, name="platform", value=answer)
+    } else if (needNames[[i]] == "platform_name") {
+      if (!(is.null(x[['station']]))) {
+        x <- oceSetMetadata(x, name="platform_name", value=x[['station']]) #mooring number
+      } else {
+        fun <- function(){
+          ans <- readline("Enter your platform_name (eg. mooring) ")
+          ans <- unlist(strsplit(ans, ","))
+          out1 <- ans
+          return(out1)
+        }
+        answer <- fun()
+        x <- oceSetMetadata(x, name="platform_name", value=answer)
+
+      }
+    } else if (needNames[[i]] == "platform_id") {
+      if (!(is.null(x[['station']]))) {
+        x <- oceSetMetadata(x, name="platform_id", value=x[['station']]) #mooring number
+      } else {
+        fun <- function(){
+          ans <- readline("Enter your platform_id (eg. BATS)")
+          ans <- unlist(strsplit(ans, ","))
+          out1 <- ans
+          return(out1)
+        }
+        answer <- fun()
+        x <- oceSetMetadata(x, name="platform_id", value=answer)
+      }
+
+    } else if (needNames[[i]] == "platform_vocabulary") {
+        x <- oceSetMetadata(x, name="platform_vocabulary", "https://vocab.nerc.ac.uk/collection/L06/current/")
+    } else if (needNames[[i]] == "deployment_platform_name") {
+        fun <- function(){
+            ans <- readline("Enter your deployment_platform_name (eg. Hudson) ")
+            ans <- unlist(strsplit(ans, ","))
+            out1 <- ans
+            return(out1)
+        }
+        answer <- fun()
+        x <- oceSetMetadata(x, name="deployment_platform_name", value=answer)
+
+    } else if (needNames[[i]] == "instrument") {
+        # Check for things (user could add it in) FIXME
+    } else if (needNames[[i]] == "instrument_vocabulary") {
+      fun <- function(){
+        ans <- readline("Enter your instrument_vocabulary (eg. 'http://vocab.nerc.ac.uk/collection/L22/current/') ")
+        ans <- unlist(strsplit(ans, ","))
+        out1 <- ans
+        return(out1)
+      }
+      answer <- fun()
+
+    x <- oceSetMetadata(x, name="instrument_vocabulary", value=answer)
+
+    } else if (needNames[[i]] == "time_coverage_resolution") {
+        # FIXME
+    } else if (needNames[[i]] == "time_coverage_duration") {
+        #FIXME
+    } else if (needNames[[i]] == "time_coverage_start") {
+        x <- oceSetMetadata(x, name="time_coverage_start", value=x[['time']][1])
+    } else if (needNames[[i]] == "time_coverage_end") {
+        x <- oceSetMetadata(x, name="time_coverage_end", value=x[['time']][length(x[['time']])])
+
+    } else if (needNames[[i]] == "geospatial_lat_min") {
+        x <- oceSetMetadata(x, name="geospatial_lat_min", value=min(x[['latitude']]))
+    } else if (needNames[[i]] == "geospatial_lat_max") {
+        x <- oceSetMetadata(x, name="geospatial_lat_max", value=max(x[['latitude']]))
+    } else if (needNames[[i]] == "geospatial_lat_units") {
+        x <- oceSetMetadata(x, name="geospatial_lat_units", value="degrees_north")
+
+    } else if (needNames[[i]] == "geospatial_lon_min") {
+        x <- oceSetMetadata(x, name="geospatial_lon_min", value=min(x[['longitude']]))
+    } else if (needNames[[i]] == "geospatial_lon_max") {
+        x <- oceSetMetadata(x, name="geospatial_lon_max", value=max(x[['longitude']]))
+    } else if (needNames[[i]] == "geospatial_lon_units") {
+        x <- oceSetMetadata(x, name="geospatial_lon_units", value="degrees_east")
+    } else if (needNames[[i]] == "geospatial_vertical_max") {
+        x <- oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
+    } else if (needNames[[i]] == "geospatial_vertical_min") {
+        x <- oceSetMetadata(x, name="geospatial_vertical_min", value=min(x[['pressure']]))
+    } else if (needNames[[i]] == "geospatial_vertical_max") {
+        x <- oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
+
+    } else if (needNames[[i]] == "geospatial_vertical_units") {
+        x <- oceSetMetadata(x, name="geospatial_vertical_units", value=x[['units']][['pressure']][['unit']])
+    } else if (needNames[[i]] == "geospatial_veterical_positive") {
+        x <- oceSetMetadata(x, name="geospatial_vertical_positive", value="down")
+    } else if (needNames[[i]] == "FillValue") {
+        x <- oceSetMetadata(x, name="FillValue", value=1e35)
+    } else if (needNames[[i]] == "date_modified") {
+        x <- oceSetMetadata(x, name="date_modified", value=date())
+    } else if (needNames[[i]] == "standard_name_vocabulary") {
+        x <- oceSetMetadata(x, name="standard_name_vocabulary", value= "https://vocab.nerc.ac.uk/search_nvs/P01/")
+    } else if (needNames[[i]] == "history") {
+        # FIXME
+    }
 
     }
 
-}
+    return(x)
 
-# Make a test that when the adp is filling it in, if it doesn't exist ask the user
+}
 
 # Make another check if the answers are the same in a for loop, just fill it in for all of them
 
 #institution,
 
 
-}

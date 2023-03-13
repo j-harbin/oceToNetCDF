@@ -87,23 +87,21 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
   namesData <- names(adp[['data']])[-which(names(adp[['data']]) %in% c("time", "distance"))]
   DEFS <- NULL
-  #browser()
   for (i in seq_along(namesData)) {
+    #browser()
     dlname <- namesData[i]
     uName <- gsub("(.+?)(\\_*[0-9].*)", "\\1", namesData[i])
     uName <- gsub(".*average_","",uName)
     longName <- data$name[which(data$standard_name == uName)]
     message("uName =", uName, " for ", i, " and longname =", longName)
     if (longName %in% c("East Component of Current", "North Component of Current", "Vertical Current Speed", "Error Velocity", "Heading")) {
-      if (!(is.null(adp[['north']])) && adp[['north']] == "geographic") {
-        longName <- paste0(longName, "(geographic)")
+      if (!(is.null(adp[['north']][1])) && !(adp[['north']][1] == "true")) {
+          longName <- paste0(longName, " (geographic)", collapse=" ")
       } else {
-        longName <- paste0(longName, "(true)", collapse=" ")
-
+        longName <- paste0(longName, " (true)", collapse=" ")
       }
-
-
     }
+
 
     if (length(adp[[namesData[[i]]]]) == timedim$len) {
       DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim), missval=FillValue, longname=longName, prec = "float")
@@ -114,11 +112,33 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
     }
 
-
   }
 
+  # Adding flags JAIM FIXME
+  if (!(length(names(adp[['flags']]))) == 0) {
+    flagNames <- NULL
+    for (f in seq_along(names(adp[['flags']]))) {
+      flagNames[[f]] <- assign(paste0(names(adp[['flags']][f]), "_QC"), adp[['flags']][[names(adp[['flags']])[f]]])
+    }
+    names(flagNames) <- paste0(names(adp[['flags']]), "_QC")
+
+
+    flags <- NULL
+    for (i in seq_along(flagNames)) {
+      dlname <- names(flagNames)[[i]]
+      flags[[i]] <- assign(dlname, ncdf4::ncvar_def(name=ifelse(is.null(data$bodc), dlname, data$bodc[which(data$standard_name == sub("_QC.*", "", dlname))]), units="NA",dim= list(timedim, distdim), missval=FillValue, longname=dlname, prec = 'double'))
+
+    }
+  }
+
+if (exists("flags")) {
+  defs <- rlist::list.append(DEFS, lon_def, lat_def, ts_def)
+  defs <- c(defs, flags)
+  names(defs) <- c(namesData, "latitude", "longitude", "time_string", names(flagNames))
+} else {
   defs <- rlist::list.append(DEFS, lon_def, lat_def, ts_def)
   names(defs) <- c(namesData, "latitude", "longitude", "time_string")
+}
 
   ####writing net CDF####
   #write out definitions to new nc file
@@ -129,9 +149,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
   # vars = an object of class ncvar4 describing the variable to be created, or a vector
   # (or list of such objects to be created)
-  #browser()
   ncout <- ncdf4::nc_create(filename=ncfname, vars=defs, force_v4 = TRUE)
-
 
   #insert variables into nc file
   if (debug > 0) {
@@ -141,7 +159,11 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   ncdf4::ncvar_put(ncout, ts_def, as.POSIXct(adp[['time']], tz = 'UTC', origin = '1970-01-01 00:00:00'))
   keepDefs <- defs[-(which(names(defs) == "time_string"))]
   for (i in seq_along(keepDefs)) {
-    ncdf4::ncvar_put(nc=ncout, varid=keepDefs[[i]], vals=adp[[names(keepDefs)[i]]])
+    if (grepl("_QC",names(keepDefs)[[i]])) {
+      ncdf4::ncvar_put(nc=ncout, varid=keepDefs[[i]], vals=unlist(unname(flagNames[which(names(flagNames) == names(keepDefs)[[i]])])))
+    } else {
+      ncdf4::ncvar_put(nc=ncout, varid=keepDefs[[i]], vals=adp[[names(keepDefs)[i]]])
+    }
 
   }
 
@@ -150,11 +172,15 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     message("Step 6: About to write metadata into existing netCDF using ncdf4::ncatt_put")
   }
 
+  if (!("flagScheme") %in% names(adp[['metadata']])) {
+    #odf <- oceSetMetadata(adp, name="flagScheme", value= list("name"= "argo", "mapping"=list("not_assessed"=0, "passed_all_tests"=1, "probably_good"=2, "probably_bad"=3, "bad"=4, "changed"=5, "not_used"=6, "not_used"=7, "estimated"=8, "missing"=9), "default"=c(0,3,4,9)))
+    adp <- oceSetMetadata(adp, name="flagScheme", value= c("Argo"))
+  }
+
   bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval", "codes", "tiltUsed", "threeBeamUsed", "binMappingUsed", "haveBinaryFixedAttitudeHeader",
                                                "haveActualData", "oceBeamUnspreaded", "dataNamesOriginal", "transformationMatrix", "ensembleFile",
                                                "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "north"))
   namesMeta <- names(adp[['metadata']])[-bad]
-  #browser()
   for (i in seq_along(namesMeta)) {
     #message("This is for namesMeta = ", namesMeta[i])
     ncdf4::ncatt_put(ncout, 0, namesMeta[i], adp[[namesMeta[i]]])

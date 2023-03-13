@@ -183,9 +183,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   latdim <- ncdf4::ncdim_def("latitude", "degrees_north", as.double(odf[['latitude']]))
   dimnchar <- ncdf4::ncdim_def('nchar', '', 1:23, create_dimvar = FALSE)
 
-  #if (debug > 0) {
-  #    message("timedim= ", timedim)
-  #}
 
   #FILLVALUE
   FillValue <- 1e35

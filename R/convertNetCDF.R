@@ -142,12 +142,16 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     eval(parse(text = paste0('var', i, 'max <-', -10000)))
     eval(parse(text = paste0('var', i, 'min <-' , 10000)))
     #check if variable also has quality flag
-    if (v[[i]] %in% names(odf[['flags']])) {
-      eval(parse(text = paste0("var", i, "_QC <- '", vv$gf3, "_QC'")))
-      eval(parse(text = paste0("variable", i , "_QC <- 'quality flag for " , v[[i]], "'")))
-    }
+    if (!(length(names(odf[['flags']]))) == 0) {
+      flagNames <- NULL
+      for (f in seq_along(names(odf[['flags']]))) {
+      #eval(parse(text = paste0(i, "_QC <- ", odf[['flags']][[i]])))
+      flagNames[[f]] <- assign(paste0(names(odf[['flags']][f]), "_QC"), odf[['flags']][[names(odf[['flags']])[f]]])
+      }
+        }
     i <- i+1
   }
+ names(flagNames) <- paste0(names(odf[['flags']]), "_QC")
   if (debug > 0) {
   message("Step 4: About to check number of variables.")
   }
@@ -161,7 +165,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (missing(filename)) {
     filename <- "MCAT"
     }
-
 
   ncpath <- destination
   ncfname <- paste(ncpath,"/", filename, ".nc", sep = "")
@@ -204,7 +207,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
 
   dlname <- variable_1
   v1_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var1, data$bodc[which(data$standard_name == var1)]), units1, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_1)]), prec = 'double')
-
   if (numvar >1){
     dlname <- variable_2
     v2_def <- ncdf4::ncvar_def(ifelse(is.null(data$bodc), var2, data$bodc[which(data$standard_name == var2)]), units2, list(timedim, stationdim), FillValue, longname=unique(data$name[which(data$standard_name == variable_2)]), prec = 'double')
@@ -261,6 +263,14 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
       }
     }
   }
+
+  # Adding flags in
+  flags <- NULL
+  for (i in seq_along(flagNames)) {
+    dlname <- names(flagNames)[[i]]
+    flags[[i]] <- assign(dlname, ncdf4::ncvar_def(name=ifelse(is.null(data$bodc), dlname, data$bodc[which(data$standard_name == sub("_QC.*", "", dlname))]), units="NA",dim= list(timedim, stationdim), missval=FillValue, longname=dlname, prec = 'double'))
+
+  }
   #####write out definitions to new nc file####
   defs <- grep(ls(), pattern = '_def', value = TRUE)
   if (debug > 0) {
@@ -270,6 +280,9 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   for ( i in 1:length(defs)){
     eval(parse(text = paste0("dd[[i]] <- ", defs[[i]])))
   }
+  #JAIM
+  # Insert data for flags
+  dd <- c(dd, flags)
 
   if (debug > 0) {
     message("Step 7: About to create  new netCDF file on disk using nc_create.")
@@ -277,7 +290,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   ncout <-
     nc_create(
       ncfname,
-
       dd
       #,
       #force_v4 = TRUE
@@ -332,6 +344,12 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (debug > 0) {
     message("Step 9: About to insert attributes (metadata) into a netCDF file")
   }
+
+  if (!("flagScheme") %in% names(odf[['metadata']])) {
+    #odf <- oceSetMetadata(odf, name="flagScheme", value= list("name"= "argo", "mapping"=list("not_assessed"=0, "passed_all_tests"=1, "probably_good"=2, "probably_bad"=3, "bad"=4, "changed"=5, "not_used"=6, "not_used"=7, "estimated"=8, "missing"=9), "default"=c(0,3,4,9)))
+    odf <- oceSetMetadata(odf, name="flagScheme", value= c("Argo"))
+    }
+
    bad <- which(names(odf[['metadata']]) %in% c("units", "header", "hexfilename", "filename", "dataNamesOriginal", "flags", "waterDepth", "date", "recoveryTime", "sampleInterval"))
   namesMeta <- names(odf[['metadata']])[-bad]
   for (i in seq_along(namesMeta)) {
@@ -339,10 +357,9 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
       ncdf4::ncatt_put(ncout, 0, namesMeta[i], odf[[namesMeta[i]]])
   }
 
-  #JAIM2
+  # Populating variable attributes
   for (i in 1:numvar) {
   ncdf4::ncatt_put(nc=ncout, varid=eval(parse(text=paste0("v",i, "_def"))), attname="standard_name", attval=eval(parse(text=paste0("variable_",i))))
-  #ncdf4::ncatt_put(nc=ncout, varid=v1_def, attname="standard_name", attval=variable_1)
   }
 
   ####preserve ODF history header####

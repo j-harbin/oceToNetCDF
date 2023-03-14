@@ -27,6 +27,7 @@
 #' data frame are used.
 #'
 #' @importFrom oce oceSetMetadata
+#' @importFrom stringr str_c
 #'
 #' @return `an [oce-class] object containing highly reccommended IOOS metadata
 #'
@@ -87,7 +88,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="Conventions", value=answer)
             }
@@ -106,7 +107,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_name", value=answer)
             }
@@ -119,7 +120,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_country", value=answer)
             }
@@ -132,7 +133,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_email", value=answer)
             }
@@ -145,7 +146,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_institution", value=answer)
             }
@@ -158,7 +159,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_address", value=answer)
             }
@@ -171,7 +172,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_city", value=answer)
             }
@@ -184,7 +185,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_sector", value=answer)
             }
@@ -198,7 +199,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="creator_url", value=answer)
             }
@@ -217,7 +218,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- answer
+                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                     namesFixed[[i]] <- needNames[[i]]
                     x <- oceSetMetadata(x, name = "id", value=answer)
                 }
@@ -231,7 +232,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name = "naming_authority", value=answer)
             }
@@ -244,7 +245,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name = "infoUrl", value=answer)
             }
@@ -258,7 +259,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name = "license", value=answer)
             }
@@ -273,7 +274,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- answer
+                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                     namesFixed[[i]] <- needNames[[i]]
                     x <- oceSetMetadata(x, name = "institute", value=answer)
                 }
@@ -286,7 +287,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- answer
+                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                     namesFixed[[i]] <- needNames[[i]]
                     x <- oceSetMetadata(x, name = "cruise_description", value=answer)
                 } else {
@@ -300,7 +301,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- answer
+                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                     namesFixed[[i]] <- needNames[[i]]
                     x <- oceSetMetadata(x, name = "cruise_name", value=answer)
 
@@ -316,7 +317,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- answer
+                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                     namesFixed[[i]] <- needNames[[i]]
                     x <- oceSetMetadata(x, name = "model", value=answer)
                 }
@@ -342,7 +343,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name = "project", value=answer)
             }
@@ -356,7 +357,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="keywords", value=answer)
             }
@@ -369,7 +370,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="platform", value=answer)
             }
@@ -385,7 +386,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- answer
+                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                     namesFixed[[i]] <- needNames[[i]]
                     x <- oceSetMetadata(x, name="platform_name", value=answer)
                 }
@@ -403,7 +404,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- answer
+                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                     namesFixed[[i]] <- needNames[[i]]
                     x <- oceSetMetadata(x, name="platform_id", value=answer)
                 }
@@ -420,7 +421,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="deployment_platform_name", value=answer)
             }
@@ -434,7 +435,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="type", value=answer)
             }
@@ -447,7 +448,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="serialNumber", value=answer)
             }
@@ -466,7 +467,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- answer
+                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
                 namesFixed[[i]] <- needNames[[i]]
                 x <- oceSetMetadata(x, name="instrument_vocabulary", value=answer)
             }
@@ -515,6 +516,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         }
 
     }
+    #browser()
     if (fixed) {
         if (!(file %in% list.files())) {
             # This means we already have the saved data

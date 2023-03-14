@@ -218,5 +218,13 @@ if (exists("flags")) {
     #message("This is for namesMeta = ", namesMeta[i])
     ncdf4::ncatt_put(ncout, 0, namesMeta[i], adp[[namesMeta[i]]])
   }
+  #browser()
+  numvar <- length(defs)
+  # Populating variable attributes
+  if (bodc) {
+  for (i in 1:numvar) {
+    ncdf4::ncatt_put(nc=ncout, varid=defs[[i]], attname="standard_name", attval=names(defs)[[i]])
+  }
+  }
 
 }

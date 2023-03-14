@@ -9,10 +9,10 @@
 #' If `fixed=TRUE`, the information that is input by the user will
 #' be saved and applied to a list of `oce` objects.
 #'
-#' If `fixed = TRUE` and a data frame named "metadataAnswers" doesn't exist
-#' it will save the user's answers into a data frame named "metadataAnswers"
-#' which contains the name of the field that required a users answers as well
-#' as the answers the user input. This means, if `fixed=TRUE` and "metadataAnswers"
+#' If `fixed = TRUE` and a data frame named with the specified file name
+#' doesn't exist it will save the user's answers into a data frame named
+#' `file` which contains the name of the field that required a users answers as well
+#' as the answers the user input. This means, if `fixed=TRUE` and a file named `file`
 #' does exist, this function will load up the previously answered questions
 #' to avoid the user needing to answer them over and over again.
 #'
@@ -21,6 +21,10 @@
 #' @param fixed a Boolean indicating if the answers input by the user
 #' should be saved as a data frame and applied to a list of `oce` objects
 #' See Details.
+#'
+#' @param file a file name indicating the name to save a data frame if `fixed=TRUE`.
+#' If this file name already exists in the present directory, the answers from this
+#' data frame are used.
 #'
 #' @importFrom oce oceSetMetadata
 #'
@@ -40,16 +44,18 @@
 #'
 #' @export
 
-standardMetadata <- function(x, fixed=FALSE) # oce
+standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
 {
-
     if (!inherits(x, "oce")) {
         stop("x must be an oce object")
     }
 
  if (fixed) {
-   if (file.exists("metadataAnswers")) {
-     load("metadataAnswers")
+   if (is.null(file)) {
+     stop("must provide a file name as fixed=TRUE")
+   }
+   if (file %in% list.files()) {
+     load(file)
      # Just load up the answers and don't ask the questions
     for (i in seq_along(d$namesFixed)) {
       x <- oceSetMetadata(x, name=d$namesFixed[[i]], value=d$fixedAnswers[[i]])
@@ -257,13 +263,75 @@ standardMetadata <- function(x, fixed=FALSE) # oce
             x <- oceSetMetadata(x, name = "license", value=answer)
           }
 
-        } else if (needNames[[i]] == "summary") { #FIXME
-            # Make cheecks here # JAIM FIXTHIS
+        } else if (needNames[[i]] == "summary") {
+          if (is.null(x[['institute']])) {
+            fun <- function(){
+              ans <- readline("Enter your institute (eg. 'University Of Washington') ")
+              ans <- unlist(strsplit(ans, ","))
+              out1 <- ans
+              return(out1)
+            }
+            answer <- fun()
+            fixedAnswers[[i]] <- answer
+            namesFixed[[i]] <- needNames[[i]]
+            x <- oceSetMetadata(x, name = "institute", value=answer)
+          }
+          if (!("CRUISE_HEADER" %in% names(x[['header']]))) {
+            #if (is.null(x[['cruise_header']])) {
+            fun <- function(){
+              ans <- readline("Enter your Cruise Description (eg. 'U of W and BIO Joint Program. Contact principal investigators for non-DFO access.') ")
+              ans <- unlist(strsplit(ans, ","))
+              out1 <- ans
+              return(out1)
+            }
+            answer <- fun()
+            fixedAnswers[[i]] <- answer
+            namesFixed[[i]] <- needNames[[i]]
+            x <- oceSetMetadata(x, name = "cruise_desription", value=answer)
+         # }
 
+          } else {
+            x <- oceSetMetadata(x, name = "cruise_description", value=x@metadata$header$CRUISE_HEADER$CRUISE_DESCRIPTION)
+          }
+          if (!("CRUISE_HEADER" %in% names(x[['header']]))) {
+            fun <- function(){
+              ans <- readline("Enter your Cruise Name (eg. 'Davis Strait 2015') ")
+              ans <- unlist(strsplit(ans, ","))
+              out1 <- ans
+              return(out1)
+            }
+            answer <- fun()
+            fixedAnswers[[i]] <- answer
+            namesFixed[[i]] <- needNames[[i]]
+            x <- oceSetMetadata(x, name = "cruise_name", value=answer)
 
-        } else if (needNames[[i]] == "title") { #FIXME
-            # Make checks this is JAIM
+          } else {
+            x <- oceSetMetadata(x, name = "cruise_name", value=x@metadata$header$CRUISE_HEADER$CRUISE_NAME_1)
 
+          }
+          if (is.null(x[['model']])) {
+            fun <- function(){
+              ans <- readline("Enter your model (eg. 'RCM11') ")
+              ans <- unlist(strsplit(ans, ","))
+              out1 <- ans
+              return(out1)
+            }
+            answer <- fun()
+            fixedAnswers[[i]] <- answer
+            namesFixed[[i]] <- needNames[[i]]
+            x <- oceSetMetadata(x, name = "model", value=answer)
+          }
+
+         sum <- paste0(x[['institute']], ',',x[['cruise_description']],
+                                                ',', x[['cruise_name']],
+                                                "," , "moored CTD model ",x[['model']],",",
+                                                "from ", x[['time']][[1]],' to ',tail(x[['time']], n = 1))
+         x <- oceSetMetadata(x, name="summary", value=sum)
+
+        } else if (needNames[[i]] == "title") {
+          titleMeta <- paste0(x[['institute']], ',', x[['cruise_description']],',',x[['cruise_name']],
+                                              ", moored CTD ")
+          x <- oceSetMetadata(x, name="title", value=titleMeta)
 
         } else if (needNames[[i]] == "project") {
           if (is.null(x[['project']])) {
@@ -358,7 +426,37 @@ standardMetadata <- function(x, fixed=FALSE) # oce
           }
 
         } else if (needNames[[i]] == "instrument") {
-            # Check for things (user could add it in) FIXME
+          if (is.null(x[['type']])) {
+            fun <- function(){
+              ans <- readline("Enter your type (eg. AANDERAA) ")
+              ans <- unlist(strsplit(ans, ","))
+              out1 <- ans
+              return(out1)
+            }
+            answer <- fun()
+            fixedAnswers[[i]] <- answer
+            namesFixed[[i]] <- needNames[[i]]
+            x <- oceSetMetadata(x, name="type", value=answer)
+          }
+
+          if (is.null(x[['serialNumber']])) {
+            fun <- function(){
+              ans <- readline("Enter your serialNumber (eg. 0684) ")
+              ans <- unlist(strsplit(ans, ","))
+              out1 <- ans
+              return(out1)
+            }
+            answer <- fun()
+            fixedAnswers[[i]] <- answer
+            namesFixed[[i]] <- needNames[[i]]
+            x <- oceSetMetadata(x, name="serialNumber", value=answer)
+          }
+
+          instrument <- paste0(x[['type']],",","model number ",x[['model']],",",
+                                                   "serial number ",x[['serialNumber']], ",",
+                                                   "http://vocab.nerc.ac.uk/collection/L22/current/TOOL1456/")
+          x <- oceSetMetadata(x, name="instrument", value=instrument)
+
         } else if (needNames[[i]] == "instrument_vocabulary") {
           if (is.null(x[['instrument_vocabulary']])) {
             fun <- function(){
@@ -418,10 +516,11 @@ standardMetadata <- function(x, fixed=FALSE) # oce
 
     }
     if (fixed) {
-        if (!(file.exists("metadataAnswers"))) {
+        if (!(file %in% list.files())) {
             # This means we already have the saved data
+          message("The length of fixedAnswers =", length(unlist(fixedAnswers)), " and length of namesFixed = ", length(unlist(namesFixed)))
           d <- data.frame("fixedAnswers"=unlist(fixedAnswers), "namesFixed"=unlist(namesFixed))
-          save(d, file="metadataAnswers")
+          save(d, file=file)
         }
     }
 

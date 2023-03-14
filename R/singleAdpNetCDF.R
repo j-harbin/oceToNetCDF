@@ -41,6 +41,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   if (!inherits(adp, "adp")){
     stop("method is only for obects of class '", "adp", "'")
   }
+  bodc <- ifelse(!(is.null(data$bodc)), TRUE, FALSE)
   # file name and path
   ncpath <- destination
   ncname <- name
@@ -88,7 +89,6 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
   namesData <- names(adp[['data']])[-which(names(adp[['data']]) %in% c("time", "distance"))]
   DEFS <- NULL
   for (i in seq_along(namesData)) {
-    #browser()
     dlname <- namesData[i]
     uName <- gsub("(.+?)(\\_*[0-9].*)", "\\1", namesData[i])
     uName <- gsub(".*average_","",uName)
@@ -101,14 +101,29 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
         longName <- paste0(longName, " (true)", collapse=" ")
       }
     }
-
+    bottom = ifelse(grepl("bottom", dlname), TRUE, FALSE)
+    average = ifelse(grepl("average", dlname), TRUE, FALSE)
 
     if (length(adp[[namesData[[i]]]]) == timedim$len) {
       DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim), missval=FillValue, longname=longName, prec = "float")
 
 
     } else if (dim(adp[[namesData[[i]]]])[2] == distdim$len) {
-      DEFS[[i]] <- ncdf4::ncvar_def(name=dlname, units=data$units[which(data$standard_name == uName)], dim=list(timedim, distdim), missval=FillValue, longname=longName, prec = "float")
+
+      DEFS[[i]] <- ncdf4::ncvar_def(name=
+                                      if (bodc) {
+                                        if (bottom) {
+                                          paste0("bottom_", data$bodc[which(data$standard_name == uName)])
+                                        } else if (average) {
+                                          paste0("average_", data$bodc[which(data$standard_name == uName)])
+                                        } else {
+                                          data$bodc[which(data$standard_name == uName)]
+                                        }
+
+                                      } else {
+                                        dlname
+                                      },
+                                    units=data$units[which(data$standard_name == uName)], dim=list(timedim, distdim), missval=FillValue, longname=longName, prec = "float")
 
     }
 
@@ -120,13 +135,32 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
     for (f in seq_along(names(adp[['flags']]))) {
       flagNames[[f]] <- assign(paste0(names(adp[['flags']][f]), "_QC"), adp[['flags']][[names(adp[['flags']])[f]]])
     }
-    names(flagNames) <- paste0(names(adp[['flags']]), "_QC")
+    if (bodc) {
+      nameOfFlags <- NULL
+      fNames <- names(adp[['flags']])
+      for (i in seq_along(fNames)) {
+        bottom = ifelse(grepl("bottom", fNames), TRUE, FALSE)
+        average = ifelse(grepl("average", fNames), TRUE, FALSE)
+        if (bottom) {
+          nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*bottom_", "", fNames[i]))], "_QC")
 
+        } else if (average) {
+          nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*average_", "", fNames[i]))], "_QC")
+
+        } else {
+        nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == fNames[i])], "_QC")
+        }
+      }
+      names(flagNames) <- unlist(nameOfFlags)
+
+    } else {
+      names(flagNames) <- paste0(names(adp[['flags']]), "_QC")
+    }
 
     flags <- NULL
     for (i in seq_along(flagNames)) {
       dlname <- names(flagNames)[[i]]
-      flags[[i]] <- assign(dlname, ncdf4::ncvar_def(name=ifelse(is.null(data$bodc), dlname, data$bodc[which(data$standard_name == sub("_QC.*", "", dlname))]), units="NA",dim= list(timedim, distdim), missval=FillValue, longname=dlname, prec = 'double'))
+      flags[[i]] <- assign(dlname, ncdf4::ncvar_def(name=ifelse(bodc, paste0(data$bodc[which(data$bodc == sub("_QC.*", "", dlname))], "_QC"),  dlname), units="NA",dim= list(timedim, distdim), missval=FillValue, longname=dlname, prec = 'double'))
 
     }
   }
@@ -146,7 +180,6 @@ if (exists("flags")) {
   if (debug > 0) {
     message("Step 3: About to write out definitions to nc file using ncdf4::nc_create")
   }
-
   # vars = an object of class ncvar4 describing the variable to be created, or a vector
   # (or list of such objects to be created)
   ncout <- ncdf4::nc_create(filename=ncfname, vars=defs, force_v4 = TRUE)

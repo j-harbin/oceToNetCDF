@@ -16,8 +16,13 @@ This vignette discusses the steps to convert a moored conductivity-temperature-d
 
 # 1: Get necessary standard data
 
+## getStandardData()
+
 To get the necessary data, use the `getStandardData()` function. This function gets the available standard names, units, codes,names, and type of data for the required information for the specified instrument type. The default `standard` argument is `cf`, which indicates to obtain the climate and forecast data. As of 2023/03/09, the user now has the option to do `standard="bodc"` to obtain standard information from the British Oceanographic Data Center.
 
+## standardMetadata()
+
+`standardMetadata()` is an optional function that inserts the required global attributes that are "highly recommended" for the IOOS (Integrated Ocean Observing System) standards (see Reference 2). This function works by extracting what it can from the data and metadata within the `oce` object, but if its required field is determined to be NULL the user will be prompted to enter in the required information. If `fixed=TRUE`, the information that is input by the user will be saved as a data frame and applied to a list of `oce` objects (See Details). See `?standardMetadata()` for more information.
 
 # 2: Creating oce objects
 
@@ -91,5 +96,7 @@ We'd like to acknowledge the background information and starter functions create
 # References
 
 Kelley, D., and Richards, C. (2020). oce: Analysis of Oceanographic Data. Available online at: https://CRAN.R-project.org/package=oce (accessed August 23, 2022).
+
+https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3#Global_Attributes
 
 

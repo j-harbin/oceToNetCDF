@@ -4,17 +4,17 @@
 #' "highly recommended" for the IOOS (Integrated Ocean Observing
 #' System) standards (see Reference 1). This function works by
 #' extracting what it can from the data and metadata within the
-#' `oce` object, but if it required field is determined to be NULL
+#' `oce` object, but if its required field is determined to be NULL
 #' the user will be prompted to enter in the required information.
 #' If `fixed=TRUE`, the information that is input by the user will
-#' be saved and applied to a list of `oce` objects.
+#' be saved and applied to a list of `oce` objects. See \sQuote{Details}.
 #'
 #' If `fixed = TRUE` and a data frame named with the specified file name
 #' doesn't exist it will save the user's answers into a data frame named
 #' `file` which contains the name of the field that required a users answers as well
 #' as the answers the user input. This means, if `fixed=TRUE` and a file named `file`
 #' does exist, this function will load up the previously answered questions
-#' to avoid the user needing to answer them over and over again.
+#' to avoid the user needing to answer them again.
 #'
 #' @param x an [oce-class] object containing bottom ranges.
 #'

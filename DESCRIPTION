@@ -9,7 +9,7 @@ Author:
 Maintainer: Jaimie Harbin <jaimie.harbin@dfo-mpo.gc.ca>
 Depends: R (>= 3.5.0)
 Suggests: knitr, testthat
-Imports: oce (>= 1.3.0), abind, ncdf4, methods, rlist, R.matlab
+Imports: oce (>= 1.3.0), abind, ncdf4, methods, rlist, R.matlab, stringr
 BugReports: https://github.com/j-harbin/oceToNetCDF/issues
 Description: This package converts ODF files from moored
     conductivity-temperature-depth (CTD), acoustic doppler

@@ -4,7 +4,14 @@
 \alias{convertNetCDF}
 \title{Converts odf object to netCDF}
 \usage{
-convertNetCDF(odf, filename = NULL, debug = 0, data = NULL, destination = ".")
+convertNetCDF(
+  odf,
+  filename = NULL,
+  debug = 0,
+  data = NULL,
+  destination = ".",
+  ioos = TRUE
+)
 }
 \arguments{
 \item{odf}{an odf object from oce which contains mctd or rcm data}
@@ -20,6 +27,11 @@ some functions will print debugging information.}
 
 \item{destination}{the specified location to save the NetCDF. By default this is set
 to the local directory}
+
+\item{ioos}{a Boolean indicating the metadata and data should abide by the IOOS
+(Integrated Ocean Observing System) standards. If not, all metadata found in the CTD and RCM
+files are added to the NetCDF under global attributes, and the units, standard names (CF compliant)
+and long names are added to the variable attributes.}
 }
 \value{
 netCDF file with a maximum of 12 variables

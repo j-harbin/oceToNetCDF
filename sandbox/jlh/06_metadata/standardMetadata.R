@@ -38,9 +38,15 @@
 #'
 #' @examples
 #' \dontrun{
+#' library(oceToNetCDF)
 #' library(oce)
-#' data(ctd)
-#' ctdMeta <- standardMetadata(ctd)
+#' data <- getStandardData(type="ctd")
+#' f <- system.file("extdata", "mctd.ODF", package="oceToNetCDF")
+#' odf1 <- read.odf(f)
+#' odf2 <- standardMetadata(odf1)
+#' odf3 <- nameReplacement(odf2, data=data, unit="S/m")
+#' odf4 <- removeDerived(odf3)
+#' odf5 <- fixMetadata(odf4, data=data)
 #' }
 #'
 #' @export
@@ -70,7 +76,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         "naming_authority", "infoUrl", "license", "summary", "title", "project", "keywords", "platform",
         "platform_name", "platform_id", "platform_vocabulary", "deployment_platform_name", "deployment_platform_vocabulary",
         "instrument", "instrument_vocabulary", "time_coverage_resolution", "time_coverage_duration", "time_coverage_start",
-        "time_coverage_end", "geospatial_lat_min", "geospation_lat_max", "geospatial_lat_units", "geospatial_lon_min",
+        "time_coverage_end", "geospatial_lat_min", "geospatial_lat_max", "geospatial_lat_units", "geospatial_lon_min",
         "geospatial_lon_max", "geospatial_lat_units", "geospatial_lon_min", "geospatial_lon_max",
         "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
         "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history")
@@ -475,7 +481,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         } else if (needNames[[i]] == "time_coverage_resolution") {
             # FIXME
         } else if (needNames[[i]] == "time_coverage_duration") {
-            #FIXME
+          x <- oceSetMetadata(x, name="time_coverage_duration", value=as.numeric(difftime(x[['time']][length(x[['time']])],x[["time"]][1])))
         } else if (needNames[[i]] == "time_coverage_start") {
             x <- oceSetMetadata(x, name="time_coverage_start", value=x[['time']][1])
         } else if (needNames[[i]] == "time_coverage_end") {
@@ -502,7 +508,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
             x <- oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
 
         } else if (needNames[[i]] == "geospatial_vertical_units") {
-            x <- oceSetMetadata(x, name="geospatial_vertical_units", value=x[['units']][['pressure']][['unit']])
+            x <- oceSetMetadata(x, name="geospatial_vertical_units", value=all.vars(x[['units']][['pressure']][['unit']]))
         } else if (needNames[[i]] == "geospatial_veterical_positive") {
             x <- oceSetMetadata(x, name="geospatial_vertical_positive", value="down")
         } else if (needNames[[i]] == "FillValue") {

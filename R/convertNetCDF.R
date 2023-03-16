@@ -386,6 +386,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   # Populating variable attributes
   for (i in 1:numvar) {
   ncdf4::ncatt_put(nc=ncout, varid=eval(parse(text=paste0("v",i, "_def"))), attname="standard_name", attval=eval(parse(text=paste0("variable_",i))))
+  ncdf4::ncatt_put(nc=ncout, varid=eval(parse(text=paste0("v",i, "_def"))), attname="coverage_content_type", attval="physicalMeasurement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              `")
   }
 
   ####preserve ODF history header####

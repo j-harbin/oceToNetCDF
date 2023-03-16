@@ -501,14 +501,30 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         } else if (needNames[[i]] == "geospatial_lon_units") {
             x <- oceSetMetadata(x, name="geospatial_lon_units", value="degrees_east")
         } else if (needNames[[i]] == "geospatial_vertical_max") {
+          if ("pressure" %in% names(x[['data']])) {
             x <- oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_max", value="unknown")
+          }
         } else if (needNames[[i]] == "geospatial_vertical_min") {
+          if ("pressure" %in% names(x[['data']])) {
             x <- oceSetMetadata(x, name="geospatial_vertical_min", value=min(x[['pressure']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_min", value="unknown")
+          }
         } else if (needNames[[i]] == "geospatial_vertical_max") {
+          if ("pressure" %in% names(x[['data']])) {
             x <- oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_max", value="unknown")
+          }
 
         } else if (needNames[[i]] == "geospatial_vertical_units") {
+          if ("pressure" %in% names(x[['data']])) {
             x <- oceSetMetadata(x, name="geospatial_vertical_units", value=all.vars(x[['units']][['pressure']][['unit']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_units", value="unknown")
+          }
         } else if (needNames[[i]] == "geospatial_veterical_positive") {
             x <- oceSetMetadata(x, name="geospatial_vertical_positive", value="down")
         } else if (needNames[[i]] == "FillValue") {

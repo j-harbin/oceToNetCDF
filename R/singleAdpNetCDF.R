@@ -7,6 +7,10 @@
 #'@param adp an adp object from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getStandardData
 #'@param name name of the netCDF file (not including the extension) to be produced
+#' @param ioos a Boolean indicating the metadata and data should abide by the IOOS
+#' (Integrated Ocean Observing System) standards. If not, all metadata found in the CTD and RCM
+#' files are added to the NetCDF under global attributes, and the units, standard names (CF compliant)
+#' and long names are added to the variable attributes.
 #'@param destination the specified location to save the NetCDF. By default this is set
 #' to the local directory
 #'@param debug integer value indicating level of debugging.
@@ -29,7 +33,7 @@
 #'
 #'@export
 
-singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
+singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination=".", ioos=TRUE){
   if (is.null(data)) {
     stop("must provide a data frame data, likely from getStandardData()")
   }
@@ -210,12 +214,25 @@ if (exists("flags")) {
     adp <- oceSetMetadata(adp, name="flagScheme", value= c("Argo"))
   }
 
+  if (!(ioos)) {
   bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval", "codes", "tiltUsed", "threeBeamUsed", "binMappingUsed", "haveBinaryFixedAttitudeHeader",
                                                "haveActualData", "oceBeamUnspreaded", "dataNamesOriginal", "transformationMatrix", "ensembleFile",
                                                "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "north"))
   namesMeta <- names(adp[['metadata']])[-bad]
+  } else {
+    namesMeta <- c("Conventions", "date_created", "institution", "source", "creator_type", "creator_name",
+                   "creator_country", "creator_email", "creator_institution", "creator_address", "creator_city",
+                   "creator_sector", "creator_url", "featureType", "creator_url", "featureType", "id",
+                   "naming_authority", "infoUrl", "license", "summary", "title", "project", "keywords", "platform",
+                   "platform_name", "platform_id", "platform_vocabulary", "deployment_platform_name", "deployment_platform_vocabulary",
+                   "instrument", "instrument_vocabulary", "time_coverage_resolution", "time_coverage_duration", "time_coverage_start",
+                   "time_coverage_end", "geospatial_lat_min", "geospatial_lat_max", "geospatial_lat_units", "geospatial_lon_min",
+                   "geospatial_lon_max", "geospatial_lat_units", "geospatial_lon_min", "geospatial_lon_max",
+                   "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
+                   "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history")
+  }
   for (i in seq_along(namesMeta)) {
-    #message("This is for namesMeta = ", namesMeta[i])
+    message("This is for namesMeta = ", namesMeta[i])
     ncdf4::ncatt_put(ncout, 0, namesMeta[i], adp[[namesMeta[i]]])
   }
   #browser()

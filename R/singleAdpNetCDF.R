@@ -213,7 +213,6 @@ if (exists("flags")) {
     #odf <- oceSetMetadata(adp, name="flagScheme", value= list("name"= "argo", "mapping"=list("not_assessed"=0, "passed_all_tests"=1, "probably_good"=2, "probably_bad"=3, "bad"=4, "changed"=5, "not_used"=6, "not_used"=7, "estimated"=8, "missing"=9), "default"=c(0,3,4,9)))
     adp <- oceSetMetadata(adp, name="flagScheme", value= c("Argo"))
   }
-
   if (!(ioos)) {
   bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval", "codes", "tiltUsed", "threeBeamUsed", "binMappingUsed", "haveBinaryFixedAttitudeHeader",
                                                "haveActualData", "oceBeamUnspreaded", "dataNamesOriginal", "transformationMatrix", "ensembleFile",

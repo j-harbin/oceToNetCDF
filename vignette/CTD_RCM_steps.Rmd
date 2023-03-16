@@ -73,10 +73,11 @@ library(oce)
 data <- getStandardData(type="ctd")
 f <- system.file("extdata", "mctd.ODF", package="oceToNetCDF")
 odf1 <- read.odf(f)
+odf1 <- standardMetadata(odf1)
 odf2 <- nameReplacement(odf1, data=data, unit="S/m")
 odf3 <- removeDerived(odf2)
 odf4 <- fixMetadata(odf3, data=data)
-convertNetCDF(odf4, data=data)
+convertNetCDF(odf4, data=data, ioos=TRUE)
 ```      
 
 

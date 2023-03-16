@@ -238,10 +238,9 @@ if (exists("flags")) {
   #browser()
   numvar <- length(defs)
   # Populating variable attributes
-  if (bodc) {
   for (i in 1:numvar) {
     ncdf4::ncatt_put(nc=ncout, varid=defs[[i]], attname="standard_name", attval=names(defs)[[i]])
-  }
+    ncdf4::ncatt_put(nc=ncout, varid=defs[[i]], attname="coverage_content_type", attval="physicalMeasurement")
   }
 
 }

@@ -201,9 +201,10 @@ knitr::include_graphics("emptyBins.png")
 
 \pagebreak
 
-After this, the naming convention of the data variables and the units were changed to abide by the CF standards using `nameReplacement`. Next, the `structureAdp` function was then applied to the data. The `structureAdp` function identifies when `v` (velocity), `g` (percent good), `q` (correlation magnitude), `a` (amplitude), `bv`, `bg`, `bq`, and `ba` are stored within the `adp` object. If they are, it structures them appropriately for the NetCDF. See `?structureAdp` for more details.
+After this, the optional `standardMetadata()` function was used to get available data and metadata to abide by IOOS standards (See `?standardMetadata` for more information). The naming convention of the data variables and the units were then changed to abide by the CF standards using `nameReplacement`. Next, the `structureAdp` function was then applied to the data. The `structureAdp` function identifies when `v` (velocity), `g` (percent good), `q` (correlation magnitude), `a` (amplitude), `bv`, `bg`, `bq`, and `ba` are stored within the `adp` object. If they are, it structures them appropriately for the NetCDF. See `?structureAdp` for more details.
 
 ```{r, eval=FALSE}
+ADP5 <- standardMetadata(ADP5, fixed=TRUE, file="adpDavisStrait")
 ADP6 <- nameReplacement(ADP5, data=data)
 ADP7 <- structureAdp(ADP6)
 ```
@@ -211,7 +212,7 @@ ADP7 <- structureAdp(ADP6)
 Lastly, the `singleAdpNetCDF` function is used to convert the `oce` object to a NetCDF file.
 
 ```{r, eval=FALSE}
-singleAdpNetCDF(adp=ADP7, name=ADP7[['station']], data=data, debug=1, destination="./20_rawDavis/adcp/nc/")
+singleAdpNetCDF(adp=ADP7, name=ADP7[['station']], data=data, debug=1, destination="./20_rawDavis/adcp/nc/", ioos=TRUE)
 ```
 
 # Caution

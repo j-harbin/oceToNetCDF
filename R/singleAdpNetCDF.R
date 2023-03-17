@@ -7,7 +7,7 @@
 #'@param adp an adp object from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getStandardData
 #'@param name name of the netCDF file (not including the extension) to be produced
-#' @param ioos a Boolean indicating the metadata and data should abide by the IOOS
+#'@param ioos a Boolean indicating the metadata and data should abide by the IOOS
 #' (Integrated Ocean Observing System) standards. If not, all metadata found in the CTD and RCM
 #' files are added to the NetCDF under global attributes, and the units, standard names (CF compliant)
 #' and long names are added to the variable attributes.
@@ -16,8 +16,8 @@
 #'@param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
-#' @importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
-#' @importFrom rlist list.append
+#'@importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
+#'@importFrom rlist list.append
 #'@examples
 #' \dontrun{
 #' library(oceToNetCDF)
@@ -33,7 +33,7 @@
 #'
 #'@export
 
-singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination=".", ioos=TRUE){
+singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, ioos=TRUE, destination="."){
   if (is.null(data)) {
     stop("must provide a data frame data, likely from getStandardData()")
   }
@@ -219,6 +219,7 @@ if (exists("flags")) {
                                                "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "north"))
   namesMeta <- names(adp[['metadata']])[-bad]
   } else {
+    message("hi it's ioos")
     namesMeta <- c("Conventions", "date_created", "institution", "source", "creator_type", "creator_name",
                    "creator_country", "creator_email", "creator_institution", "creator_address", "creator_city",
                    "creator_sector", "creator_url", "featureType", "creator_url", "featureType", "id",

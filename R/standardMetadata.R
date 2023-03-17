@@ -81,10 +81,15 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
         "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history")
 
+    namesExtra <- c("institute", "cruise_description", "cruise_name", "model", "type", "serialNumber")
+
     fixedAnswers <- NULL
     namesFixed <- NULL
+    extraAnswers <- NULL
+    extraNames <- NULL
 
     for (i in seq_along(needNames)) {
+        for (j in seq_along(namesExtra)) {
         if (needNames[[i]] == 'Conventions') {
             if (is.null(x[["Conventions"]])) {
                 fun <- function(){
@@ -280,26 +285,34 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
+                    j <- 1
+                    extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                    extraNames[[j]] <- "institute"
                     x <- oceSetMetadata(x, name = "institute", value=answer)
                 }
-                #browser()
                 if (!("CRUISE_HEADER" %in% names(x[['header']]))) {
-                    fun <- function(){
-                        ans <- readline("Enter your Cruise Description (eg. 'U of W and BIO Joint Program. Contact principal investigators for non-DFO access.') ")
-                        ans <- unlist(strsplit(ans, ","))
-                        out1 <- ans
-                        return(out1)
+                    if (!("cruise_description" %in% names(x[['metadata']]))) {
+                        fun <- function(){
+                            ans <- readline("Enter your Cruise Description (eg. 'U of W and BIO Joint Program. Contact principal investigators for non-DFO access.') ")
+                            ans <- unlist(strsplit(ans, ","))
+                            out1 <- ans
+                            return(out1)
+                        }
+                        answer <- fun()
+                        j <- 2
+                        extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                        extraNames[[j]] <- "cruise_description"
+                        x <- oceSetMetadata(x, name = "cruise_description", value=answer)
                     }
-                    answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
-                    x <- oceSetMetadata(x, name = "cruise_description", value=answer)
                 } else {
+                  if (!("cruise_description" %in% x[['metadata']])) {
                     x <- oceSetMetadata(x, name = "cruise_description", value=x@metadata$header$CRUISE_HEADER$CRUISE_DESCRIPTION)
+                  } else {
+                    x <- oceSetMetadata(x, name = "cruise_description", value=x[['cruise_description']])
+                  }
                 }
                 if (!("CRUISE_HEADER" %in% names(x[['header']]))) {
+                  if (!("cruise_name" %in% names(x[['metadata']]))) {
                     fun <- function(){
                         ans <- readline("Enter your Cruise Name (eg. 'Davis Strait 2015') ")
                         ans <- unlist(strsplit(ans, ","))
@@ -307,12 +320,19 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
+                    j <- 3
+                    extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                    extraNames[[j]] <- "cruise_name"
                     x <- oceSetMetadata(x, name = "cruise_name", value=answer)
+                }
 
                 } else {
+                  if (!("cruise_name" %in% names(x[['metadata']]))) {
                     x <- oceSetMetadata(x, name = "cruise_name", value=x@metadata$header$CRUISE_HEADER$CRUISE_NAME_1)
+                  } else {
+                    x <- oceSetMetadata(x, name = "cruise_name", value=x[['cruise_name']])
+
+                  }
 
                 }
                 if (is.null(x[['model']])) {
@@ -323,8 +343,9 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
+                    j <- 4
+                    extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                    extraNames[[j]] <- "model"
                     x <- oceSetMetadata(x, name = "model", value=answer)
                 }
 
@@ -441,8 +462,9 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                namesFixed[[i]] <- needNames[[i]]
+                j <- 5
+                extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                extraNames[[j]] <- "type"
                 x <- oceSetMetadata(x, name="type", value=answer)
             }
 
@@ -454,8 +476,9 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                namesFixed[[i]] <- needNames[[i]]
+                j <- 6
+                extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                extraNames[[j]] <- "serialNumber"
                 x <- oceSetMetadata(x, name="serialNumber", value=answer)
             }
 
@@ -536,14 +559,15 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         } else if (needNames[[i]] == "history") {
             # FIXME
         }
-
     }
-    #browser()
+    }
     if (fixed) {
         if (!(file %in% list.files())) {
             # This means we already have the saved data
             #message("The length of fixedAnswers =", length(unlist(fixedAnswers)), " and length of namesFixed = ", length(unlist(namesFixed)))
             d <- data.frame("fixedAnswers"=unlist(fixedAnswers), "namesFixed"=unlist(namesFixed))
+            e <- data.frame("fixedAnswers" = unlist(extraAnswers), "namesFixed"=unlist(extraNames))
+            d <- rbind(d,e)
             save(d, file=file)
         }
     }

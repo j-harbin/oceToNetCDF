@@ -10,7 +10,7 @@ output:
 
 # Introduction
 
-This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) file to a NetCDF file. To date (2023/03/09) `odfToNetCDF` has the ability to convert MCAT files originating from ODFs or matlab files. In addition, it has the ability to convert RCM files strictly from ODF. To convert a list of CTD or RCM ODF files, follow the work flow provided below. The data used in this example is from the Davis Strait with an ODF origin.
+This vignette discusses the steps to convert a moored conductivity-temperature-depth (CTD) or a  rotary current meter (RCM) file to a NetCDF file. To date (2023/03/09) `oceToNetCDF` has the ability to convert MCAT files originating from ODFs or matlab files. In addition, it has the ability to convert RCM files strictly from ODF. To convert a list of CTD or RCM ODF files, follow the work flow provided below. The data used in this example is from the Davis Strait with an ODF origin.
 
 ![Figure 1: Work flow of the oceToNetCDF package for CTD and RCM data types ](ctd_rcm_diagram.png)
 

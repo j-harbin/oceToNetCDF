@@ -133,40 +133,64 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, ioos=TRUE, destinatio
 
   }
 
-  # Adding flags JAIM FIXME
   if (!(length(names(adp[['flags']]))) == 0) {
-    flagNames <- NULL
-    for (f in seq_along(names(adp[['flags']]))) {
-      flagNames[[f]] <- assign(paste0(names(adp[['flags']][f]), "_QC"), adp[['flags']][[names(adp[['flags']])[f]]])
-    }
-    if (bodc) {
-      nameOfFlags <- NULL
-      fNames <- names(adp[['flags']])
-      for (i in seq_along(fNames)) {
-        bottom = ifelse(grepl("bottom", fNames), TRUE, FALSE)
-        average = ifelse(grepl("average", fNames), TRUE, FALSE)
-        if (bottom) {
-          nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*bottom_", "", fNames[i]))], "_QC")
+	  numberOfBeams <- dim(adp[['flags']][['v']])[3]
+	  flagNames <- vector("list", numberOfBeams)
+	  for (f in seq_along(names(adp[['flags']]))) {
+		  for (j in 1:numberOfBeams) {
+			  flagNames[[f]][[j]] <- assign(paste0(names(adp[['flags']][f]),"_",j, "_QC"), adp[['flags']][[names(adp[['flags']])[f]]][,,j])
+		  }
+	  }
+	  # This could be improved
+	  if (numberOfBeams == 4) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]], flagNames[[3]], flagNames[[4]]))
+	  } else if (numberOfBeams == 3) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]], flagNames[[3]]))
+	  } else if (numberOfBeams == 5) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]], flagNames[[3]], flagNames[[4]], flagNames[[5]]))
+	  } else if (numberOfBeams == 2) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]]))
+	  }
 
-        } else if (average) {
-          nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*average_", "", fNames[i]))], "_QC")
+	  if (bodc) {
+		  nameOfFlags <- NULL
+		  fNames <- names(adp[['flags']])
+		  for (i in seq_along(fNames)) {
+			  bottom = ifelse(grepl("bottom", fNames), TRUE, FALSE)
+			  average = ifelse(grepl("average", fNames), TRUE, FALSE)
+			  if (bottom) {
+				  nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*bottom_", "", fNames[i]))], "_QC")
 
-        } else {
-        nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == fNames[i])], "_QC")
-        }
-      }
-      names(flagNames) <- unlist(nameOfFlags)
+			  } else if (average) {
+				  nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*average_", "", fNames[i]))], "_QC")
 
-    } else {
+			  } else {
+				  nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == fNames[i])], "_QC")
+			  }
+		  }
+		  names(flagNames) <- unlist(nameOfFlags)
 
-      names(flagNames) <- paste0(names(adp[['flags']]), "_QC")
-      namesF <- NULL
-      for (i in names(adp[['flags']])) {
-        namesF[[i]] <- paste0(standardName(i, data=data)$standard_name, "_QC")
-      }
-      names(flagNames) <- unlist(namesF)
+	  } else {
+		  namesF <- NULL
+		  for (i in names(adp[['flags']])) {
+			  for (j in 1:numberOfBeams) {
+				  namesF[[i]][[j]] <- paste0(standardName(i, data=data)$standard_name, "_", j, "_QC")
+			  }
+		  }
 
-          }
+
+		  if (numberOfBeams == 4) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]], namesF[[3]], namesF[[4]]))
+		  } else if (numberOfBeams == 3) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]], namesF[[3]]))
+		  } else if (numberOfBeams == 5) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]], namesF[[3]], namesF[[4]], namesF[[5]]))
+		  } else if (numberOfBeams == 2) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]]))
+		  }
+
+		  names(flagNames) <- unlist(namesF)
+	  }
 
     flags <- NULL
     for (i in seq_along(flagNames)) {

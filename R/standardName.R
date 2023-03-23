@@ -21,7 +21,8 @@ standardName <- function(gf3, data=NULL, debug=0) {
   if (is.null(data)) {
     stop("In standardName, must provide a data frame for data")
   }
-  if (!(class(data) == "data.frame")) {
+
+  if (!inherits(data, "data.frame")) {
     stop("In standardName, data must be a data.frame class, not ", class(data))
   }
 

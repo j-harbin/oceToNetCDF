@@ -38,7 +38,7 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, ioos=TRUE, destinatio
     stop("must provide a data frame data, likely from getStandardData()")
   }
 
-  if (!(class(data) =="data.frame")) {
+  if (!inherits(data, "data.frame")) {
     stop("data provided must be of class data.frame, not ", class(data))
   }
 
@@ -158,8 +158,15 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, ioos=TRUE, destinatio
       names(flagNames) <- unlist(nameOfFlags)
 
     } else {
+
       names(flagNames) <- paste0(names(adp[['flags']]), "_QC")
-    }
+      namesF <- NULL
+      for (i in names(adp[['flags']])) {
+        namesF[[i]] <- paste0(standardName(i, data=data)$standard_name, "_QC")
+      }
+      names(flagNames) <- unlist(namesF)
+
+          }
 
     flags <- NULL
     for (i in seq_along(flagNames)) {

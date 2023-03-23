@@ -37,7 +37,8 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (is.null(data)) {
     stop("In convertNetCDF(), must provide a data frame for data")
   }
-  if (!(class(data) == "data.frame")) {
+
+  if (!inherits(data, "data.frame")) {
     stop("In convertNetCDF(), data must be a data.frame class, not ", class(data))
   }
 

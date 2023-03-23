@@ -28,7 +28,8 @@ fixMetadata <- function(odf, debug=0, data=NULL) {
     stop("must provide a dataframe data, likely from getStandardData()")
   }
 
-  if (!(class(data) == "data.frame")) {
+
+  if (!(inherits(data, "data.frame"))) {
     stop("the data must be of class data.frame, not ", class(data))
   }
 

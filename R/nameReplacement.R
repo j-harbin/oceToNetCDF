@@ -36,7 +36,8 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     if (is.null(data)) {
         stop("In nameReplacement, must provide a data frame for data")
     }
-    if (!(class(data) == "data.frame")) {
+
+  if (!(inherits(data, "data.frame"))) {
         stop("In nameReplacement, data must be a data.frame class, not ", class(data))
     }
 

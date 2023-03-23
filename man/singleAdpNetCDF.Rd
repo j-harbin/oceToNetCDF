@@ -9,8 +9,8 @@ singleAdpNetCDF(
   name,
   debug = 0,
   data = NULL,
-  destination = ".",
-  ioos = TRUE
+  ioos = TRUE,
+  destination = "."
 )
 }
 \arguments{
@@ -24,13 +24,13 @@ some functions will print debugging information.}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getStandardData}
 
-\item{destination}{the specified location to save the NetCDF. By default this is set
-to the local directory}
-
 \item{ioos}{a Boolean indicating the metadata and data should abide by the IOOS
 (Integrated Ocean Observing System) standards. If not, all metadata found in the CTD and RCM
 files are added to the NetCDF under global attributes, and the units, standard names (CF compliant)
 and long names are added to the variable attributes.}
+
+\item{destination}{the specified location to save the NetCDF. By default this is set
+to the local directory}
 }
 \description{
 This function exports an adp object to a netCDF using variables

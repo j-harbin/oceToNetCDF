@@ -47,10 +47,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   if (!requireNamespace("ncdf4", quietly=TRUE))
     stop("must install.packages(\"ncdf4\") for convertNetCDF() to work")
 
-
-
-
-
   if (grepl("MCTD", odf[['filename']]) == FALSE && grepl("mctd", odf[['filename']]) == FALSE && grepl("RCM", odf[['filename']]) == FALSE
       && grepl("rcm", odf[['filename']]) == FALSE && is.null(odf[['mooringType']])) {
     stop("Type of file not found in filename. Set your odf[['mooringType']] to be either mctd, rcm, or adcp. See help page for details")
@@ -362,7 +358,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
                    "time_coverage_end", "geospatial_lat_min", "geospatial_lat_max", "geospatial_lat_units", "geospatial_lon_min",
                    "geospatial_lon_max", "geospatial_lat_units", "geospatial_lon_min", "geospatial_lon_max",
                    "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
-                   "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history")
+                   "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history", "flagScheme")
 
     noNames <- NULL
     if (any(!(namesMeta %in% names(odf[['metadata']])))) {

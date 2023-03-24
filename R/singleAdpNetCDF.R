@@ -250,7 +250,6 @@ if (exists("flags")) {
                                                "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "north"))
   namesMeta <- names(adp[['metadata']])[-bad]
   } else {
-    message("hi it's ioos")
     namesMeta <- c("Conventions", "date_created", "institution", "source", "creator_type", "creator_name",
                    "creator_country", "creator_email", "creator_institution", "creator_address", "creator_city",
                    "creator_sector", "creator_url", "featureType", "creator_url", "featureType", "id",
@@ -260,7 +259,7 @@ if (exists("flags")) {
                    "time_coverage_end", "geospatial_lat_min", "geospatial_lat_max", "geospatial_lat_units", "geospatial_lon_min",
                    "geospatial_lon_max", "geospatial_lat_units", "geospatial_lon_min", "geospatial_lon_max",
                    "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
-                   "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history")
+                   "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history", "flagScheme")
   }
   for (i in seq_along(namesMeta)) {
     message("This is for namesMeta = ", namesMeta[i])

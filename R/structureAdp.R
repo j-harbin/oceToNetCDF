@@ -60,7 +60,9 @@ structureAdp <- function(adp, debug=0) {
       adp <- oceSetData(adp, name="eastward_sea_water_velocity", value=adp[["northward_sea_water_velocity"]][,,1])
       adp <- oceSetData(adp, name="northward_sea_water_velocity_1", value=adp[["northward_sea_water_velocity"]][,,2])
       adp <- oceSetData(adp, name="upward_sea_water_velocity", value=adp[["northward_sea_water_velocity"]][,,3])
+      if (adp[['numberOfBeams']] > 3) {
       adp <- oceSetData(adp, name="indicative_error_from_multibeam_acoustic_doppler_velocity_profiler_in_sea_water", value=adp[["northward_sea_water_velocity"]][,,4])
+      }
       adp <- oceDeleteData(adp, name="northward_sea_water_velocity")
       adp <- oceSetData(adp, name="northward_sea_water_velocity", value=adp[["northward_sea_water_velocity_1"]])
       adp <- oceDeleteData(adp, name="northward_sea_water_velocity_1")
@@ -74,7 +76,14 @@ structureAdp <- function(adp, debug=0) {
       if (debug > 0) {
         message("It was not an average")
       }
-      if (unique(class(adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']][,,1][,1])) == "raw") {
+
+      if (length(adp[['distance']]) == 1) {
+        raw <- ifelse(unique(class(adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']][,,1][1])) == "raw", TRUE, FALSE)
+      } else {
+        raw <- unique(class(adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']][,,1][,1]) == "raw", TRUE, FALSE)
+      }
+
+      if (raw) {
         qn <- as.numeric(adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]])
         dim(qn) <- dim(adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']])
         adp[['signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water']] <- qn
@@ -84,7 +93,9 @@ structureAdp <- function(adp, debug=0) {
       adp <- oceSetData(adp, name="signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water_1", value=adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]][,,1])
       adp <- oceSetData(adp, name="signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water_2", value=adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]][,,2])
       adp <- oceSetData(adp, name="signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water_3", value=adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]][,,3])
+      if (adp[['numberOfBeams']] > 3) {
       adp <- oceSetData(adp, name="signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water_4", value=adp[["signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water"]][,,4])
+      }
       adp <- oceDeleteData(adp, name="signal_intensity_from_multibeam_acoustic_doppler_velocity_sensor_in_sea_water")
     } else {
       if (debug > 0) {
@@ -148,7 +159,12 @@ structureAdp <- function(adp, debug=0) {
               message("It was not an average")
           }
           # This is not an average
-          if (unique(class(adp[['correlation_magnitude']][,,1][,1])) == "raw") {
+        if (length(adp[['distance']]) == 1) {
+          raw <- ifelse(unique(class(adp[['correlation_magnitude']][,,1][1])) == "raw", TRUE, FALSE)
+        } else {
+          raw <- ifelse(unique(class(adp[['correlation_magnitude']][,,1][,1])) == "raw", TRUE, FALSE)
+        }
+          if (raw) {
               qn <- as.numeric(adp[["correlation_magnitude"]])
               dim(qn) <- dim(adp[['correlation_magnitude']])
               adp[['correlation_magnitude']] <- qn
@@ -156,7 +172,9 @@ structureAdp <- function(adp, debug=0) {
           adp <- oceSetData(adp, name="correlation_magnitude_1", value=adp[["correlation_magnitude"]][,,1])
           adp <- oceSetData(adp, name="correlation_magnitude_2", value=adp[["correlation_magnitude"]][,,2])
           adp <- oceSetData(adp, name="correlation_magnitude_3", value=adp[["correlation_magnitude"]][,,3])
+          if (adp[['numberOfBeams']] > 3) {
           adp <- oceSetData(adp, name="correlation_magnitude_4", value=adp[["correlation_magnitude"]][,,4])
+          }
           adp <- oceDeleteData(adp, name="correlation_magnitude")
       } else {
           if (debug > 0) {

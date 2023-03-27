@@ -217,6 +217,7 @@ if (exists("flags")) {
   }
   # vars = an object of class ncvar4 describing the variable to be created, or a vector
   # (or list of such objects to be created)
+  #browser()
   ncout <- ncdf4::nc_create(filename=ncfname, vars=defs, force_v4 = TRUE)
 
   #insert variables into nc file
@@ -237,7 +238,7 @@ if (exists("flags")) {
 
   ####metadata####
   if (debug > 0) {
-    message("Step 6: About to write metadata into existing netCDF using ncdf4::ncatt_put")
+    message("Step 5: About to write metadata into existing netCDF using ncdf4::ncatt_put")
   }
 
   if (!("flagScheme") %in% names(adp[['metadata']])) {

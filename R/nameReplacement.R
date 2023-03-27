@@ -84,7 +84,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
 		    keep <- which(namesData %in% c("v", "q", "g", "a", "bv", "ba", "br", "bg", "bc", "bq", "roll", "pitch", "heading", "temperature",
 						   "salinity", "depth", "soundSpeed", "time", "distance"))
 	    } else {
-		    keep <- which(!(namesData == "flag"))
+		    keep <- which(!(namesData == c("flag", "attitude")))
 	    }
 	    dataNamesOriginal <- namesData[keep]
 	    badData <- namesData[which(!(namesData %in% dataNamesOriginal))]
@@ -117,7 +117,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
        #names of data
        names(odf@data) <- names(odf@metadata$dataNamesOriginal)
        # names of units
-       unitNames <- names(odf[['units']])
+       unitNames <- names(odf[['units']][-which(odf[['units']] == "attitude")])
        CFunits <- unlist(lapply(unitNames, function(x) standardName(x, data=data)$standard_name))
        names(odf[['units']]) <- CFunits
 

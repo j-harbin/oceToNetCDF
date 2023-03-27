@@ -106,7 +106,7 @@ removeDerived <- function(odf, debug=0) {
     if (RCM | rcm) {
         codeNames <- c("HCDT", "HCSP", "PRES", "PSAL", "SYTM", "TEMP", "EWCT", "NSCT")
     } else if (MCTD | mctd) {
-        codeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES", "DOXY", "sal11", "t090C", "prDM", "o2ML.L", "yday", "temperature", "salinity", "pressure", "datenum", "FLOR", "c0mS/cm", "sal00", "tv290C", "flECO-AFL", "timeJ", "prdM")
+        codeNames <- c("SYTM", "CRAT", "PSAL", "TEMP", "PRES", "DOXY", "sal11", "t090C", "prDM", "o2ML.L", "yday", "temperature", "salinity", "pressure", "datenum", "FLOR", "c0mS/cm", "sal00", "tv290C", "flECO-AFL", "timeJ", "prdM", "time", "conductivity")
     }
     if (!(is.null(odf[['fileType']])) && odf[["fileType"]] == "matlab") {
         matlabfile <- TRUE

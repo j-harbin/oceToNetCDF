@@ -25,7 +25,7 @@ odfMetadataCheck <- function(odf, data=NULL, print = TRUE, debug=0) {
   if (is.null(data)) {
     stop("must provide a data frame for data")
   }
-  if (!(class(data) == "data.frame")) {
+  if (!inherits(data, "data.frame")) {
     stop("data must be a data.frame class, not ", class(data))
   }
     if (print == FALSE) {

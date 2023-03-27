@@ -4,7 +4,14 @@
 \alias{singleAdpNetCDF}
 \title{Convert adp object to netCDF}
 \usage{
-singleAdpNetCDF(adp, name, debug = 0, data = NULL, destination = ".")
+singleAdpNetCDF(
+  adp,
+  name,
+  debug = 0,
+  data = NULL,
+  ioos = TRUE,
+  destination = "."
+)
 }
 \arguments{
 \item{adp}{an adp object from the oce class}
@@ -16,6 +23,11 @@ If this is less than 1, no debugging is done. Otherwise,
 some functions will print debugging information.}
 
 \item{data}{a data frame of standard name, name, units, and GF3 codes likely from getStandardData}
+
+\item{ioos}{a Boolean indicating the metadata and data should abide by the IOOS
+(Integrated Ocean Observing System) standards. If not, all metadata found in the CTD and RCM
+files are added to the NetCDF under global attributes, and the units, standard names (CF compliant)
+and long names are added to the variable attributes.}
 
 \item{destination}{the specified location to save the NetCDF. By default this is set
 to the local directory}

@@ -7,7 +7,11 @@
 #' @param data a data frame of standard name, name, units, and GF3 codes likely from [getStandardData()]
 #' @param filename the desired name for the netCDF file produced (not including the extension), if left NULL
 #'   the default will conform to Bedford Institute of Oceanography ("BIO") naming conventions
-#'@param destination the specified location to save the NetCDF. By default this is set
+#' @param ioos a Boolean indicating the metadata and data should abide by the IOOS
+#' (Integrated Ocean Observing System) standards. If not, all metadata found in the CTD and RCM
+#' files are added to the NetCDF under global attributes, and the units, standard names (CF compliant)
+#' and long names are added to the variable attributes.
+#' @param destination the specified location to save the NetCDF. By default this is set
 #' to the local directory
 #' @param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
@@ -29,11 +33,12 @@
 #' }
 #' @export
 
-convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination="."){
+convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=".", ioos=TRUE){
   if (is.null(data)) {
     stop("In convertNetCDF(), must provide a data frame for data")
   }
-  if (!(class(data) == "data.frame")) {
+
+  if (!inherits(data, "data.frame")) {
     stop("In convertNetCDF(), data must be a data.frame class, not ", class(data))
   }
 
@@ -41,10 +46,6 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     stop("must install.packages(\"oce\") for convertNetCDF() to work")
   if (!requireNamespace("ncdf4", quietly=TRUE))
     stop("must install.packages(\"ncdf4\") for convertNetCDF() to work")
-
-
-
-
 
   if (grepl("MCTD", odf[['filename']]) == FALSE && grepl("mctd", odf[['filename']]) == FALSE && grepl("RCM", odf[['filename']]) == FALSE
       && grepl("rcm", odf[['filename']]) == FALSE && is.null(odf[['mooringType']])) {
@@ -347,8 +348,33 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
     odf <- oceSetMetadata(odf, name="flagScheme", value= c("Argo"))
     }
 
-   bad <- which(names(odf[['metadata']]) %in% c("units", "header", "hexfilename", "filename", "dataNamesOriginal", "flags", "waterDepth", "date", "recoveryTime", "sampleInterval"))
+  if (ioos) {
+    namesMeta <- c("Conventions", "date_created", "institution", "source", "creator_type", "creator_name",
+                   "creator_country", "creator_email", "creator_institution", "creator_address", "creator_city",
+                   "creator_sector", "creator_url", "featureType", "creator_url", "featureType", "id",
+                   "naming_authority", "infoUrl", "license", "summary", "title", "project", "keywords", "platform",
+                   "platform_name", "platform_id", "platform_vocabulary", "deployment_platform_name", "deployment_platform_vocabulary",
+                   "instrument", "instrument_vocabulary", "time_coverage_resolution", "time_coverage_duration", "time_coverage_start",
+                   "time_coverage_end", "geospatial_lat_min", "geospatial_lat_max", "geospatial_lat_units", "geospatial_lon_min",
+                   "geospatial_lon_max", "geospatial_lat_units", "geospatial_lon_min", "geospatial_lon_max",
+                   "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
+                   "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history", "flagScheme")
+
+    noNames <- NULL
+    if (any(!(namesMeta %in% names(odf[['metadata']])))) {
+      for (i in seq_along(namesMeta)) {
+        if (!(namesMeta[[i]] %in% names(odf[['metadata']]))) {
+          noNames[[i]] <- namesMeta[[i]]
+        }
+      }
+      message("There have been no identified metadata items for ", paste0(unlist(noNames), collapse=", "), " try using standardMetadata()")
+    }
+
+  } else {
+  bad <- which(names(odf[['metadata']]) %in% c("units", "header", "hexfilename", "filename", "dataNamesOriginal", "flags", "waterDepth", "date", "recoveryTime", "sampleInterval"))
   namesMeta <- names(odf[['metadata']])[-bad]
+  }
+
   for (i in seq_along(namesMeta)) {
       #message("This is for namesMeta = ", namesMeta[i])
       ncdf4::ncatt_put(ncout, 0, namesMeta[i], odf[[namesMeta[i]]])
@@ -357,6 +383,7 @@ convertNetCDF <- function(odf, filename = NULL, debug=0, data=NULL, destination=
   # Populating variable attributes
   for (i in 1:numvar) {
   ncdf4::ncatt_put(nc=ncout, varid=eval(parse(text=paste0("v",i, "_def"))), attname="standard_name", attval=eval(parse(text=paste0("variable_",i))))
+  ncdf4::ncatt_put(nc=ncout, varid=eval(parse(text=paste0("v",i, "_def"))), attname="coverage_content_type", attval="physicalMeasurement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              `")
   }
 
   ####preserve ODF history header####

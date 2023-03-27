@@ -21,7 +21,8 @@ standardName <- function(gf3, data=NULL, debug=0) {
   if (is.null(data)) {
     stop("In standardName, must provide a data frame for data")
   }
-  if (!(class(data) == "data.frame")) {
+
+  if (!inherits(data, "data.frame")) {
     stop("In standardName, data must be a data.frame class, not ", class(data))
   }
 
@@ -30,7 +31,7 @@ standardName <- function(gf3, data=NULL, debug=0) {
   # This is for matlab origin files
   matnames <- c("prDM","t090C","sal00","t190C","sal11","o2ML.L", "yday", "salinity", "temperature", "pressure", "datenum")
   namesRDI <- c("v", "q","g", "a", "bv", "ba", "br", "bg", "bc", "bq", "roll", "pitch", "heading", "temperature",
-      "salinity", "depth", "soundSpeed", "heading", "time", "distance") # This is not all of them
+      "salinity", "depth", "soundSpeed", "time", "distance", "headingStd", "pitchStd", "rollStd") # This is not all of them
   namesLIA <- c("conductivity", "fluorescence")
   specialNames <- unique(c(matnames, namesRDI, namesLIA))
 
@@ -64,7 +65,7 @@ standardName <- function(gf3, data=NULL, debug=0) {
       # This is for RDI origin files
       #FIXME: This doesn't include all of them
 
-      if ("v" %in% gf3) { # FIXME this is a bandaid until nameReplacement
+      if ("v" %in% gf3) {
           gf3 <- "NSCT"
 
       }
@@ -106,14 +107,14 @@ standardName <- function(gf3, data=NULL, debug=0) {
           gf3 <- "SVEL"
       }
 
-      if ("pitch" %in% gf3) {
+      if (gf3 %in% c("pitch", "pitchStd")) {
           gf3 <- "PTCH"
       }
 
-      if ("roll" %in% gf3) {
+      if (gf3 %in% c("roll", "rollStd")) {
           gf3 <- "ROLL"
       }
-      if ("heading" %in% gf3) {
+      if (gf3 %in% c("heading", "headingStd")) {
           gf3 <- "HEAD"
       }
 

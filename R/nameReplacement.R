@@ -36,9 +36,10 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     if (is.null(data)) {
         stop("In nameReplacement, must provide a data frame for data")
     }
-    if (!(class(data) == "data.frame")) {
+
+  if (!(inherits(data, "data.frame"))) {
         stop("In nameReplacement, data must be a data.frame class, not ", class(data))
-    }
+  }
 
     if (!(is.null(odf[['fileType']])) && odf@metadata$fileType == "matlab") {
       # Matlab origin
@@ -67,17 +68,26 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
         names(odf@metadata$units) <- names(odf@metadata$dataNamesOriginal)
 
 
-    } else if ((!(is.null(odf[['fileType']])) && odf@metadata$fileType == "rdi") | unique(data$type) == "adcp") {
-      # RDI origin
-      matlabOrigin <- FALSE
-        if (debug > 0) {
-            message("rdi type has been identified")
-        }
-       namesData <- names(odf[['data']])
-       keep <- which(namesData %in% c("v", "q", "g", "a", "bv", "ba", "br", "bg", "bc", "bq", "roll", "pitch", "heading", "temperature",
-                                      "salinity", "depth", "soundSpeed", "time", "distance"))
-       dataNamesOriginal <- namesData[keep]
-           badData <- namesData[which(!(namesData %in% dataNamesOriginal))]
+    } else if ((!(is.null(odf[['fileType']])) && odf@metadata$fileType %in% c("rdi","cnv")) | unique(data$type) == "adcp") {
+	    # RDI origin
+	    matlabOrigin <- FALSE
+	    if (debug > 0) {
+		    message("fileType has been identified as ", odf[['fileType']])
+	    }
+	    namesData <- names(odf[['data']])
+	    if ("timeK" %in% namesData) {
+	      odf <- oceSetData(odf, name="time", value=odf[['time']])
+	      odf <- oceDeleteData(odf, name="timeK")
+	      namesData[which(namesData == "timeK")] <- "time"
+	    }
+	    if (unique(data$type) == "adcp") {
+		    keep <- which(namesData %in% c("v", "q", "g", "a", "bv", "ba", "br", "bg", "bc", "bq", "roll", "pitch", "heading", "temperature",
+						   "salinity", "depth", "soundSpeed", "time", "distance"))
+	    } else {
+		    keep <- which(!(namesData == c("flag", "attitude")))
+	    }
+	    dataNamesOriginal <- namesData[keep]
+	    badData <- namesData[which(!(namesData %in% dataNamesOriginal))]
            if (!(length(badData) == 0)) {
            ADP <- NULL
            for (i in seq_along(badData)) {
@@ -107,7 +117,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
        #names of data
        names(odf@data) <- names(odf@metadata$dataNamesOriginal)
        # names of units
-       unitNames <- names(odf[['units']])
+       unitNames <- names(odf[['units']][-which(odf[['units']] == "attitude")])
        CFunits <- unlist(lapply(unitNames, function(x) standardName(x, data=data)$standard_name))
        names(odf[['units']]) <- CFunits
 
@@ -227,7 +237,7 @@ nameReplacement <- function(odf, data=NULL, debug=0, institute=NULL, unit=NULL) 
     if (matlabOrigin) {
         parameters <- dataNamesOriginal
     }
-    if (unique(data$type) == "ctd" && length(which(parameters == "CRAT") != 0)) {
+    if (unique(data$type) == "ctd" && is.null(odf[['fileType']]) && length(which(parameters == "CRAT") != 0)) {
         if (is.null(unit)) {
             stop("must provide a unit of either 'S/m' or 'mS/cm' for CTD type to convert CRAT to sea_water_electrical_conducitivity for CF standards")
         } else {

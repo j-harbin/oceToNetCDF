@@ -4,17 +4,17 @@
 #' "highly recommended" for the IOOS (Integrated Ocean Observing
 #' System) standards (see Reference 1). This function works by
 #' extracting what it can from the data and metadata within the
-#' `oce` object, but if it required field is determined to be NULL
+#' `oce` object, but if its required field is determined to be NULL
 #' the user will be prompted to enter in the required information.
 #' If `fixed=TRUE`, the information that is input by the user will
-#' be saved and applied to a list of `oce` objects.
+#' be saved and applied to a list of `oce` objects. See \sQuote{Details}.
 #'
 #' If `fixed = TRUE` and a data frame named with the specified file name
 #' doesn't exist it will save the user's answers into a data frame named
 #' `file` which contains the name of the field that required a users answers as well
 #' as the answers the user input. This means, if `fixed=TRUE` and a file named `file`
 #' does exist, this function will load up the previously answered questions
-#' to avoid the user needing to answer them over and over again.
+#' to avoid the user needing to answer them again.
 #'
 #' @param x an [oce-class] object containing bottom ranges.
 #'
@@ -38,9 +38,15 @@
 #'
 #' @examples
 #' \dontrun{
+#' library(oceToNetCDF)
 #' library(oce)
-#' data(ctd)
-#' ctdMeta <- standardMetadata(ctd)
+#' data <- getStandardData(type="ctd")
+#' f <- system.file("extdata", "mctd.ODF", package="oceToNetCDF")
+#' odf1 <- read.odf(f)
+#' odf2 <- standardMetadata(odf1)
+#' odf3 <- nameReplacement(odf2, data=data, unit="S/m")
+#' odf4 <- removeDerived(odf3)
+#' odf5 <- fixMetadata(odf4, data=data)
 #' }
 #'
 #' @export
@@ -70,15 +76,20 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         "naming_authority", "infoUrl", "license", "summary", "title", "project", "keywords", "platform",
         "platform_name", "platform_id", "platform_vocabulary", "deployment_platform_name", "deployment_platform_vocabulary",
         "instrument", "instrument_vocabulary", "time_coverage_resolution", "time_coverage_duration", "time_coverage_start",
-        "time_coverage_end", "geospatial_lat_min", "geospation_lat_max", "geospatial_lat_units", "geospatial_lon_min",
+        "time_coverage_end", "geospatial_lat_min", "geospatial_lat_max", "geospatial_lat_units", "geospatial_lon_min",
         "geospatial_lon_max", "geospatial_lat_units", "geospatial_lon_min", "geospatial_lon_max",
         "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
         "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history")
 
+    namesExtra <- c("institute", "cruise_description", "cruise_name", "model", "type", "serialNumber")
+
     fixedAnswers <- NULL
     namesFixed <- NULL
+    extraAnswers <- NULL
+    extraNames <- NULL
 
     for (i in seq_along(needNames)) {
+        for (j in seq_along(namesExtra)) {
         if (needNames[[i]] == 'Conventions') {
             if (is.null(x[["Conventions"]])) {
                 fun <- function(){
@@ -274,26 +285,34 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
+                    j <- 1
+                    extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                    extraNames[[j]] <- "institute"
                     x <- oceSetMetadata(x, name = "institute", value=answer)
                 }
-                #browser()
                 if (!("CRUISE_HEADER" %in% names(x[['header']]))) {
-                    fun <- function(){
-                        ans <- readline("Enter your Cruise Description (eg. 'U of W and BIO Joint Program. Contact principal investigators for non-DFO access.') ")
-                        ans <- unlist(strsplit(ans, ","))
-                        out1 <- ans
-                        return(out1)
+                    if (!("cruise_description" %in% names(x[['metadata']]))) {
+                        fun <- function(){
+                            ans <- readline("Enter your Cruise Description (eg. 'U of W and BIO Joint Program. Contact principal investigators for non-DFO access.') ")
+                            ans <- unlist(strsplit(ans, ","))
+                            out1 <- ans
+                            return(out1)
+                        }
+                        answer <- fun()
+                        j <- 2
+                        extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                        extraNames[[j]] <- "cruise_description"
+                        x <- oceSetMetadata(x, name = "cruise_description", value=answer)
                     }
-                    answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
-                    x <- oceSetMetadata(x, name = "cruise_description", value=answer)
                 } else {
+                  if (!("cruise_description" %in% x[['metadata']])) {
                     x <- oceSetMetadata(x, name = "cruise_description", value=x@metadata$header$CRUISE_HEADER$CRUISE_DESCRIPTION)
+                  } else {
+                    x <- oceSetMetadata(x, name = "cruise_description", value=x[['cruise_description']])
+                  }
                 }
                 if (!("CRUISE_HEADER" %in% names(x[['header']]))) {
+                  if (!("cruise_name" %in% names(x[['metadata']]))) {
                     fun <- function(){
                         ans <- readline("Enter your Cruise Name (eg. 'Davis Strait 2015') ")
                         ans <- unlist(strsplit(ans, ","))
@@ -301,12 +320,19 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
+                    j <- 3
+                    extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                    extraNames[[j]] <- "cruise_name"
                     x <- oceSetMetadata(x, name = "cruise_name", value=answer)
+                }
 
                 } else {
+                  if (!("cruise_name" %in% names(x[['metadata']]))) {
                     x <- oceSetMetadata(x, name = "cruise_name", value=x@metadata$header$CRUISE_HEADER$CRUISE_NAME_1)
+                  } else {
+                    x <- oceSetMetadata(x, name = "cruise_name", value=x[['cruise_name']])
+
+                  }
 
                 }
                 if (is.null(x[['model']])) {
@@ -317,8 +343,9 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                         return(out1)
                     }
                     answer <- fun()
-                    fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                    namesFixed[[i]] <- needNames[[i]]
+                    j <- 4
+                    extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                    extraNames[[j]] <- "model"
                     x <- oceSetMetadata(x, name = "model", value=answer)
                 }
 
@@ -435,8 +462,9 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                namesFixed[[i]] <- needNames[[i]]
+                j <- 5
+                extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                extraNames[[j]] <- "type"
                 x <- oceSetMetadata(x, name="type", value=answer)
             }
 
@@ -448,8 +476,9 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
                     return(out1)
                 }
                 answer <- fun()
-                fixedAnswers[[i]] <- stringr::str_c(answer, collapse=",")
-                namesFixed[[i]] <- needNames[[i]]
+                j <- 6
+                extraAnswers[[j]] <- stringr::str_c(answer, collapse=",")
+                extraNames[[j]] <- "serialNumber"
                 x <- oceSetMetadata(x, name="serialNumber", value=answer)
             }
 
@@ -475,7 +504,7 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         } else if (needNames[[i]] == "time_coverage_resolution") {
             # FIXME
         } else if (needNames[[i]] == "time_coverage_duration") {
-            #FIXME
+          x <- oceSetMetadata(x, name="time_coverage_duration", value=as.numeric(difftime(x[['time']][length(x[['time']])],x[["time"]][1])))
         } else if (needNames[[i]] == "time_coverage_start") {
             x <- oceSetMetadata(x, name="time_coverage_start", value=x[['time']][1])
         } else if (needNames[[i]] == "time_coverage_end") {
@@ -495,14 +524,30 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         } else if (needNames[[i]] == "geospatial_lon_units") {
             x <- oceSetMetadata(x, name="geospatial_lon_units", value="degrees_east")
         } else if (needNames[[i]] == "geospatial_vertical_max") {
+          if ("pressure" %in% names(x[['data']])) {
             x <- oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_max", value="unknown")
+          }
         } else if (needNames[[i]] == "geospatial_vertical_min") {
+          if ("pressure" %in% names(x[['data']])) {
             x <- oceSetMetadata(x, name="geospatial_vertical_min", value=min(x[['pressure']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_min", value="unknown")
+          }
         } else if (needNames[[i]] == "geospatial_vertical_max") {
+          if ("pressure" %in% names(x[['data']])) {
             x <- oceSetMetadata(x, name="geospatial_vertical_max", value=max(x[['pressure']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_max", value="unknown")
+          }
 
         } else if (needNames[[i]] == "geospatial_vertical_units") {
-            x <- oceSetMetadata(x, name="geospatial_vertical_units", value=x[['units']][['pressure']][['unit']])
+          if ("pressure" %in% names(x[['data']])) {
+            x <- oceSetMetadata(x, name="geospatial_vertical_units", value=all.vars(x[['units']][['pressure']][['unit']]))
+          } else {
+            x <- oceSetMetadata(x, name="geospatial_vertical_units", value="unknown")
+          }
         } else if (needNames[[i]] == "geospatial_veterical_positive") {
             x <- oceSetMetadata(x, name="geospatial_vertical_positive", value="down")
         } else if (needNames[[i]] == "FillValue") {
@@ -514,14 +559,15 @@ standardMetadata <- function(x, fixed=FALSE, file=NULL) # oce
         } else if (needNames[[i]] == "history") {
             # FIXME
         }
-
     }
-    #browser()
+    }
     if (fixed) {
         if (!(file %in% list.files())) {
             # This means we already have the saved data
             #message("The length of fixedAnswers =", length(unlist(fixedAnswers)), " and length of namesFixed = ", length(unlist(namesFixed)))
             d <- data.frame("fixedAnswers"=unlist(fixedAnswers), "namesFixed"=unlist(namesFixed))
+            e <- data.frame("fixedAnswers" = unlist(extraAnswers), "namesFixed"=unlist(extraNames))
+            d <- rbind(d,e)
             save(d, file=file)
         }
     }

@@ -14,16 +14,25 @@ grViz("digraph flowchart {
       tab6 [label = '@@6']
       tab7 [label = '@@7']
       tab8 [label = '@@8']
+      tab9 [label = '@@9']
+      tab10 [label = '@@10']
+      tab11 [label = '@@11']
+      tab12 [label = '@@12']
 
       # edge definitions with the node IDs
       tab1 -> tab2;
       tab2 -> tab3;
-      tab2 -> tab4;
       tab3 -> tab5;
       tab5 -> tab6;
       tab6 -> tab7;
-      tab7 -> tab8;
-      tab4 -> tab6;
+      tab7 -> tab9;
+      tab9 -> tab10;
+      tab10 -> tab11;
+      tab11 -> tab12;
+      tab2 -> tab4;
+      tab4 ->tab6;
+      tab6 -> tab8;
+      tab8 -> tab10;
 
       }
 
@@ -32,9 +41,13 @@ grViz("digraph flowchart {
       [3]: 'Yes'
       [4]: 'No'
       [5]: 'compileOdfToAdp()'
-      [6]: 'nameReplacement()'
-      [7]: 'structureAdp()'
-      [8]: 'singleAdpNetCDF()'
+      [6]: 'Do you want IOOS standards?'
+      [7]: 'Yes'
+      [8]: 'No'
+      [9]: 'standardMetadata()'
+      [10]: 'nameReplacement()'
+      [11]: 'structureAdp()'
+      [12]: 'singleAdpNetCDF()'
       ")
 
 if (!interactive()) dev.off()

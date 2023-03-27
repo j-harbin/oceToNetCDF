@@ -103,11 +103,11 @@ adpRemoveEmptyBins <- function(adp, debug=1, fields=NULL) {
     if (any(is.finite(nonValues))) {
         minDistance <- min(nonValues) # This is looking for NAs near surface
 
-        if (adp[["distance"]][minDistance] < 30) { # Skipping first 30 m (this could be improved)
+        if (adp[["distance"]][minDistance] < 60) { # Skipping first 30 m (this could be improved)
             message("A NA bin has been located in the upper 30 m of the water column")
             keep <- NULL
             for (i in seq_along(nonValues)) {
-                if (adp[["distance"]][nonValues[i]] > 30) {
+                if (adp[["distance"]][nonValues[i]] > 60) {
                     keep[[i]] <- adp[['distance']][nonValues[[i]]]
                 }
             }

@@ -7,13 +7,17 @@
 #'@param adp an adp object from the oce class
 #'@param data a data frame of standard name, name, units, and GF3 codes likely from getStandardData
 #'@param name name of the netCDF file (not including the extension) to be produced
+#'@param ioos a Boolean indicating the metadata and data should abide by the IOOS
+#' (Integrated Ocean Observing System) standards. If not, all metadata found in the CTD and RCM
+#' files are added to the NetCDF under global attributes, and the units, standard names (CF compliant)
+#' and long names are added to the variable attributes.
 #'@param destination the specified location to save the NetCDF. By default this is set
 #' to the local directory
 #'@param debug integer value indicating level of debugging.
 #'  If this is less than 1, no debugging is done. Otherwise,
 #'  some functions will print debugging information.
-#' @importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
-#' @importFrom rlist list.append
+#'@importFrom ncdf4 nc_close ncdim_def ncvar_def nc_create ncvar_put ncatt_put
+#'@importFrom rlist list.append
 #'@examples
 #' \dontrun{
 #' library(oceToNetCDF)
@@ -29,12 +33,12 @@
 #'
 #'@export
 
-singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
+singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, ioos=TRUE, destination="."){
   if (is.null(data)) {
     stop("must provide a data frame data, likely from getStandardData()")
   }
 
-  if (!(class(data) =="data.frame")) {
+  if (!inherits(data, "data.frame")) {
     stop("data provided must be of class data.frame, not ", class(data))
   }
 
@@ -129,33 +133,64 @@ singleAdpNetCDF <- function(adp, name, debug=0, data=NULL, destination="."){
 
   }
 
-  # Adding flags JAIM FIXME
   if (!(length(names(adp[['flags']]))) == 0) {
-    flagNames <- NULL
-    for (f in seq_along(names(adp[['flags']]))) {
-      flagNames[[f]] <- assign(paste0(names(adp[['flags']][f]), "_QC"), adp[['flags']][[names(adp[['flags']])[f]]])
-    }
-    if (bodc) {
-      nameOfFlags <- NULL
-      fNames <- names(adp[['flags']])
-      for (i in seq_along(fNames)) {
-        bottom = ifelse(grepl("bottom", fNames), TRUE, FALSE)
-        average = ifelse(grepl("average", fNames), TRUE, FALSE)
-        if (bottom) {
-          nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*bottom_", "", fNames[i]))], "_QC")
+	  numberOfBeams <- dim(adp[['flags']][['v']])[3]
+	  flagNames <- vector("list", numberOfBeams)
+	  for (f in seq_along(names(adp[['flags']]))) {
+		  for (j in 1:numberOfBeams) {
+			  flagNames[[f]][[j]] <- assign(paste0(names(adp[['flags']][f]),"_",j, "_QC"), adp[['flags']][[names(adp[['flags']])[f]]][,,j])
+		  }
+	  }
+	  # This could be improved
+	  if (numberOfBeams == 4) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]], flagNames[[3]], flagNames[[4]]))
+	  } else if (numberOfBeams == 3) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]], flagNames[[3]]))
+	  } else if (numberOfBeams == 5) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]], flagNames[[3]], flagNames[[4]], flagNames[[5]]))
+	  } else if (numberOfBeams == 2) {
+		  flagNames <- list.append(c(flagNames[[1]], flagNames[[2]]))
+	  }
 
-        } else if (average) {
-          nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*average_", "", fNames[i]))], "_QC")
+	  if (bodc) {
+		  nameOfFlags <- NULL
+		  fNames <- names(adp[['flags']])
+		  for (i in seq_along(fNames)) {
+			  bottom = ifelse(grepl("bottom", fNames), TRUE, FALSE)
+			  average = ifelse(grepl("average", fNames), TRUE, FALSE)
+			  if (bottom) {
+				  nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*bottom_", "", fNames[i]))], "_QC")
 
-        } else {
-        nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == fNames[i])], "_QC")
-        }
-      }
-      names(flagNames) <- unlist(nameOfFlags)
+			  } else if (average) {
+				  nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == gsub(".*average_", "", fNames[i]))], "_QC")
 
-    } else {
-      names(flagNames) <- paste0(names(adp[['flags']]), "_QC")
-    }
+			  } else {
+				  nameOfFlags[[i]] <- paste0(data$bodc[which(data$standard_name == fNames[i])], "_QC")
+			  }
+		  }
+		  names(flagNames) <- unlist(nameOfFlags)
+
+	  } else {
+		  namesF <- NULL
+		  for (i in names(adp[['flags']])) {
+			  for (j in 1:numberOfBeams) {
+				  namesF[[i]][[j]] <- paste0(standardName(i, data=data)$standard_name, "_", j, "_QC")
+			  }
+		  }
+
+
+		  if (numberOfBeams == 4) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]], namesF[[3]], namesF[[4]]))
+		  } else if (numberOfBeams == 3) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]], namesF[[3]]))
+		  } else if (numberOfBeams == 5) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]], namesF[[3]], namesF[[4]], namesF[[5]]))
+		  } else if (numberOfBeams == 2) {
+			  namesF <- list.append(c(namesF[[1]], namesF[[2]]))
+		  }
+
+		  names(flagNames) <- unlist(namesF)
+	  }
 
     flags <- NULL
     for (i in seq_along(flagNames)) {
@@ -182,6 +217,7 @@ if (exists("flags")) {
   }
   # vars = an object of class ncvar4 describing the variable to be created, or a vector
   # (or list of such objects to be created)
+  #browser()
   ncout <- ncdf4::nc_create(filename=ncfname, vars=defs, force_v4 = TRUE)
 
   #insert variables into nc file
@@ -202,29 +238,40 @@ if (exists("flags")) {
 
   ####metadata####
   if (debug > 0) {
-    message("Step 6: About to write metadata into existing netCDF using ncdf4::ncatt_put")
+    message("Step 5: About to write metadata into existing netCDF using ncdf4::ncatt_put")
   }
 
   if (!("flagScheme") %in% names(adp[['metadata']])) {
     #odf <- oceSetMetadata(adp, name="flagScheme", value= list("name"= "argo", "mapping"=list("not_assessed"=0, "passed_all_tests"=1, "probably_good"=2, "probably_bad"=3, "bad"=4, "changed"=5, "not_used"=6, "not_used"=7, "estimated"=8, "missing"=9), "default"=c(0,3,4,9)))
     adp <- oceSetMetadata(adp, name="flagScheme", value= c("Argo"))
   }
-
+  if (!(ioos)) {
   bad <- which(names(adp[['metadata']]) %in% c("longitude", "latitude", "units", "flags", "header", "sampleInterval", "codes", "tiltUsed", "threeBeamUsed", "binMappingUsed", "haveBinaryFixedAttitudeHeader",
                                                "haveActualData", "oceBeamUnspreaded", "dataNamesOriginal", "transformationMatrix", "ensembleFile",
                                                "ensembleNumber", "ensembleInFile", "cpuBoardSerialNumber", "dataOffset", "fileType", "north"))
   namesMeta <- names(adp[['metadata']])[-bad]
+  } else {
+    namesMeta <- c("Conventions", "date_created", "institution", "source", "creator_type", "creator_name",
+                   "creator_country", "creator_email", "creator_institution", "creator_address", "creator_city",
+                   "creator_sector", "creator_url", "featureType", "creator_url", "featureType", "id",
+                   "naming_authority", "infoUrl", "license", "summary", "title", "project", "keywords", "platform",
+                   "platform_name", "platform_id", "platform_vocabulary", "deployment_platform_name", "deployment_platform_vocabulary",
+                   "instrument", "instrument_vocabulary", "time_coverage_resolution", "time_coverage_duration", "time_coverage_start",
+                   "time_coverage_end", "geospatial_lat_min", "geospatial_lat_max", "geospatial_lat_units", "geospatial_lon_min",
+                   "geospatial_lon_max", "geospatial_lat_units", "geospatial_lon_min", "geospatial_lon_max",
+                   "geospatial_lon_units", "geospatial_vertical_max", "geospatial_vertical_min", "geospatial_vertical_units",
+                   "geospatial_vertical_positive", "FillValue","date_modified", "standard_name_vocabulary", "history", "flagScheme")
+  }
   for (i in seq_along(namesMeta)) {
-    #message("This is for namesMeta = ", namesMeta[i])
+    message("This is for namesMeta = ", namesMeta[i])
     ncdf4::ncatt_put(ncout, 0, namesMeta[i], adp[[namesMeta[i]]])
   }
   #browser()
   numvar <- length(defs)
   # Populating variable attributes
-  if (bodc) {
   for (i in 1:numvar) {
     ncdf4::ncatt_put(nc=ncout, varid=defs[[i]], attname="standard_name", attval=names(defs)[[i]])
-  }
+    ncdf4::ncatt_put(nc=ncout, varid=defs[[i]], attname="coverage_content_type", attval="physicalMeasurement")
   }
 
 }
